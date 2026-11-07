@@ -1,6 +1,6 @@
 # DreamsPOS Automated Test Results
 
-Date: 2026-11-06 / 2026-11-07
+Date: 2026-11-07
 Engine: Vitest 3.x
 Environment: Windows / Node.js 22.x / TypeScript 5.7+
 
@@ -10,7 +10,9 @@ Environment: Windows / Node.js 22.x / TypeScript 5.7+
 | :--- | :--- | :---: | :---: | :---: | :---: | :---: |
 | **Financial Decimal Arithmetic** | `apps/api/test/decimal.test.ts` | 6 | 6 | 0 | 14ms | ✅ PASSED |
 | **Point of Sale (POS) Logic** | `apps/api/test/pos.test.ts` | 4 | 4 | 0 | 19ms | ✅ PASSED |
-| **Total** | | **10** | **10** | **0** | **3.01s** | **100% PASS** |
+| **Clothing Size/Color Exchange & Returns** | `apps/api/test/clothing_pos_exchange.test.ts` | 5 | 5 | 0 | 13ms | ✅ PASSED |
+| **Zustand POS Store & Cart Operations** | `apps/web/test/posStore.test.ts` | 5 | 5 | 0 | 115ms | ✅ PASSED |
+| **Total** | | **20** | **20** | **0** | **6.23s** | **100% PASS** |
 
 ---
 
@@ -29,3 +31,17 @@ Environment: Windows / Node.js 22.x / TypeScript 5.7+
 - ✅ `should calculate split-tender payments accurately` (Validates `$150 Cash + $100 Card = $250 Total`, resulting in $0 balance due)
 - ✅ `should calculate change due correctly when cash exceeds total` (`$100 tendered for $78.50 invoice produces $21.50 change`)
 - ✅ `should calculate subtotal with line item discounts correctly` (Verifies line item discounts properly reduce subtotal)
+
+### 3. `apps/api/test/clothing_pos_exchange.test.ts`
+- ✅ `should validate that clothing items with distinct sizes and colors have unique SKUs and barcodes`
+- ✅ `should calculate price difference when exchanging for a different garment variant`
+- ✅ `should validate exchange quantity cannot exceed original purchased quantity`
+- ✅ `should simulate exchange transaction: return old variant to stock and deduct new variant`
+- ✅ `should calculate refund or customer additional payment on exchange price variance`
+
+### 4. `apps/web/test/posStore.test.ts`
+- ✅ `should add a clothing product with variant (size and color) to cart`
+- ✅ `should treat different clothing variants of the same product as distinct cart lines`
+- ✅ `should increment quantity when identical variant is added again`
+- ✅ `should update quantity, price override, line discount, and correctly compute grand total`
+- ✅ `should hold an active order and recall it accurately`
