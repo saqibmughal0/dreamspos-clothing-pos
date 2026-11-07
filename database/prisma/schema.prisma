@@ -17,16 +17,17 @@ model Company {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
-  stores      Store[]
-  warehouses  Warehouse[]
-  users       User[]
-  products    Product[]
-  customers   Customer[]
-  suppliers   Supplier[]
-  sales       Sale[]
-  purchases   Purchase[]
-  accounts    Account[]
-  settings    Setting[]
+  stores       Store[]
+  warehouses   Warehouse[]
+  users        User[]
+  products     Product[]
+  customers    Customer[]
+  suppliers    Supplier[]
+  sales        Sale[]
+  salesReturns SalesReturn[]
+  purchases    Purchase[]
+  accounts     Account[]
+  settings     Setting[]
 
   @@map("companies")
 }
@@ -41,10 +42,11 @@ model Store {
   isActive  Boolean  @default(true) @map("is_active")
   createdAt DateTime @default(now()) @map("created_at")
 
-  company   Company  @relation(fields: [companyId], references: [id])
-  users     User[]
-  registers CashRegister[]
-  sales     Sale[]
+  company      Company        @relation(fields: [companyId], references: [id])
+  users        User[]
+  registers    CashRegister[]
+  sales        Sale[]
+  salesReturns SalesReturn[]
 
   @@map("stores")
 }
@@ -80,13 +82,13 @@ model User {
   createdAt    DateTime @default(now()) @map("created_at")
   updatedAt    DateTime @updatedAt @map("updated_at")
 
-  company      Company        @relation(fields: [companyId], references: [id])
-  store        Store?         @relation(fields: [storeId], references: [id])
-  role         Role           @relation(fields: [roleId], references: [id])
-  sessions     CashRegisterSession[]
-  sales        Sale[]
+  company       Company               @relation(fields: [companyId], references: [id])
+  store         Store?                @relation(fields: [storeId], references: [id])
+  role          Role                  @relation(fields: [roleId], references: [id])
+  sessions      CashRegisterSession[]
+  sales         Sale[]
   refreshTokens RefreshToken[]
-  auditLogs    AuditLog[]
+  auditLogs     AuditLog[]
 
   @@map("users")
 }
@@ -210,16 +212,38 @@ model Product {
   createdAt     DateTime @default(now()) @map("created_at")
   updatedAt     DateTime @updatedAt @map("updated_at")
 
-  company       Company         @relation(fields: [companyId], references: [id])
-  category      Category        @relation(fields: [categoryId], references: [id])
-  brand         Brand?          @relation(fields: [brandId], references: [id])
-  unit          Unit            @relation(fields: [unitId], references: [id])
-  stockBalances StockBalance[]
-  stockMovements StockMovement[]
-  saleItems     SaleItem[]
-  purchaseItems PurchaseItem[]
+  company          Company           @relation(fields: [companyId], references: [id])
+  category         Category          @relation(fields: [categoryId], references: [id])
+  brand            Brand?            @relation(fields: [brandId], references: [id])
+  unit             Unit              @relation(fields: [unitId], references: [id])
+  variants         ProductVariant[]
+  stockBalances    StockBalance[]
+  stockMovements   StockMovement[]
+  saleItems        SaleItem[]
+  salesReturnItems SalesReturnItem[]
+  purchaseItems    PurchaseItem[]
 
   @@map("products")
+}
+
+model ProductVariant {
+  id        String   @id @default(uuid())
+  productId String   @map("product_id")
+  size      String
+  color     String
+  sku       String   @unique
+  barcode   String?  @unique
+  priceDiff Decimal  @default(0.0000) @map("price_diff") @db.Decimal(14, 4)
+  stockQty  Decimal  @default(0.0000) @map("stock_qty") @db.Decimal(14, 4)
+  image     String?
+  isActive  Boolean  @default(true) @map("is_active")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  product   Product    @relation(fields: [productId], references: [id], onDelete: Cascade)
+  saleItems SaleItem[]
+
+  @@unique([productId, size, color])
+  @@map("product_variants")
 }
 
 model StockBalance {
@@ -348,6 +372,7 @@ model Sale {
   cashier         User                 @relation(fields: [cashierId], references: [id])
   items           SaleItem[]
   payments        Payment[]
+  returns         SalesReturn[]
 
   @@map("sales")
 }
@@ -356,14 +381,19 @@ model SaleItem {
   id             String  @id @default(uuid())
   saleId         String  @map("sale_id")
   productId      String  @map("product_id")
+  variantId      String? @map("variant_id")
+  size           String?
+  color          String?
   quantity       Decimal @db.Decimal(14, 4)
   unitPrice      Decimal @map("unit_price") @db.Decimal(14, 4)
   discountAmount Decimal @default(0.0000) @map("discount_amount") @db.Decimal(14, 4)
   taxAmount      Decimal @default(0.0000) @map("tax_amount") @db.Decimal(14, 4)
   totalPrice     Decimal @map("total_price") @db.Decimal(14, 4)
 
-  sale           Sale    @relation(fields: [saleId], references: [id], onDelete: Cascade)
-  product        Product @relation(fields: [productId], references: [id])
+  sale           Sale              @relation(fields: [saleId], references: [id], onDelete: Cascade)
+  product        Product           @relation(fields: [productId], references: [id])
+  variant        ProductVariant?   @relation(fields: [variantId], references: [id])
+  returnItems    SalesReturnItem[]
 
   @@map("sale_items")
 }
@@ -381,6 +411,43 @@ model Payment {
   @@map("payments")
 }
 
+model SalesReturn {
+  id           String   @id @default(uuid())
+  companyId    String   @map("company_id")
+  storeId      String   @map("store_id")
+  saleId       String   @map("sale_id")
+  returnNumber String   @unique @map("return_number")
+  refundAmount Decimal  @map("refund_amount") @db.Decimal(14, 4)
+  refundMethod String   @map("refund_method")
+  reason       String?  @db.Text
+  status       String   @default("COMPLETED")
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  company      Company           @relation(fields: [companyId], references: [id])
+  store        Store             @relation(fields: [storeId], references: [id])
+  sale         Sale              @relation(fields: [saleId], references: [id])
+  items        SalesReturnItem[]
+
+  @@map("sales_returns")
+}
+
+model SalesReturnItem {
+  id            String  @id @default(uuid())
+  salesReturnId String  @map("sales_return_id")
+  saleItemId    String  @map("sale_item_id")
+  productId     String  @map("product_id")
+  variantId     String? @map("variant_id")
+  quantity      Decimal @db.Decimal(14, 4)
+  refundAmount  Decimal @map("refund_amount") @db.Decimal(14, 4)
+  isRestocked   Boolean @default(true) @map("is_restocked")
+
+  salesReturn   SalesReturn @relation(fields: [salesReturnId], references: [id], onDelete: Cascade)
+  saleItem      SaleItem    @relation(fields: [saleItemId], references: [id])
+  product       Product     @relation(fields: [productId], references: [id])
+
+  @@map("sales_return_items")
+}
+
 model Purchase {
   id             String   @id @default(uuid())
   companyId      String   @map("company_id")
@@ -396,10 +463,10 @@ model Purchase {
   notes          String?  @db.Text
   createdAt      DateTime @default(now()) @map("created_at")
 
-  company     Company        @relation(fields: [companyId], references: [id])
-  warehouse   Warehouse      @relation(fields: [warehouseId], references: [id])
-  supplier    Supplier       @relation(fields: [supplierId], references: [id])
-  items       PurchaseItem[]
+  company        Company        @relation(fields: [companyId], references: [id])
+  warehouse      Warehouse      @relation(fields: [warehouseId], references: [id])
+  supplier       Supplier       @relation(fields: [supplierId], references: [id])
+  items          PurchaseItem[]
 
   @@map("purchases")
 }

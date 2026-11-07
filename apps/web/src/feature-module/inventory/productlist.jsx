@@ -5,7 +5,7 @@ import {
   RotateCcw,
   Trash2,
 } from "feather-icons-react/build/IconComponents";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import ImageWithBasePath from "../../core/img/imagewithbasebath";
@@ -15,11 +15,38 @@ import { OverlayTrigger, Tooltip } from "react-bootstrap";
 import Table from "../../core/pagination/datatable";
 import { setToogleHeader } from "../../core/redux/action";
 import { Download } from "react-feather";
+import { apiClient } from "../../core/apiClient";
 
 const ProductList = () => {
-  const dataSource = useSelector((state) => state.rootReducer.product_list);
+  const reduxDataSource = useSelector((state) => state.rootReducer.product_list);
+  const [dataSource, setDataSource] = useState(reduxDataSource);
   const dispatch = useDispatch();
   const data = useSelector((state) => state.rootReducer.toggle_header);
+
+  useEffect(() => {
+    apiClient.get("/products")
+      .then((res) => {
+        if (res.data?.success && res.data.data?.items?.length > 0) {
+          const mapped = res.data.data.items.map((p, idx) => ({
+            id: p.id,
+            key: p.id || idx,
+            sku: p.sku,
+            product: p.name,
+            productImage: p.image || "assets/img/products/pos-product-01.png",
+            category: p.categoryName || "Apparel",
+            brand: "Dreams Apparel",
+            price: `$${Number(p.sellingPrice).toFixed(2)}`,
+            unit: p.unitName || "pc",
+            qty: `${p.stockQuantity ?? 50} Pcs`,
+            createdby: "Admin"
+          }));
+          setDataSource(mapped);
+        }
+      })
+      .catch((err) => {
+        console.warn("Using default product list:", err);
+      });
+  }, []);
 
 
   const route = all_routes;

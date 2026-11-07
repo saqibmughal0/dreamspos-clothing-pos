@@ -14,11 +14,48 @@ export class PosController {
     }
   }
 
-  async getRecentOrders(req: Request, res: Response, next: NextFunction): Promise<void> {
+  async getReceiptData(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const companyId = req.user!.companyId;
-      const orders = await posService.getRecentOrders(companyId);
-      res.status(200).json({ success: true, data: orders });
+      const saleId = req.params.saleId as string;
+      const receipt = await posService.getReceiptData(saleId);
+      if (!receipt) {
+        res.status(404).json({ success: false, message: "Receipt not found" });
+        return;
+      }
+      res.status(200).json({ success: true, data: receipt });
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  async openRegister(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const userId = req.user!.id;
+      const storeId = req.user!.storeId || req.body.storeId;
+      const openingFloat = Number(req.body.openingFloat || 0);
+
+      const session = await posService.openRegister(storeId, userId, openingFloat);
+      res.status(201).json({ success: true, data: session });
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  async closeRegister(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const { sessionId, closingCash } = req.body;
+      const result = await posService.closeRegister(sessionId, Number(closingCash));
+      res.status(200).json({ success: true, data: result });
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  async getActiveRegister(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const userId = req.user!.id;
+      const active = await posService.getActiveRegister(userId);
+      res.status(200).json({ success: true, data: active });
     } catch (err) {
       next(err);
     }

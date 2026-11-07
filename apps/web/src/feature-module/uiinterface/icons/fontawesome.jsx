@@ -21,7 +21,6 @@ import {
   faAngleLeft,
   faAngleRight,
   faAngleUp,
-  faApple,
   faArchive,
   faChartArea,
   faArrowCircleDown,
@@ -376,7 +375,7 @@ const FontawesomeIcons = () => {
                         />
                       </li>
                       {/* <li>
-                          <FontAwesomeIcon icon={faApple} data-bs-toggle="tooltip" title="fab fa-apple" />
+                          <FontAwesomeIcon icon={faArchive} data-bs-toggle="tooltip" title="fas fa-archive" />
                         </li> */}
                       <li>
                         <FontAwesomeIcon

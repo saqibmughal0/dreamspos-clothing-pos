@@ -1,1785 +1,943 @@
-import React, { useEffect, useState } from 'react'
-import { Link, useLocation } from 'react-router-dom'
-import CartCounter from '../../core/common/counter/counter'
+import React, { useEffect, useState, useMemo } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import Select from "react-select";
-import { Check } from 'feather-icons-react/build/IconComponents';
 import PosModals from '../../core/modals/pos-modal/posModals';
+import { usePosStore } from '../../core/posStore';
+import { useBarcodeScanner } from '../../core/hooks/useBarcodeScanner';
+import { apiClient } from '../../core/apiClient';
+import { CheckoutModal } from '../../core/modals/pos-modal/CheckoutModal';
+import { ThermalReceiptModal } from '../../core/modals/pos-modal/ThermalReceiptModal';
+import { CashRegisterModal } from '../../core/modals/pos-modal/CashRegisterModal';
+import { ClothingExchangeModal } from '../../core/modals/pos-modal/ClothingExchangeModal';
+
+// Initial Single-Brand Clothing Retail Catalog (Apparel & Variants)
+const INITIAL_APPAREL_CATALOG = [
+  {
+    id: "prod-tee-01",
+    name: "Classic Crewneck Cotton Tee",
+    sku: "APP-TSH-01",
+    barcode: "890123450010",
+    categoryCode: "t-shirts",
+    categoryName: "T-Shirts & Tops",
+    sellingPrice: 24.99,
+    taxRate: 8.5,
+    stockQuantity: 190,
+    image: "assets/img/products/pos-product-01.png",
+    variants: [
+      { id: "var-tsh-blk-s", size: "S", color: "Jet Black", sku: "APP-TSH-BLK-S", barcode: "890123450101", price: 24.99, stockQty: 25 },
+      { id: "var-tsh-blk-m", size: "M", color: "Jet Black", sku: "APP-TSH-BLK-M", barcode: "890123450102", price: 24.99, stockQty: 40 },
+      { id: "var-tsh-blk-l", size: "L", color: "Jet Black", sku: "APP-TSH-BLK-L", barcode: "890123450103", price: 24.99, stockQty: 30 },
+      { id: "var-tsh-wht-m", size: "M", color: "Pure White", sku: "APP-TSH-WHT-M", barcode: "890123450104", price: 24.99, stockQty: 35 },
+      { id: "var-tsh-wht-l", size: "L", color: "Pure White", sku: "APP-TSH-WHT-L", barcode: "890123450105", price: 24.99, stockQty: 20 },
+      { id: "var-tsh-nvy-m", size: "M", color: "Navy Blue", sku: "APP-TSH-NVY-M", barcode: "890123450106", price: 24.99, stockQty: 30 }
+    ]
+  },
+  {
+    id: "prod-sht-01",
+    name: "Oxford Button-Down Long Sleeve Shirt",
+    sku: "APP-SHT-01",
+    barcode: "890123450020",
+    categoryCode: "shirts",
+    categoryName: "Shirts",
+    sellingPrice: 49.99,
+    taxRate: 8.5,
+    stockQuantity: 78,
+    image: "assets/img/products/pos-product-02.png",
+    variants: [
+      { id: "var-sht-blu-m", size: "M", color: "Sky Blue", sku: "APP-SHT-BLU-M", barcode: "890123450201", price: 49.99, stockQty: 20 },
+      { id: "var-sht-blu-l", size: "L", color: "Sky Blue", sku: "APP-SHT-BLU-L", barcode: "890123450202", price: 49.99, stockQty: 18 },
+      { id: "var-sht-wht-m", size: "M", color: "Crisp White", sku: "APP-SHT-WHT-M", barcode: "890123450203", price: 49.99, stockQty: 25 },
+      { id: "var-sht-wht-l", size: "L", color: "Crisp White", sku: "APP-SHT-WHT-L", barcode: "890123450204", price: 49.99, stockQty: 15 }
+    ]
+  },
+  {
+    id: "prod-jns-01",
+    name: "Slim Fit Stretch Denim Jeans",
+    sku: "APP-JNS-01",
+    barcode: "890123450030",
+    categoryCode: "jeans",
+    categoryName: "Jeans & Trousers",
+    sellingPrice: 69.99,
+    taxRate: 8.5,
+    stockQuantity: 99,
+    image: "assets/img/products/pos-product-03.png",
+    variants: [
+      { id: "var-jns-ind-30", size: "30", color: "Dark Indigo", sku: "APP-JNS-IND-30", barcode: "890123450301", price: 69.99, stockQty: 15 },
+      { id: "var-jns-ind-32", size: "32", color: "Dark Indigo", sku: "APP-JNS-IND-32", barcode: "890123450302", price: 69.99, stockQty: 28 },
+      { id: "var-jns-ind-34", size: "34", color: "Dark Indigo", sku: "APP-JNS-IND-34", barcode: "890123450303", price: 69.99, stockQty: 20 },
+      { id: "var-jns-blk-32", size: "32", color: "Washed Black", sku: "APP-JNS-BLK-32", barcode: "890123450304", price: 69.99, stockQty: 22 },
+      { id: "var-jns-blk-34", size: "34", color: "Washed Black", sku: "APP-JNS-BLK-34", barcode: "890123450305", price: 69.99, stockQty: 14 }
+    ]
+  },
+  {
+    id: "prod-hod-01",
+    name: "Heavyweight Fleece Pullover Hoodie",
+    sku: "APP-HOD-01",
+    barcode: "890123450040",
+    categoryCode: "hoodies",
+    categoryName: "Hoodies & Jackets",
+    sellingPrice: 59.99,
+    taxRate: 8.5,
+    stockQuantity: 112,
+    image: "assets/img/products/pos-product-04.png",
+    variants: [
+      { id: "var-hod-gry-s", size: "S", color: "Heather Grey", sku: "APP-HOD-GRY-S", barcode: "890123450401", price: 59.99, stockQty: 15 },
+      { id: "var-hod-gry-m", size: "M", color: "Heather Grey", sku: "APP-HOD-GRY-M", barcode: "890123450402", price: 59.99, stockQty: 25 },
+      { id: "var-hod-gry-l", size: "L", color: "Heather Grey", sku: "APP-HOD-GRY-L", barcode: "890123450403", price: 59.99, stockQty: 20 },
+      { id: "var-hod-blk-m", size: "M", color: "Onyx Black", sku: "APP-HOD-BLK-M", barcode: "890123450404", price: 59.99, stockQty: 30 },
+      { id: "var-hod-blk-l", size: "L", color: "Onyx Black", sku: "APP-HOD-BLK-L", barcode: "890123450405", price: 59.99, stockQty: 22 }
+    ]
+  },
+  {
+    id: "prod-sho-01",
+    name: "Chino Casual Everyday Shorts",
+    sku: "APP-SHO-01",
+    barcode: "890123450050",
+    categoryCode: "shorts",
+    categoryName: "Shorts",
+    sellingPrice: 34.99,
+    taxRate: 8.5,
+    stockQuantity: 65,
+    image: "assets/img/products/pos-product-05.png",
+    variants: [
+      { id: "var-sho-khk-30", size: "30", color: "Khaki Tan", sku: "APP-SHO-KHK-30", barcode: "890123450501", price: 34.99, stockQty: 15 },
+      { id: "var-sho-khk-32", size: "32", color: "Khaki Tan", sku: "APP-SHO-KHK-32", barcode: "890123450502", price: 34.99, stockQty: 20 },
+      { id: "var-sho-khk-34", size: "34", color: "Khaki Tan", sku: "APP-SHO-KHK-34", barcode: "890123450503", price: 34.99, stockQty: 15 },
+      { id: "var-sho-olv-32", size: "32", color: "Olive Green", sku: "APP-SHO-OLV-32", barcode: "890123450504", price: 34.99, stockQty: 15 }
+    ]
+  },
+  {
+    id: "prod-trs-01",
+    name: "Tailored Slim Fit Chino Trousers",
+    sku: "APP-TRS-01",
+    barcode: "890123450060",
+    categoryCode: "trousers",
+    categoryName: "Jeans & Trousers",
+    sellingPrice: 54.99,
+    taxRate: 8.5,
+    stockQuantity: 70,
+    image: "assets/img/products/pos-product-06.png",
+    variants: [
+      { id: "var-trs-khk-30", size: "30", color: "British Khaki", sku: "APP-TRS-KHK-30", barcode: "890123450601", price: 54.99, stockQty: 18 },
+      { id: "var-trs-khk-32", size: "32", color: "British Khaki", sku: "APP-TRS-KHK-32", barcode: "890123450602", price: 54.99, stockQty: 22 },
+      { id: "var-trs-chr-32", size: "32", color: "Charcoal Grey", sku: "APP-TRS-CHR-32", barcode: "890123450603", price: 54.99, stockQty: 16 },
+      { id: "var-trs-chr-34", size: "34", color: "Charcoal Grey", sku: "APP-TRS-CHR-34", barcode: "890123450604", price: 54.99, stockQty: 14 }
+    ]
+  }
+];
+
+const customerOptions = [
+  { value: "cust-walkin", label: "Walk-in Customer" },
+  { value: "cust-james", label: "James Anderson (VIP)" },
+  { value: "cust-sarah", label: "Sarah Connor (Member)" },
+  { value: "cust-michael", label: "Michael Scott" },
+  { value: "cust-emma", label: "Emma Watson" }
+];
 
 const Pos = () => {
-    const [activeTab, setActiveTab] = useState('all')
-    const [showAlert, setShowAlert] = useState(true)
-    const [showAlert1, setShowAlert1] = useState(true)
-    const Location = useLocation();
-    const options = [
-        { value: "1", label: "Walk in Customer" },
-        { value: "2", label: "John" },
-        { value: "3", label: "Smith" },
-        { value: "4", label: "Ana" },
-        { value: "4", label: "Elza" },
-    ];
+  const [activeTab, setActiveTab] = useState('all');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [products, setProducts] = useState(INITIAL_APPAREL_CATALOG);
+  const [selectedVariants, setSelectedVariants] = useState({});
+  const [scanMessage, setScanMessage] = useState('');
 
-    useEffect(() => {
-        document.addEventListener("click", function (event) {
-            if (event.target.closest(".product-info")) {
-                let productInfo = event.target.closest(".product-info");
-                productInfo.classList.toggle("active");
+  // Modals state
+  const [showCheckoutModal, setShowCheckoutModal] = useState(false);
+  const [showReceiptModal, setShowReceiptModal] = useState(false);
+  const [showRegisterModal, setShowRegisterModal] = useState(false);
+  const [showExchangeModal, setShowExchangeModal] = useState(false);
+  const [showHeldOrdersModal, setShowHeldOrdersModal] = useState(false);
 
-                if (document.querySelectorAll(".product-info.active").length > 0) {
-                    // If "active" exists, hide .empty-cart and show .product-list
-                    document.querySelector(".product-wrap .empty-cart").style.display = "none";
-                    document.querySelector(".product-wrap .product-list").style.display = "block";
-                } else {
-                    // If not "active", reverse the behavior
-                    document.querySelector(".product-wrap .empty-cart").style.display = "flex";
-                    document.querySelector(".product-wrap .product-list").style.display = "none";
-                }
-            }
-        });
-        document.body.classList.add("pos-page");
-        return () => {
-            document.body.classList.remove("pos-page");
+  const Location = useLocation();
+
+  // POS Zustand Store
+  const {
+    cart,
+    customer,
+    orderDiscount,
+    shippingFee,
+    heldOrders,
+    lastCompletedSale,
+    addItem,
+    removeItem,
+    updateQuantity,
+    clearCart,
+    setCustomer,
+    holdCurrentOrder,
+    recallOrder,
+    deleteHeldOrder,
+    getSubtotal,
+    getTotalTax,
+    getGrandTotal,
+    getItemCount
+  } = usePosStore();
+
+  // Initialize Hardware & Keyboard-Wedge Barcode Scanner
+  useBarcodeScanner({
+    onScanSuccess: (item) => {
+      setScanMessage(`Scanned: ${item.name}`);
+      setTimeout(() => setScanMessage(''), 3000);
+    },
+    onScanError: (barcode) => {
+      setScanMessage(`Barcode not found: ${barcode}`);
+      setTimeout(() => setScanMessage(''), 3000);
+    }
+  });
+
+  // Fetch live products from backend
+  useEffect(() => {
+    let isMounted = true;
+    apiClient.get('/products')
+      .then((res) => {
+        if (isMounted && res.data?.success && res.data.data?.items?.length > 0) {
+          setProducts(res.data.data.items);
         }
+      })
+      .catch((err) => {
+        console.warn("Using offline apparel catalog:", err.message);
+      });
 
-    }, [Location.pathname, showAlert1])
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
+  // Filter products by category and search term
+  const filteredProducts = useMemo(() => {
+    return products.filter((p) => {
+      const matchCategory =
+        activeTab === 'all' ||
+        p.categoryCode === activeTab ||
+        (p.categoryName && p.categoryName.toLowerCase().includes(activeTab.toLowerCase()));
 
-    return (
-        <div className='main-wrapper pos-five'>
-            <div className="page-wrapper pos-pg-wrapper ms-0">
-                <div className="content pos-design p-0">
-                    <div className="row pos-wrapper">
-                        {/* Products */}
-                        <div className="col-md-12 col-lg-7 col-xl-8 d-flex">
-                            <div className="pos-categories tabs_wrapper p-0 flex-fill">
-                                <div className="content-wrap">
-                                    <div className="tab-wrap">
-                                        <ul className="tabs owl-carousel pos-category5">
-                                            <li id="all" onClick={() => setActiveTab('all')} className={activeTab === 'all' ? 'active' : ''}>
-                                                <Link to="#">
-                                                    <img
-                                                        src="assets/img/categories/category-01.svg"
-                                                        alt="Categories"
-                                                    />
-                                                </Link>
-                                                <h6>
-                                                    <Link to="#">All</Link>
-                                                </h6>
-                                            </li>
-                                            <li id="headphones" onClick={() => setActiveTab('headphones')} className={activeTab === 'headphones' ? 'active' : ''}>
-                                                <Link to="#">
-                                                    <img
-                                                        src="assets/img/categories/category-02.svg"
-                                                        alt="Categories"
-                                                    />
-                                                </Link>
-                                                <h6>
-                                                    <Link to="#">Headset</Link>
-                                                </h6>
-                                            </li>
-                                            <li id="shoes" onClick={() => setActiveTab('shoes')} className={activeTab === 'shoes' ? 'active' : ''}>
-                                                <Link to="#">
-                                                    <img
-                                                        src="assets/img/categories/category-03.svg"
-                                                        alt="Categories"
-                                                    />
-                                                </Link>
-                                                <h6>
-                                                    <Link to="#">Shoes</Link>
-                                                </h6>
-                                            </li>
-                                            <li id="mobiles" onClick={() => setActiveTab('mobiles')} className={activeTab === 'mobiles' ? 'active' : ''}>
-                                                <Link to="#">
-                                                    <img
-                                                        src="assets/img/categories/category-04.svg"
-                                                        alt="Categories"
-                                                    />
-                                                </Link>
-                                                <h6>
-                                                    <Link to="#">Mobiles</Link>
-                                                </h6>
-                                            </li>
-                                            <li id="watches" onClick={() => setActiveTab('watches')} className={activeTab === 'watches' ? 'active' : ''}>
-                                                <Link to="#">
-                                                    <img
-                                                        src="assets/img/categories/category-05.svg"
-                                                        alt="Categories"
-                                                    />
-                                                </Link>
-                                                <h6>
-                                                    <Link to="#">Watches</Link>
-                                                </h6>
-                                            </li>
-                                            <li id="laptops" onClick={() => setActiveTab('laptops')} className={activeTab === 'laptops' ? 'active' : ''}>
-                                                <Link to="#">
-                                                    <img
-                                                        src="assets/img/categories/category-06.svg"
-                                                        alt="Categories"
-                                                    />
-                                                </Link>
-                                                <h6>
-                                                    <Link to="#">Laptops</Link>
-                                                </h6>
-                                            </li>
-                                            <li id="appliances" onClick={() => setActiveTab('appliances')} className={activeTab === 'appliances' ? 'active' : ''}>
-                                                <Link to="#">
-                                                    <img
-                                                        src="assets/img/categories/category-07.svg"
-                                                        alt="Categories"
-                                                    />
-                                                </Link>
-                                                <h6>
-                                                    <Link to="#">Appliance</Link>
-                                                </h6>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                    <div className="tab-content-wrap">
-                                        <div className="d-flex align-items-center justify-content-between flex-wrap mb-2">
-                                            <div className="mb-3">
-                                                <h5 className="mb-1">Welcome, Wesley Adrian</h5>
-                                                <p>December 24, 2024</p>
-                                            </div>
-                                            <div className="d-flex align-items-center flex-wrap mb-2">
-                                                <div className="input-icon-start search-pos position-relative mb-2 me-3">
-                                                    <span className="input-icon-addon">
-                                                        <i className="ti ti-search" />
-                                                    </span>
-                                                    <input
-                                                        type="text"
-                                                        className="form-control"
-                                                        placeholder="Search Product"
-                                                    />
-                                                </div>
-                                                <Link to="#" className="btn btn-sm btn-dark mb-2 me-2">
-                                                    <i className="ti ti-tag me-1" />
-                                                    View All Brands
-                                                </Link>
-                                                <Link to="#" className="btn btn-sm btn-primary mb-2">
-                                                    <i className="ti ti-star me-1" />
-                                                    Featured
-                                                </Link>
-                                            </div>
-                                        </div>
-                                        <div className="pos-products">
-                                            <div className="tabs_container">
-                                                <div className={`tab_content ${activeTab === 'all' ? 'active' : ''} `} data-tab="all">
-                                                    <div className="row g-3">
-                                                        <div className="col-sm-6 col-md-6 col-lg-6 col-xl-4 col-xxl-3">
-                                                            <div className="product-info card mb-0" onClick={() => setShowAlert1(!showAlert1)} tabIndex="0">
-                                                                <Link to="#" className="pro-img">
-                                                                    <img
-                                                                        src="assets/img/products/pos-product-01.svg"
-                                                                        alt="Products"
-                                                                    />
-                                                                    <span>
-                                                                        <i className="ti ti-circle-check-filled" />
-                                                                    </span>
-                                                                </Link>
-                                                                <h6 className="cat-name">
-                                                                    <Link to="#">Mobiles</Link>
-                                                                </h6>
-                                                                <h6 className="product-name">
-                                                                    <Link to="#">IPhone 14 64GB</Link>
-                                                                </h6>
-                                                                <div className="d-flex align-items-center justify-content-between price">
-                                                                    <p className="text-gray-9 mb-0">$15800</p>
-                                                                    <div className="qty-item m-0">
-                                                                        <CartCounter defaultValue={4} />
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div className="col-sm-6 col-md-6 col-lg-6 col-xl-4 col-xxl-3">
-                                                            <div className="product-info card mb-0" onClick={() => setShowAlert1(!showAlert1)} tabIndex="0">
-                                                                <Link to="#" className="pro-img">
-                                                                    <img
-                                                                        src="assets/img/products/pos-product-02.svg"
-                                                                        alt="Products"
-                                                                    />
-                                                                    <span>
-                                                                        <i className="ti ti-circle-check-filled" />
-                                                                    </span>
-                                                                </Link>
-                                                                <h6 className="cat-name">
-                                                                    <Link to="#">Computer</Link>
-                                                                </h6>
-                                                                <h6 className="product-name">
-                                                                    <Link to="#">MacBook Pro</Link>
-                                                                </h6>
-                                                                <div className="d-flex align-items-center justify-content-between price">
-                                                                    <p className="text-gray-9 mb-0">$1000</p>
-                                                                    <div className="qty-item m-0">
-                                                                        <CartCounter defaultValue={4} />
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div className="col-sm-6 col-md-6 col-lg-6 col-xl-4 col-xxl-3">
-                                                            <div className="product-info card mb-0" onClick={() => setShowAlert1(!showAlert1)} tabIndex="0">
-                                                                <Link to="#" className="pro-img">
-                                                                    <img
-                                                                        src="assets/img/products/pos-product-03.svg"
-                                                                        alt="Products"
-                                                                    />
-                                                                    <span>
-                                                                        <i className="ti ti-circle-check-filled" />
-                                                                    </span>
-                                                                </Link>
-                                                                <h6 className="cat-name">
-                                                                    <Link to="#">Watches</Link>
-                                                                </h6>
-                                                                <h6 className="product-name">
-                                                                    <Link to="#">Rolex Tribute V3</Link>
-                                                                </h6>
-                                                                <div className="d-flex align-items-center justify-content-between price">
-                                                                    <p className="text-gray-9 mb-0">$6800</p>
-                                                                    <div className="qty-item m-0">
-                                                                        <CartCounter defaultValue={4} />
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div className="col-sm-6 col-md-6 col-lg-6 col-xl-4 col-xxl-3">
-                                                            <div className="product-info card mb-0" onClick={() => setShowAlert1(!showAlert1)} tabIndex="0">
-                                                                <Link to="#" className="pro-img">
-                                                                    <img
-                                                                        src="assets/img/products/pos-product-04.svg"
-                                                                        alt="Products"
-                                                                    />
-                                                                    <span>
-                                                                        <i className="ti ti-circle-check-filled" />
-                                                                    </span>
-                                                                </Link>
-                                                                <h6 className="cat-name">
-                                                                    <Link to="#">Shoes</Link>
-                                                                </h6>
-                                                                <h6 className="product-name">
-                                                                    <Link to="#">Red Nike Angelo</Link>
-                                                                </h6>
-                                                                <div className="d-flex align-items-center justify-content-between price">
-                                                                    <p className="text-gray-9 mb-0">$7800</p>
-                                                                    <div className="qty-item m-0">
-                                                                        <CartCounter defaultValue={4} />
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div className="col-sm-6 col-md-6 col-lg-6 col-xl-4 col-xxl-3">
-                                                            <div className="product-info card active mb-0" onClick={() => setShowAlert1(!showAlert1)} tabIndex="0">
-                                                                <Link to="#" className="pro-img">
-                                                                    <img
-                                                                        src="assets/img/products/pos-product-05.svg"
-                                                                        alt="Products"
-                                                                    />
-                                                                    <span>
-                                                                        <i className="ti ti-circle-check-filled" />
-                                                                    </span>
-                                                                </Link>
-                                                                <h6 className="cat-name">
-                                                                    <Link to="#">Headphones</Link>
-                                                                </h6>
-                                                                <h6 className="product-name">
-                                                                    <Link to="#">Airpod 2</Link>
-                                                                </h6>
-                                                                <div className="d-flex align-items-center justify-content-between price">
-                                                                    <p className="text-gray-9 mb-0">$5478</p>
-                                                                    <div className="qty-item m-0">
-                                                                        <CartCounter defaultValue={4} />
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div className="col-sm-6 col-md-6 col-lg-6 col-xl-4 col-xxl-3">
-                                                            <div className="product-info card mb-0" onClick={() => setShowAlert1(!showAlert1)} tabIndex="0">
-                                                                <Link to="#" className="pro-img">
-                                                                    <img
-                                                                        src="assets/img/products/pos-product-06.svg"
-                                                                        alt="Products"
-                                                                    />
-                                                                    <span>
-                                                                        <i className="ti ti-circle-check-filled" />
-                                                                    </span>
-                                                                </Link>
-                                                                <h6 className="cat-name">
-                                                                    <Link to="#">Shoes</Link>
-                                                                </h6>
-                                                                <h6 className="product-name">
-                                                                    <Link to="#">Blue White OGR</Link>
-                                                                </h6>
-                                                                <div className="d-flex align-items-center justify-content-between price">
-                                                                    <p className="text-gray-9 mb-0">$987</p>
-                                                                    <div className="qty-item m-0">
-                                                                        <CartCounter defaultValue={4} />
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div className="col-sm-6 col-md-6 col-lg-6 col-xl-4 col-xxl-3">
-                                                            <div className="product-info card mb-0" onClick={() => setShowAlert1(!showAlert1)} tabIndex="0">
-                                                                <Link to="#" className="pro-img">
-                                                                    <img
-                                                                        src="assets/img/products/pos-product-07.svg"
-                                                                        alt="Products"
-                                                                    />
-                                                                    <span>
-                                                                        <i className="ti ti-circle-check-filled" />
-                                                                    </span>
-                                                                </Link>
-                                                                <h6 className="cat-name">
-                                                                    <Link to="#">Laptop</Link>
-                                                                </h6>
-                                                                <h6 className="product-name">
-                                                                    <Link to="#">
-                                                                        IdeaPad Slim 5 Gen 7
-                                                                    </Link>
-                                                                </h6>
-                                                                <div className="d-flex align-items-center justify-content-between price">
-                                                                    <p className="text-gray-9 mb-0">$1454</p>
-                                                                    <div className="qty-item m-0">
-                                                                        <CartCounter defaultValue={4} />
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div className="col-sm-6 col-md-6 col-lg-6 col-xl-4 col-xxl-3">
-                                                            <div className="product-info card mb-0" onClick={() => setShowAlert1(!showAlert1)} tabIndex="0">
-                                                                <Link to="#" className="pro-img">
-                                                                    <img
-                                                                        src="assets/img/products/pos-product-08.svg"
-                                                                        alt="Products"
-                                                                    />
-                                                                    <span>
-                                                                        <i className="ti ti-circle-check-filled" />
-                                                                    </span>
-                                                                </Link>
-                                                                <h6 className="cat-name">
-                                                                    <Link to="#">Headphones</Link>
-                                                                </h6>
-                                                                <h6 className="product-name">
-                                                                    <Link to="#">SWAGME</Link>
-                                                                </h6>
-                                                                <div className="d-flex align-items-center justify-content-between price">
-                                                                    <p className="text-gray-9 mb-0">$6587</p>
-                                                                    <div className="qty-item m-0">
-                                                                        <CartCounter defaultValue={4} />
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div className="col-sm-6 col-md-6 col-lg-6 col-xl-4 col-xxl-3">
-                                                            <div className="product-info card mb-0" onClick={() => setShowAlert1(!showAlert1)} tabIndex="0">
-                                                                <Link to="#" className="pro-img">
-                                                                    <img
-                                                                        src="assets/img/products/pos-product-09.svg"
-                                                                        alt="Products"
-                                                                    />
-                                                                    <span>
-                                                                        <i className="ti ti-circle-check-filled" />
-                                                                    </span>
-                                                                </Link>
-                                                                <h6 className="cat-name">
-                                                                    <Link to="#">Watches</Link>
-                                                                </h6>
-                                                                <h6 className="product-name">
-                                                                    <Link to="#">Timex Black Silver</Link>
-                                                                </h6>
-                                                                <div className="d-flex align-items-center justify-content-between price">
-                                                                    <p className="text-gray-9 mb-0">$1457</p>
-                                                                    <div className="qty-item m-0">
-                                                                        <CartCounter defaultValue={4} />
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div className="col-sm-6 col-md-6 col-lg-6 col-xl-4 col-xxl-3">
-                                                            <div className="product-info card mb-0" onClick={() => setShowAlert1(!showAlert1)} tabIndex="0">
-                                                                <Link to="#" className="pro-img">
-                                                                    <img
-                                                                        src="assets/img/products/pos-product-10.svg"
-                                                                        alt="Products"
-                                                                    />
-                                                                    <span>
-                                                                        <i className="ti ti-circle-check-filled" />
-                                                                    </span>
-                                                                </Link>
-                                                                <h6 className="cat-name">
-                                                                    <Link to="#">Computer</Link>
-                                                                </h6>
-                                                                <h6 className="product-name">
-                                                                    <Link to="#">Tablet 1.02 inch</Link>
-                                                                </h6>
-                                                                <div className="d-flex align-items-center justify-content-between price">
-                                                                    <p className="text-gray-9 mb-0">$4744</p>
-                                                                    <div className="qty-item m-0">
-                                                                        <CartCounter defaultValue={4} />
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div className="col-sm-6 col-md-6 col-lg-6 col-xl-4 col-xxl-3">
-                                                            <div className="product-info card mb-0" onClick={() => setShowAlert1(!showAlert1)} tabIndex="0">
-                                                                <Link to="#" className="pro-img">
-                                                                    <img
-                                                                        src="assets/img/products/pos-product-11.svg"
-                                                                        alt="Products"
-                                                                    />
-                                                                    <span>
-                                                                        <i className="ti ti-circle-check-filled" />
-                                                                    </span>
-                                                                </Link>
-                                                                <h6 className="cat-name">
-                                                                    <Link to="#">Watches</Link>
-                                                                </h6>
-                                                                <h6 className="product-name">
-                                                                    <Link to="#">
-                                                                        Fossil Pair Of 3 in 1{" "}
-                                                                    </Link>
-                                                                </h6>
-                                                                <div className="d-flex align-items-center justify-content-between price">
-                                                                    <p className="text-gray-9 mb-0">$789</p>
-                                                                    <div className="qty-item m-0">
-                                                                        <CartCounter defaultValue={4} />
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div className="col-sm-6 col-md-6 col-lg-6 col-xl-4 col-xxl-3">
-                                                            <div className="product-info card mb-0" onClick={() => setShowAlert1(!showAlert1)} tabIndex="0">
-                                                                <Link to="#" className="pro-img">
-                                                                    <img
-                                                                        src="assets/img/products/pos-product-18.svg"
-                                                                        alt="Products"
-                                                                    />
-                                                                    <span>
-                                                                        <i className="ti ti-circle-check-filled" />
-                                                                    </span>
-                                                                </Link>
-                                                                <h6 className="cat-name">
-                                                                    <Link to="#">Shoes</Link>
-                                                                </h6>
-                                                                <h6 className="product-name">
-                                                                    <Link to="#">Green Nike Fe</Link>
-                                                                </h6>
-                                                                <div className="d-flex align-items-center justify-content-between price">
-                                                                    <p className="text-gray-9 mb-0">$7847</p>
-                                                                    <div className="qty-item m-0">
-                                                                        <CartCounter defaultValue={4} />
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div className={`tab_content ${activeTab === 'headphones' ? 'active' : ''} `} data-tab="headphones">
-                                                    <div className="row g-3">
-                                                        <div className="col-sm-6 col-md-6 col-lg-6 col-xl-4 col-xxl-3">
-                                                            <div className="product-info card mb-0" onClick={() => setShowAlert1(!showAlert1)} tabIndex="0">
-                                                                <Link to="#" className="pro-img">
-                                                                    <img
-                                                                        src="assets/img/products/pos-product-05.svg"
-                                                                        alt="Products"
-                                                                    />
-                                                                    <span>
-                                                                        <i className="ti ti-circle-check-filled" />
-                                                                    </span>
-                                                                </Link>
-                                                                <h6 className="cat-name">
-                                                                    <Link to="#">Headphones</Link>
-                                                                </h6>
-                                                                <h6 className="product-name">
-                                                                    <Link to="#">Airpod 2</Link>
-                                                                </h6>
-                                                                <div className="d-flex align-items-center justify-content-between price">
-                                                                    <p className="text-gray-9 mb-0">$5478</p>
-                                                                    <div className="qty-item m-0">
-                                                                        <CartCounter defaultValue={4} />
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div className="col-sm-6 col-md-6 col-lg-6 col-xl-4 col-xxl-3">
-                                                            <div className="product-info card mb-0" onClick={() => setShowAlert1(!showAlert1)} tabIndex="0">
-                                                                <Link to="#" className="pro-img">
-                                                                    <img
-                                                                        src="assets/img/products/pos-product-08.svg"
-                                                                        alt="Products"
-                                                                    />
-                                                                    <span>
-                                                                        <Check className="feather-16" />
-                                                                    </span>
-                                                                </Link>
-                                                                <h6 className="cat-name">
-                                                                    <Link to="#">Headphones</Link>
-                                                                </h6>
-                                                                <h6 className="product-name">
-                                                                    <Link to="#">SWAGME</Link>
-                                                                </h6>
-                                                                <div className="d-flex align-items-center justify-content-between price">
-                                                                    <p className="text-gray-9 mb-0">$6587</p>
-                                                                    <div className="qty-item m-0">
-                                                                        <CartCounter defaultValue={4} />
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div className={`tab_content ${activeTab === 'shoes' ? 'active' : ''} `} data-tab="shoes">
-                                                    <div className="row g-3">
-                                                        <div className="col-sm-6 col-md-6 col-lg-6 col-xl-4 col-xxl-3">
-                                                            <div className="product-info card mb-0" onClick={() => setShowAlert1(!showAlert1)} tabIndex="0">
-                                                                <Link to="#" className="pro-img">
-                                                                    <img
-                                                                        src="assets/img/products/pos-product-04.svg"
-                                                                        alt="Products"
-                                                                    />
-                                                                    <span>
-                                                                        <i className="ti ti-circle-check-filled" />
-                                                                    </span>
-                                                                </Link>
-                                                                <h6 className="cat-name">
-                                                                    <Link to="#">Shoes</Link>
-                                                                </h6>
-                                                                <h6 className="product-name">
-                                                                    <Link to="#">Red Nike Angelo</Link>
-                                                                </h6>
-                                                                <div className="d-flex align-items-center justify-content-between price">
-                                                                    <p className="text-gray-9 mb-0">$7800</p>
-                                                                    <div className="qty-item m-0">
-                                                                        <CartCounter defaultValue={4} />
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div className="col-sm-6 col-md-6 col-lg-6 col-xl-4 col-xxl-3">
-                                                            <div className="product-info card mb-0" onClick={() => setShowAlert1(!showAlert1)} tabIndex="0">
-                                                                <Link to="#" className="pro-img">
-                                                                    <img
-                                                                        src="assets/img/products/pos-product-06.svg"
-                                                                        alt="Products"
-                                                                    />
-                                                                    <span>
-                                                                        <i className="ti ti-circle-check-filled" />
-                                                                    </span>
-                                                                </Link>
-                                                                <h6 className="cat-name">
-                                                                    <Link to="#">Shoes</Link>
-                                                                </h6>
-                                                                <h6 className="product-name">
-                                                                    <Link to="#">Blue White OGR</Link>
-                                                                </h6>
-                                                                <div className="d-flex align-items-center justify-content-between price">
-                                                                    <p className="text-gray-9 mb-0">$987</p>
-                                                                    <div className="qty-item m-0">
-                                                                        <CartCounter defaultValue={4} />
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div className="col-sm-6 col-md-6 col-lg-6 col-xl-4 col-xxl-3">
-                                                            <div className="product-info card mb-0" onClick={() => setShowAlert1(!showAlert1)} tabIndex="0">
-                                                                <Link to="#" className="pro-img">
-                                                                    <img
-                                                                        src="assets/img/products/pos-product-18.svg"
-                                                                        alt="Products"
-                                                                    />
-                                                                    <span>
-                                                                        <i className="ti ti-circle-check-filled" />
-                                                                    </span>
-                                                                </Link>
-                                                                <h6 className="cat-name">
-                                                                    <Link to="#">Shoes</Link>
-                                                                </h6>
-                                                                <h6 className="product-name">
-                                                                    <Link to="#">Green Nike Fe</Link>
-                                                                </h6>
-                                                                <div className="d-flex align-items-center justify-content-between price">
-                                                                    <p className="text-gray-9 mb-0">$7847</p>
-                                                                    <div className="qty-item m-0">
-                                                                        <CartCounter defaultValue={4} />
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div className={`tab_content ${activeTab === 'mobiles' ? 'active' : ''} `} data-tab="mobiles">
-                                                    <div className="row g-3">
-                                                        <div className="col-sm-6 col-md-6 col-lg-6 col-xl-4 col-xxl-3">
-                                                            <div className="product-info card mb-0" onClick={() => setShowAlert1(!showAlert1)} tabIndex="0">
-                                                                <Link to="#" className="pro-img">
-                                                                    <img
-                                                                        src="assets/img/products/pos-product-01.svg"
-                                                                        alt="Products"
-                                                                    />
-                                                                    <span>
-                                                                        <i className="ti ti-circle-check-filled" />
-                                                                    </span>
-                                                                </Link>
-                                                                <h6 className="cat-name">
-                                                                    <Link to="#">Mobiles</Link>
-                                                                </h6>
-                                                                <h6 className="product-name">
-                                                                    <Link to="#">IPhone 14 64GB</Link>
-                                                                </h6>
-                                                                <div className="d-flex align-items-center justify-content-between price">
-                                                                    <p className="text-gray-9 mb-0">$15800</p>
-                                                                    <div className="qty-item m-0">
-                                                                        <CartCounter defaultValue={4} />
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div className="col-sm-6 col-md-6 col-lg-6 col-xl-4 col-xxl-3">
-                                                            <div className="product-info card mb-0" onClick={() => setShowAlert1(!showAlert1)} tabIndex="0">
-                                                                <Link to="#" className="pro-img">
-                                                                    <img
-                                                                        src="assets/img/products/pos-product-14.png"
-                                                                        alt="Products"
-                                                                    />
-                                                                    <span>
-                                                                        <i className="ti ti-circle-check-filled" />
-                                                                    </span>
-                                                                </Link>
-                                                                <h6 className="cat-name">
-                                                                    <Link to="#">Mobiles</Link>
-                                                                </h6>
-                                                                <h6 className="product-name">
-                                                                    <Link to="#">Iphone 11</Link>
-                                                                </h6>
-                                                                <div className="d-flex align-items-center justify-content-between price">
-                                                                    <p className="text-gray-9 mb-0">$3654</p>
-                                                                    <div className="qty-item m-0">
-                                                                        <CartCounter defaultValue={4} />
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div className={`tab_content ${activeTab === 'watches' ? 'active' : ''} `} data-tab="watches">
-                                                    <div className="row g-3">
-                                                        <div className="col-sm-6 col-md-6 col-lg-6 col-xl-4 col-xxl-3">
-                                                            <div className="product-info card mb-0" onClick={() => setShowAlert1(!showAlert1)} tabIndex="0">
-                                                                <Link to="#" className="pro-img">
-                                                                    <img
-                                                                        src="assets/img/products/pos-product-03.svg"
-                                                                        alt="Products"
-                                                                    />
-                                                                    <span>
-                                                                        <i className="ti ti-circle-check-filled" />
-                                                                    </span>
-                                                                </Link>
-                                                                <h6 className="cat-name">
-                                                                    <Link to="#">Watches</Link>
-                                                                </h6>
-                                                                <h6 className="product-name">
-                                                                    <Link to="#">Rolex Tribute V3</Link>
-                                                                </h6>
-                                                                <div className="d-flex align-items-center justify-content-between price">
-                                                                    <p className="text-gray-9 mb-0">$6800</p>
-                                                                    <div className="qty-item m-0">
-                                                                        <CartCounter defaultValue={4} />
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div className="col-sm-6 col-md-6 col-lg-6 col-xl-4 col-xxl-3">
-                                                            <div className="product-info card mb-0" onClick={() => setShowAlert1(!showAlert1)} tabIndex="0">
-                                                                <Link to="#" className="pro-img">
-                                                                    <img
-                                                                        src="assets/img/products/pos-product-09.svg"
-                                                                        alt="Products"
-                                                                    />
-                                                                    <span>
-                                                                        <i className="ti ti-circle-check-filled" />
-                                                                    </span>
-                                                                </Link>
-                                                                <h6 className="cat-name">
-                                                                    <Link to="#">Watches</Link>
-                                                                </h6>
-                                                                <h6 className="product-name">
-                                                                    <Link to="#">Timex Black Silver</Link>
-                                                                </h6>
-                                                                <div className="d-flex align-items-center justify-content-between price">
-                                                                    <p className="text-gray-9 mb-0">$1457</p>
-                                                                    <div className="qty-item m-0">
-                                                                        <CartCounter defaultValue={4} />
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div className="col-sm-6 col-md-6 col-lg-6 col-xl-4 col-xxl-3">
-                                                            <div className="product-info card mb-0" onClick={() => setShowAlert1(!showAlert1)} tabIndex="0">
-                                                                <Link to="#" className="pro-img">
-                                                                    <img
-                                                                        src="assets/img/products/pos-product-11.svg"
-                                                                        alt="Products"
-                                                                    />
-                                                                    <span>
-                                                                        <i className="ti ti-circle-check-filled" />
-                                                                    </span>
-                                                                </Link>
-                                                                <h6 className="cat-name">
-                                                                    <Link to="#">Watches</Link>
-                                                                </h6>
-                                                                <h6 className="product-name">
-                                                                    <Link to="#">
-                                                                        Fossil Pair Of 3 in 1{" "}
-                                                                    </Link>
-                                                                </h6>
-                                                                <div className="d-flex align-items-center justify-content-between price">
-                                                                    <p className="text-gray-9 mb-0">$789</p>
-                                                                    <div className="qty-item m-0">
-                                                                        <CartCounter defaultValue={4} />
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div className={`tab_content ${activeTab === 'laptops' ? 'active' : ''} `} data-tab="laptops">
-                                                    <div className="row g-3">
-                                                        <div className="col-sm-6 col-md-6 col-lg-6 col-xl-4 col-xxl-3">
-                                                            <div className="product-info card mb-0" onClick={() => setShowAlert1(!showAlert1)} tabIndex="0">
-                                                                <Link to="#" className="pro-img">
-                                                                    <img
-                                                                        src="assets/img/products/pos-product-02.svg"
-                                                                        alt="Products"
-                                                                    />
-                                                                    <span>
-                                                                        <i className="ti ti-circle-check-filled" />
-                                                                    </span>
-                                                                </Link>
-                                                                <h6 className="cat-name">
-                                                                    <Link to="#">Computer</Link>
-                                                                </h6>
-                                                                <h6 className="product-name">
-                                                                    <Link to="#">MacBook Pro</Link>
-                                                                </h6>
-                                                                <div className="d-flex align-items-center justify-content-between price">
-                                                                    <p className="text-gray-9 mb-0">$1000</p>
-                                                                    <div className="qty-item m-0">
-                                                                        <CartCounter defaultValue={4} />
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div className="col-sm-6 col-md-6 col-lg-6 col-xl-4 col-xxl-3">
-                                                            <div className="product-info card mb-0" onClick={() => setShowAlert1(!showAlert1)} tabIndex="0">
-                                                                <Link to="#" className="pro-img">
-                                                                    <img
-                                                                        src="assets/img/products/pos-product-07.svg"
-                                                                        alt="Products"
-                                                                    />
-                                                                    <span>
-                                                                        <i className="ti ti-circle-check-filled" />
-                                                                    </span>
-                                                                </Link>
-                                                                <h6 className="cat-name">
-                                                                    <Link to="#">Laptop</Link>
-                                                                </h6>
-                                                                <h6 className="product-name">
-                                                                    <Link to="#">
-                                                                        IdeaPad Slim 5 Gen 7
-                                                                    </Link>
-                                                                </h6>
-                                                                <div className="d-flex align-items-center justify-content-between price">
-                                                                    <p className="text-gray-9 mb-0">$1454</p>
-                                                                    <div className="qty-item m-0">
-                                                                        <CartCounter defaultValue={4} />
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div className="col-sm-6 col-md-6 col-lg-6 col-xl-4 col-xxl-3">
-                                                            <div className="product-info card mb-0" onClick={() => setShowAlert1(!showAlert1)} tabIndex="0">
-                                                                <Link to="#" className="pro-img">
-                                                                    <img
-                                                                        src="assets/img/products/pos-product-10.svg"
-                                                                        alt="Products"
-                                                                    />
-                                                                    <span>
-                                                                        <i className="ti ti-circle-check-filled" />
-                                                                    </span>
-                                                                </Link>
-                                                                <h6 className="cat-name">
-                                                                    <Link to="#">Computer</Link>
-                                                                </h6>
-                                                                <h6 className="product-name">
-                                                                    <Link to="#">Tablet 1.02 inch</Link>
-                                                                </h6>
-                                                                <div className="d-flex align-items-center justify-content-between price">
-                                                                    <p className="text-gray-9 mb-0">$4744</p>
-                                                                    <div className="qty-item m-0">
-                                                                        <CartCounter defaultValue={4} />
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div className="col-sm-6 col-md-6 col-lg-6 col-xl-4 col-xxl-3">
-                                                            <div className="product-info card mb-0" onClick={() => setShowAlert1(!showAlert1)} tabIndex="0">
-                                                                <Link to="#" className="pro-img">
-                                                                    <img
-                                                                        src="assets/img/products/pos-product-13.png"
-                                                                        alt="Products"
-                                                                    />
-                                                                    <span>
-                                                                        <i className="ti ti-circle-check-filled" />
-                                                                    </span>
-                                                                </Link>
-                                                                <h6 className="cat-name">
-                                                                    <Link to="#">Laptop</Link>
-                                                                </h6>
-                                                                <h6 className="product-name">
-                                                                    <Link to="#">Yoga Book 9i</Link>
-                                                                </h6>
-                                                                <div className="d-flex align-items-center justify-content-between price">
-                                                                    <p className="text-gray-9 mb-0">$4784</p>
-                                                                    <div className="qty-item m-0">
-                                                                        <CartCounter defaultValue={4} />
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div className="col-sm-6 col-md-6 col-lg-6 col-xl-4 col-xxl-3">
-                                                            <div className="product-info card mb-0" onClick={() => setShowAlert1(!showAlert1)} tabIndex="0">
-                                                                <Link to="#" className="pro-img">
-                                                                    <img
-                                                                        src="assets/img/products/pos-product-14.png"
-                                                                        alt="Products"
-                                                                    />
-                                                                    <span>
-                                                                        <i className="ti ti-circle-check-filled" />
-                                                                    </span>
-                                                                </Link>
-                                                                <h6 className="cat-name">
-                                                                    <Link to="#">Laptop</Link>
-                                                                </h6>
-                                                                <h6 className="product-name">
-                                                                    <Link to="#">IdeaPad Slim 3i</Link>
-                                                                </h6>
-                                                                <div className="d-flex align-items-center justify-content-between price">
-                                                                    <p className="text-gray-9 mb-0">$1245</p>
-                                                                    <div className="qty-item m-0">
-                                                                        <CartCounter defaultValue={4} />
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div className={`tab_content ${activeTab === 'appliances' ? 'active' : ''} `} data-tab="appliances">
-                                                    <div className="row g-3">
-                                                        <div className="col-sm-6 col-md-6 col-lg-6 col-xl-4 col-xxl-3">
-                                                            <div className="product-info card mb-0" onClick={() => setShowAlert1(!showAlert1)} tabIndex="0">
-                                                                <Link to="#" className="pro-img">
-                                                                    <img
-                                                                        src="assets/img/products/pos-product-01.svg"
-                                                                        alt="Products"
-                                                                    />
-                                                                    <span>
-                                                                        <i className="ti ti-circle-check-filled" />
-                                                                    </span>
-                                                                </Link>
-                                                                <h6 className="cat-name">
-                                                                    <Link to="#">Mobiles</Link>
-                                                                </h6>
-                                                                <h6 className="product-name">
-                                                                    <Link to="#">IPhone 14 64GB</Link>
-                                                                </h6>
-                                                                <div className="d-flex align-items-center justify-content-between price">
-                                                                    <p className="text-gray-9 mb-0">$15800</p>
-                                                                    <div className="qty-item m-0">
-                                                                        <CartCounter defaultValue={4} />
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div className="col-sm-6 col-md-6 col-lg-6 col-xl-4 col-xxl-3">
-                                                            <div className="product-info card mb-0" onClick={() => setShowAlert1(!showAlert1)} tabIndex="0">
-                                                                <Link to="#" className="pro-img">
-                                                                    <img
-                                                                        src="assets/img/products/pos-product-02.svg"
-                                                                        alt="Products"
-                                                                    />
-                                                                    <span>
-                                                                        <i className="ti ti-circle-check-filled" />
-                                                                    </span>
-                                                                </Link>
-                                                                <h6 className="cat-name">
-                                                                    <Link to="#">Computer</Link>
-                                                                </h6>
-                                                                <h6 className="product-name">
-                                                                    <Link to="#">MacBook Pro</Link>
-                                                                </h6>
-                                                                <div className="d-flex align-items-center justify-content-between price">
-                                                                    <p className="text-gray-9 mb-0">$1000</p>
-                                                                    <div className="qty-item m-0">
-                                                                        <CartCounter defaultValue={4} />
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div className="col-sm-6 col-md-6 col-lg-6 col-xl-4 col-xxl-3">
-                                                            <div className="product-info card mb-0" onClick={() => setShowAlert1(!showAlert1)} tabIndex="0">
-                                                                <Link to="#" className="pro-img">
-                                                                    <img
-                                                                        src="assets/img/products/pos-product-03.svg"
-                                                                        alt="Products"
-                                                                    />
-                                                                    <span>
-                                                                        <i className="ti ti-circle-check-filled" />
-                                                                    </span>
-                                                                </Link>
-                                                                <h6 className="cat-name">
-                                                                    <Link to="#">Watches</Link>
-                                                                </h6>
-                                                                <h6 className="product-name">
-                                                                    <Link to="#">Rolex Tribute V3</Link>
-                                                                </h6>
-                                                                <div className="d-flex align-items-center justify-content-between price">
-                                                                    <p className="text-gray-9 mb-0">$6800</p>
-                                                                    <div className="qty-item m-0">
-                                                                        <CartCounter defaultValue={4} />
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div className="col-sm-6 col-md-6 col-lg-6 col-xl-4 col-xxl-3">
-                                                            <div className="product-info card mb-0" onClick={() => setShowAlert1(!showAlert1)} tabIndex="0">
-                                                                <Link to="#" className="pro-img">
-                                                                    <img
-                                                                        src="assets/img/products/pos-product-04.svg"
-                                                                        alt="Products"
-                                                                    />
-                                                                    <span>
-                                                                        <i className="ti ti-circle-check-filled" />
-                                                                    </span>
-                                                                </Link>
-                                                                <h6 className="cat-name">
-                                                                    <Link to="#">Shoes</Link>
-                                                                </h6>
-                                                                <h6 className="product-name">
-                                                                    <Link to="#">Red Nike Angelo</Link>
-                                                                </h6>
-                                                                <div className="d-flex align-items-center justify-content-between price">
-                                                                    <p className="text-gray-9 mb-0">$7800</p>
-                                                                    <div className="qty-item m-0">
-                                                                        <CartCounter defaultValue={4} />
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div className="col-sm-6 col-md-6 col-lg-6 col-xl-4 col-xxl-3">
-                                                            <div className="product-info card mb-0" onClick={() => setShowAlert1(!showAlert1)} tabIndex="0">
-                                                                <Link to="#" className="pro-img">
-                                                                    <img
-                                                                        src="assets/img/products/pos-product-05.svg"
-                                                                        alt="Products"
-                                                                    />
-                                                                    <span>
-                                                                        <i className="ti ti-circle-check-filled" />
-                                                                    </span>
-                                                                </Link>
-                                                                <h6 className="cat-name">
-                                                                    <Link to="#">Headphones</Link>
-                                                                </h6>
-                                                                <h6 className="product-name">
-                                                                    <Link to="#">Airpod 2</Link>
-                                                                </h6>
-                                                                <div className="d-flex align-items-center justify-content-between price">
-                                                                    <p className="text-gray-9 mb-0">$5478</p>
-                                                                    <div className="qty-item m-0">
-                                                                        <CartCounter defaultValue={4} />
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div className="col-sm-6 col-md-6 col-lg-6 col-xl-4 col-xxl-3">
-                                                            <div className="product-info card mb-0" onClick={() => setShowAlert1(!showAlert1)} tabIndex="0">
-                                                                <Link to="#" className="pro-img">
-                                                                    <img
-                                                                        src="assets/img/products/pos-product-06.svg"
-                                                                        alt="Products"
-                                                                    />
-                                                                    <span>
-                                                                        <i className="ti ti-circle-check-filled" />
-                                                                    </span>
-                                                                </Link>
-                                                                <h6 className="cat-name">
-                                                                    <Link to="#">Shoes</Link>
-                                                                </h6>
-                                                                <h6 className="product-name">
-                                                                    <Link to="#">Blue White OGR</Link>
-                                                                </h6>
-                                                                <div className="d-flex align-items-center justify-content-between price">
-                                                                    <p className="text-gray-9 mb-0">$987</p>
-                                                                    <div className="qty-item m-0">
-                                                                        <CartCounter defaultValue={4} />
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div className="col-sm-6 col-md-6 col-lg-6 col-xl-4 col-xxl-3">
-                                                            <div className="product-info card mb-0" onClick={() => setShowAlert1(!showAlert1)} tabIndex="0">
-                                                                <Link to="#" className="pro-img">
-                                                                    <img
-                                                                        src="assets/img/products/pos-product-07.svg"
-                                                                        alt="Products"
-                                                                    />
-                                                                    <span>
-                                                                        <i className="ti ti-circle-check-filled" />
-                                                                    </span>
-                                                                </Link>
-                                                                <h6 className="cat-name">
-                                                                    <Link to="#">Laptop</Link>
-                                                                </h6>
-                                                                <h6 className="product-name">
-                                                                    <Link to="#">
-                                                                        IdeaPad Slim 5 Gen 7
-                                                                    </Link>
-                                                                </h6>
-                                                                <div className="d-flex align-items-center justify-content-between price">
-                                                                    <p className="text-gray-9 mb-0">$1454</p>
-                                                                    <div className="qty-item m-0">
-                                                                        <CartCounter defaultValue={4} />
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div className="col-sm-6 col-md-6 col-lg-6 col-xl-4 col-xxl-3">
-                                                            <div className="product-info card mb-0" onClick={() => setShowAlert1(!showAlert1)} tabIndex="0">
-                                                                <Link to="#" className="pro-img">
-                                                                    <img
-                                                                        src="assets/img/products/pos-product-08.svg"
-                                                                        alt="Products"
-                                                                    />
-                                                                    <span>
-                                                                        <i className="ti ti-circle-check-filled" />
-                                                                    </span>
-                                                                </Link>
-                                                                <h6 className="cat-name">
-                                                                    <Link to="#">Headphones</Link>
-                                                                </h6>
-                                                                <h6 className="product-name">
-                                                                    <Link to="#">SWAGME</Link>
-                                                                </h6>
-                                                                <div className="d-flex align-items-center justify-content-between price">
-                                                                    <p className="text-gray-9 mb-0">$6587</p>
-                                                                    <div className="qty-item m-0">
-                                                                        <CartCounter defaultValue={4} />
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div className="col-sm-6 col-md-6 col-lg-6 col-xl-4 col-xxl-3">
-                                                            <div className="product-info card mb-0" onClick={() => setShowAlert1(!showAlert1)} tabIndex="0">
-                                                                <Link to="#" className="pro-img">
-                                                                    <img
-                                                                        src="assets/img/products/pos-product-09.svg"
-                                                                        alt="Products"
-                                                                    />
-                                                                    <span>
-                                                                        <i className="ti ti-circle-check-filled" />
-                                                                    </span>
-                                                                </Link>
-                                                                <h6 className="cat-name">
-                                                                    <Link to="#">Watches</Link>
-                                                                </h6>
-                                                                <h6 className="product-name">
-                                                                    <Link to="#">Timex Black Silver</Link>
-                                                                </h6>
-                                                                <div className="d-flex align-items-center justify-content-between price">
-                                                                    <p className="text-gray-9 mb-0">$1457</p>
-                                                                    <div className="qty-item m-0">
-                                                                        <CartCounter defaultValue={4} />
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div className="col-sm-6 col-md-6 col-lg-6 col-xl-4 col-xxl-3">
-                                                            <div className="product-info card mb-0" onClick={() => setShowAlert1(!showAlert1)} tabIndex="0">
-                                                                <Link to="#" className="pro-img">
-                                                                    <img
-                                                                        src="assets/img/products/pos-product-10.svg"
-                                                                        alt="Products"
-                                                                    />
-                                                                    <span>
-                                                                        <i className="ti ti-circle-check-filled" />
-                                                                    </span>
-                                                                </Link>
-                                                                <h6 className="cat-name">
-                                                                    <Link to="#">Computer</Link>
-                                                                </h6>
-                                                                <h6 className="product-name">
-                                                                    <Link to="#">Tablet 1.02 inch</Link>
-                                                                </h6>
-                                                                <div className="d-flex align-items-center justify-content-between price">
-                                                                    <p className="text-gray-9 mb-0">$4744</p>
-                                                                    <div className="qty-item m-0">
-                                                                        <CartCounter defaultValue={4} />
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div className="col-sm-6 col-md-6 col-lg-6 col-xl-4 col-xxl-3">
-                                                            <div className="product-info card mb-0" onClick={() => setShowAlert1(!showAlert1)} tabIndex="0">
-                                                                <Link to="#" className="pro-img">
-                                                                    <img
-                                                                        src="assets/img/products/pos-product-11.svg"
-                                                                        alt="Products"
-                                                                    />
-                                                                    <span>
-                                                                        <i className="ti ti-circle-check-filled" />
-                                                                    </span>
-                                                                </Link>
-                                                                <h6 className="cat-name">
-                                                                    <Link to="#">Watches</Link>
-                                                                </h6>
-                                                                <h6 className="product-name">
-                                                                    <Link to="#">
-                                                                        Fossil Pair Of 3 in 1{" "}
-                                                                    </Link>
-                                                                </h6>
-                                                                <div className="d-flex align-items-center justify-content-between price">
-                                                                    <p className="text-gray-9 mb-0">$789</p>
-                                                                    <div className="qty-item m-0">
-                                                                        <CartCounter defaultValue={4} />
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div className="col-sm-6 col-md-6 col-lg-6 col-xl-4 col-xxl-3">
-                                                            <div className="product-info card mb-0" onClick={() => setShowAlert1(!showAlert1)} tabIndex="0">
-                                                                <Link to="#" className="pro-img">
-                                                                    <img
-                                                                        src="assets/img/products/pos-product-18.svg"
-                                                                        alt="Products"
-                                                                    />
-                                                                    <span>
-                                                                        <i className="ti ti-circle-check-filled" />
-                                                                    </span>
-                                                                </Link>
-                                                                <h6 className="cat-name">
-                                                                    <Link to="#">Shoes</Link>
-                                                                </h6>
-                                                                <h6 className="product-name">
-                                                                    <Link to="#">Green Nike Fe</Link>
-                                                                </h6>
-                                                                <div className="d-flex align-items-center justify-content-between price">
-                                                                    <p className="text-gray-9 mb-0">$7847</p>
-                                                                    <div className="qty-item m-0">
-                                                                        <CartCounter defaultValue={4} />
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
+      const q = searchQuery.toLowerCase().trim();
+      const matchSearch =
+        !q ||
+        p.name.toLowerCase().includes(q) ||
+        p.sku.toLowerCase().includes(q) ||
+        (p.barcode && p.barcode.includes(q)) ||
+        (p.variants && p.variants.some((v) =>
+          v.sku.toLowerCase().includes(q) ||
+          v.barcode?.includes(q) ||
+          v.color.toLowerCase().includes(q) ||
+          v.size.toLowerCase().includes(q)
+        ));
+
+      return matchCategory && matchSearch;
+    });
+  }, [products, activeTab, searchQuery]);
+
+  // Handle Search input Enter key for manual barcode entry
+  const handleSearchKeyDown = async (e) => {
+    if (e.key === 'Enter' && searchQuery.trim().length >= 3) {
+      e.preventDefault();
+      try {
+        const res = await apiClient.get(`/products/barcode/${encodeURIComponent(searchQuery.trim())}`);
+        if (res.data?.success && res.data.data) {
+          const item = res.data.data;
+          addItem({
+            id: item.id,
+            variantId: item.variantId || null,
+            name: item.name,
+            size: item.size || null,
+            color: item.color || null,
+            sku: item.sku,
+            sellingPrice: item.sellingPrice,
+            taxRate: item.taxRate,
+            image: item.image,
+            stockQty: item.stockQuantity
+          });
+          setScanMessage(`Added: ${item.name}`);
+          setSearchQuery('');
+          setTimeout(() => setScanMessage(''), 3000);
+        }
+      } catch (err) {
+        // Just leave the search query for listing filter
+      }
+    }
+  };
+
+  // Add Product to Cart with Selected Variant
+  const handleAddProductWithVariant = (prod) => {
+    const selectedVariant = selectedVariants[prod.id] || (prod.variants && prod.variants[0]);
+    if (selectedVariant) {
+      addItem({
+        id: prod.id,
+        variantId: selectedVariant.id,
+        name: `${prod.name} (${selectedVariant.color} - ${selectedVariant.size})`,
+        size: selectedVariant.size,
+        color: selectedVariant.color,
+        sku: selectedVariant.sku,
+        sellingPrice: selectedVariant.price || prod.sellingPrice,
+        taxRate: prod.taxRate || 8.5,
+        image: prod.image,
+        stockQty: selectedVariant.stockQty
+      });
+    } else {
+      addItem({
+        id: prod.id,
+        name: prod.name,
+        sku: prod.sku,
+        sellingPrice: prod.sellingPrice,
+        taxRate: prod.taxRate || 8.5,
+        image: prod.image,
+        stockQty: prod.stockQuantity
+      });
+    }
+  };
+
+  // Open Checkout Modal
+  const handleOpenCheckout = () => {
+    if (cart.length === 0) return;
+    setShowCheckoutModal(true);
+  };
+
+  const handleCheckoutSuccess = () => {
+    setShowCheckoutModal(false);
+    setShowReceiptModal(true);
+  };
+
+  return (
+    <div className='main-wrapper pos-five'>
+      <div className="page-wrapper pos-pg-wrapper ms-0">
+        <div className="content pos-design p-0">
+          <div className="row pos-wrapper">
+            {/* Products Main Column */}
+            <div className="col-md-12 col-lg-7 col-xl-8 d-flex">
+              <div className="pos-categories tabs_wrapper p-0 flex-fill">
+                <div className="content-wrap">
+                  {/* Category Tabs */}
+                  <div className="tab-wrap">
+                    <ul className="tabs pos-category5 d-flex list-unstyled gap-2 p-2 overflow-auto mb-0">
+                      <li
+                        id="all"
+                        onClick={() => setActiveTab('all')}
+                        className={`cursor-pointer ${activeTab === 'all' ? 'active' : ''}`}
+                      >
+                        <Link to="#" onClick={(e) => { e.preventDefault(); setActiveTab('all'); }}>
+                          <img src="assets/img/categories/category-01.svg" alt="All" />
+                        </Link>
+                        <h6><Link to="#" onClick={(e) => { e.preventDefault(); setActiveTab('all'); }}>All Items</Link></h6>
+                      </li>
+                      <li
+                        id="t-shirts"
+                        onClick={() => setActiveTab('t-shirts')}
+                        className={`cursor-pointer ${activeTab === 't-shirts' ? 'active' : ''}`}
+                      >
+                        <Link to="#" onClick={(e) => { e.preventDefault(); setActiveTab('t-shirts'); }}>
+                          <img src="assets/img/categories/category-02.svg" alt="Tees" />
+                        </Link>
+                        <h6><Link to="#" onClick={(e) => { e.preventDefault(); setActiveTab('t-shirts'); }}>T-Shirts & Tops</Link></h6>
+                      </li>
+                      <li
+                        id="shirts"
+                        onClick={() => setActiveTab('shirts')}
+                        className={`cursor-pointer ${activeTab === 'shirts' ? 'active' : ''}`}
+                      >
+                        <Link to="#" onClick={(e) => { e.preventDefault(); setActiveTab('shirts'); }}>
+                          <img src="assets/img/categories/category-03.svg" alt="Shirts" />
+                        </Link>
+                        <h6><Link to="#" onClick={(e) => { e.preventDefault(); setActiveTab('shirts'); }}>Shirts</Link></h6>
+                      </li>
+                      <li
+                        id="jeans"
+                        onClick={() => setActiveTab('jeans')}
+                        className={`cursor-pointer ${activeTab === 'jeans' ? 'active' : ''}`}
+                      >
+                        <Link to="#" onClick={(e) => { e.preventDefault(); setActiveTab('jeans'); }}>
+                          <img src="assets/img/categories/category-04.svg" alt="Jeans" />
+                        </Link>
+                        <h6><Link to="#" onClick={(e) => { e.preventDefault(); setActiveTab('jeans'); }}>Jeans & Denim</Link></h6>
+                      </li>
+                      <li
+                        id="hoodies"
+                        onClick={() => setActiveTab('hoodies')}
+                        className={`cursor-pointer ${activeTab === 'hoodies' ? 'active' : ''}`}
+                      >
+                        <Link to="#" onClick={(e) => { e.preventDefault(); setActiveTab('hoodies'); }}>
+                          <img src="assets/img/categories/category-05.svg" alt="Hoodies" />
+                        </Link>
+                        <h6><Link to="#" onClick={(e) => { e.preventDefault(); setActiveTab('hoodies'); }}>Hoodies & Outerwear</Link></h6>
+                      </li>
+                      <li
+                        id="shorts"
+                        onClick={() => setActiveTab('shorts')}
+                        className={`cursor-pointer ${activeTab === 'shorts' ? 'active' : ''}`}
+                      >
+                        <Link to="#" onClick={(e) => { e.preventDefault(); setActiveTab('shorts'); }}>
+                          <img src="assets/img/categories/category-06.svg" alt="Shorts" />
+                        </Link>
+                        <h6><Link to="#" onClick={(e) => { e.preventDefault(); setActiveTab('shorts'); }}>Shorts & Active</Link></h6>
+                      </li>
+                    </ul>
+                  </div>
+
+                  {/* Sub Header & Search Bar */}
+                  <div className="tab-content-wrap">
+                    <div className="d-flex align-items-center justify-content-between flex-wrap mb-2 p-3 bg-white border-bottom">
+                      <div className="mb-2">
+                        <h5 className="mb-1 fw-bold">Dreams Apparel POS</h5>
+                        <p className="text-muted fs-12 mb-0">
+                          {new Date().toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' })}
+                        </p>
+                      </div>
+                      <div className="d-flex align-items-center flex-wrap gap-2">
+                        <div className="input-icon-start search-pos position-relative">
+                          <span className="input-icon-addon">
+                            <i className="ti ti-search" />
+                          </span>
+                          <input
+                            type="text"
+                            className="form-control"
+                            placeholder="Search or Scan Barcode (Enter)..."
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                            onKeyDown={handleSearchKeyDown}
+                            data-barcode-input="true"
+                          />
+                        </div>
+                        <button
+                          type="button"
+                          className="btn btn-sm btn-dark"
+                          onClick={() => setShowExchangeModal(true)}
+                        >
+                          <i className="ti ti-repeat me-1" />
+                          Exchange / Return
+                        </button>
+                        <button
+                          type="button"
+                          className="btn btn-sm btn-primary"
+                          onClick={() => setShowRegisterModal(true)}
+                        >
+                          <i className="ti ti-cash me-1" />
+                          Register Shift
+                        </button>
+                      </div>
+                    </div>
+
+                    {scanMessage && (
+                      <div className="alert alert-info py-2 px-3 m-3 mb-0 fs-13 d-flex align-items-center">
+                        <i className="ti ti-barcode me-2 fs-16" />
+                        {scanMessage}
+                      </div>
+                    )}
+
+                    {/* Products Grid */}
+                    <div className="pos-products p-3">
+                      <div className="row g-3">
+                        {filteredProducts.map((prod) => {
+                          const isCarted = cart.some(c => c.productId === prod.id);
+                          const activeVar = selectedVariants[prod.id] || (prod.variants && prod.variants[0]);
+                          const displayPrice = activeVar?.price || prod.sellingPrice;
+                          const displayStock = activeVar?.stockQty ?? prod.stockQuantity ?? 10;
+
+                          return (
+                            <div className="col-sm-6 col-md-6 col-lg-6 col-xl-4 col-xxl-3" key={prod.id}>
+                              <div className={`product-info card mb-0 h-100 ${isCarted ? "active" : ""}`} tabIndex={0}>
+                                <div
+                                  className="pro-img cursor-pointer"
+                                  onClick={() => handleAddProductWithVariant(prod)}
+                                >
+                                  <img
+                                    src={prod.image || "assets/img/products/pos-product-01.png"}
+                                    alt={prod.name}
+                                    onError={(e) => { e.currentTarget.src = "assets/img/products/pos-product-01.svg"; }}
+                                  />
+                                  {isCarted && (
+                                    <span>
+                                      <i className="ti ti-circle-check-filled" />
+                                    </span>
+                                  )}
                                 </div>
+
+                                <div className="p-3 d-flex flex-column justify-content-between flex-grow-1">
+                                  <div>
+                                    <h6 className="cat-name fs-12 text-muted mb-1">
+                                      {prod.categoryName || "Apparel"}
+                                    </h6>
+                                    <h6 className="product-name fs-14 fw-semibold text-truncate mb-2" title={prod.name}>
+                                      {prod.name}
+                                    </h6>
+
+                                    {/* Clothing Size and Color Variant Selector Pills */}
+                                    {prod.variants && prod.variants.length > 0 && (
+                                      <div className="variant-pills d-flex flex-wrap gap-1 mb-2">
+                                        {prod.variants.map((v) => {
+                                          const isSelected = activeVar?.id === v.id;
+                                          return (
+                                            <button
+                                              key={v.id}
+                                              type="button"
+                                              className={`badge border text-xs px-2 py-1 ${isSelected ? 'bg-primary text-white border-primary' : 'bg-light text-dark'}`}
+                                              onClick={(e) => {
+                                                e.stopPropagation();
+                                                setSelectedVariants(prev => ({ ...prev, [prod.id]: v }));
+                                              }}
+                                            >
+                                              {v.size} {v.color ? `· ${v.color}` : ''}
+                                            </button>
+                                          );
+                                        })}
+                                      </div>
+                                    )}
+                                  </div>
+
+                                  <div className="d-flex align-items-center justify-content-between price mt-2 pt-2 border-top">
+                                    <div>
+                                      <p className="text-gray-9 mb-0 fw-bold fs-15">
+                                        ${Number(displayPrice).toFixed(2)}
+                                      </p>
+                                      <small className="text-muted" style={{ fontSize: '11px' }}>
+                                        Stock: {displayStock} pcs
+                                      </small>
+                                    </div>
+                                    <button
+                                      type="button"
+                                      className="btn btn-sm btn-primary rounded-circle p-1 d-flex align-items-center justify-content-center"
+                                      style={{ width: "32px", height: "32px" }}
+                                      onClick={() => handleAddProductWithVariant(prod)}
+                                      title="Add Variant to Cart"
+                                    >
+                                      <i className="ti ti-plus" />
+                                    </button>
+                                  </div>
+                                </div>
+                              </div>
                             </div>
-                        </div>
-                        {/* /Products */}
-                        {/* Order Details */}
-                        <div className="col-md-12 col-lg-5 col-xl-4 ps-0 theiaStickySidebar d-lg-flex">
-                            <aside className="product-order-list bg-secondary-transparent flex-fill">
-                                <div className="card">
-                                    <div className="card-body">
-                                        <div className="order-head d-flex align-items-center justify-content-between w-100">
-                                            <div>
-                                                <h3>Order List</h3>
-                                            </div>
-                                            <div className="d-flex align-items-center gap-2">
-                                                <span className="badge badge-dark fs-10 fw-medium badge-xs">
-                                                    #ORD123
-                                                </span>
-                                                <Link className="link-danger fs-16" to="#">
-                                                    <i className="ti ti-trash-x-filled" />
-                                                </Link>
-                                            </div>
-                                        </div>
-                                        <div className="customer-info block-section">
-                                            <h5 className="mb-2">Customer Information</h5>
-                                            <div className="d-flex align-items-center gap-2">
-                                                <div className="flex-grow-1">
+                          );
+                        })}
 
-                                                    <Select
-                                                        options={options}
-                                                        classNamePrefix="react-select select"
-                                                        placeholder="Choose a Name"
-                                                        defaultValue={options[0]}
-                                                    />
-                                                </div>
-                                                <Link
-                                                    to="#"
-                                                    className="btn btn-teal btn-icon fs-20"
-                                                    data-bs-toggle="modal"
-                                                    data-bs-target="#create"
-                                                >
-                                                    <i className="ti ti-user-plus" />
-                                                </Link>
-                                                <Link
-                                                    to="#"
-                                                    className="btn btn-info btn-icon fs-20"
-                                                    data-bs-toggle="modal"
-                                                    data-bs-target="#barcode"
-                                                >
-                                                    <i className="ti ti-scan" />
-                                                </Link>
-                                            </div>
-                                            {showAlert &&
-                                                <div className="customer-item border border-orange bg-orange-100 d-flex align-items-center justify-content-between flex-wrap gap-2 mt-3">
-                                                    <div>
-                                                        <h6 className="fs-16 fw-bold mb-1">James Anderson</h6>
-                                                        <div className="d-inline-flex align-items-center gap-2 customer-bonus">
-                                                            <p className="fs-13 d-inline-flex align-items-center gap-1">
-                                                                Bonus :
-                                                                <span className="badge bg-cyan fs-13 fw-bold p-1">
-                                                                    148
-                                                                </span>{" "}
-                                                            </p>
-                                                            <p className="fs-13 d-inline-flex align-items-center gap-1">
-                                                                Loyality :
-                                                                <span className="badge bg-teal fs-13 fw-bold p-1">
-                                                                    $20
-                                                                </span>{" "}
-                                                            </p>
-                                                        </div>
-                                                    </div>
-                                                    <Link
-                                                        to="#"
-                                                        className="btn btn-orange btn-sm"
-                                                    >
-                                                        Apply
-                                                    </Link>
-                                                    <Link to="#" className="close-icon" onClick={() => setShowAlert(false)}>
-                                                        <i className="ti ti-x" />
-                                                    </Link>
-                                                </div>}
-
-                                        </div>
-                                        <div className="product-added block-section">
-                                            <div className="head-text d-flex align-items-center justify-content-between mb-3">
-                                                <div className="d-flex align-items-center">
-                                                    <h5 className="me-2">Order Details</h5>
-                                                    <div className="badge bg-light text-gray-9 fs-12 fw-semibold py-2 border rounded">
-                                                        Items : <span className="text-teal">3</span>
-                                                    </div>
-                                                </div>
-                                                <Link
-                                                    to="#"
-                                                    className="d-flex align-items-center clear-icon fs-10 fw-medium"
-                                                >
-                                                    Clear all
-                                                </Link>
-                                            </div>
-                                            <div className="product-wrap">
-                                                <div className="empty-cart">
-                                                    <div className="fs-24 mb-1">
-                                                        <i className="ti ti-shopping-cart" />
-                                                    </div>
-                                                    <p className="fw-bold">No Products Selected</p>
-                                                </div>
-                                                <div className="product-list border-0 p-0">
-                                                    <div className="table-responsive">
-                                                        <table className="table table-borderless">
-                                                            <thead>
-                                                                <tr>
-                                                                    <th className="fw-bold bg-light">Item</th>
-                                                                    <th className="fw-bold bg-light">QTY</th>
-                                                                    <th className="fw-bold bg-light text-end">Cost</th>
-                                                                </tr>
-                                                            </thead>
-                                                            <tbody>
-                                                                <tr>
-                                                                    <td>
-                                                                        <div className="d-flex align-items-center">
-                                                                            <Link
-                                                                                className="delete-icon"
-                                                                                to="#"
-                                                                                data-bs-toggle="modal"
-                                                                                data-bs-target="#delete"
-                                                                            >
-                                                                                <i className="ti ti-trash-x-filled" />
-                                                                            </Link>
-                                                                            <h6 className="fs-13 fw-normal">
-                                                                                <Link
-                                                                                    to="#"
-                                                                                    className=" link-default"
-                                                                                    data-bs-toggle="modal"
-                                                                                    data-bs-target="#products"
-                                                                                >
-                                                                                    iPhone 14 64GB
-                                                                                </Link>
-                                                                            </h6>
-                                                                        </div>
-                                                                    </td>
-                                                                    <td>
-                                                                        <div className="qty-item m-0">
-                                                                            <CartCounter defaultValue={1} />
-                                                                        </div>
-                                                                    </td>
-                                                                    <td className="fs-13 fw-semibold text-gray-9 text-end">
-                                                                        $15800
-                                                                    </td>
-                                                                </tr>
-                                                                <tr>
-                                                                    <td>
-                                                                        <div className="d-flex align-items-center">
-                                                                            <Link
-                                                                                className="delete-icon"
-                                                                                to="#"
-                                                                                data-bs-toggle="modal"
-                                                                                data-bs-target="#delete"
-                                                                            >
-                                                                                <i className="ti ti-trash-x-filled" />
-                                                                            </Link>
-                                                                            <h6 className="fs-13 fw-normal ">
-                                                                                <Link
-                                                                                    to="#"
-                                                                                    className="link-default"
-                                                                                    data-bs-toggle="modal"
-                                                                                    data-bs-target="#products"
-                                                                                >
-                                                                                    Red Nike Angelo
-                                                                                </Link>
-                                                                            </h6>
-                                                                        </div>
-                                                                    </td>
-                                                                    <td>
-                                                                        <div className="qty-item m-0">
-                                                                            <CartCounter defaultValue={4} />
-                                                                        </div>
-                                                                    </td>
-                                                                    <td className="fs-13 fw-semibold text-gray-9 text-end">
-                                                                        $398
-                                                                    </td>
-                                                                </tr>
-                                                                <tr>
-                                                                    <td>
-                                                                        <div className="d-flex align-items-center">
-                                                                            <Link
-                                                                                className="delete-icon"
-                                                                                to="#"
-                                                                                data-bs-toggle="modal"
-                                                                                data-bs-target="#delete"
-                                                                            >
-                                                                                <i className="ti ti-trash-x-filled" />
-                                                                            </Link>
-                                                                            <h6 className="fs-13 fw-normal ">
-                                                                                <Link
-                                                                                    to="#"
-                                                                                    className="link-default"
-                                                                                    data-bs-toggle="modal"
-                                                                                    data-bs-target="#products"
-                                                                                >
-                                                                                    Tablet 1.02 inch
-                                                                                </Link>
-                                                                            </h6>
-                                                                        </div>
-                                                                    </td>
-                                                                    <td>
-                                                                        <div className="qty-item m-0">
-                                                                            <CartCounter defaultValue={4} />
-                                                                        </div>
-                                                                    </td>
-                                                                    <td className="fs-13 fw-semibold text-gray-9 text-end">
-                                                                        $3000
-                                                                    </td>
-                                                                </tr>
-                                                                <tr>
-                                                                    <td>
-                                                                        <div className="d-flex align-items-center">
-                                                                            <Link
-                                                                                className="delete-icon"
-                                                                                to="#"
-                                                                                data-bs-toggle="modal"
-                                                                                data-bs-target="#delete"
-                                                                            >
-                                                                                <i className="ti ti-trash-x-filled" />
-                                                                            </Link>
-                                                                            <h6 className="fs-13 fw-normal ">
-                                                                                <Link
-                                                                                    to="#"
-                                                                                    className="link-default"
-                                                                                    data-bs-toggle="modal"
-                                                                                    data-bs-target="#products"
-                                                                                >
-                                                                                    IdeaPad Slim 3i
-                                                                                </Link>
-                                                                            </h6>
-                                                                        </div>
-                                                                    </td>
-                                                                    <td>
-                                                                        <div className="qty-item m-0">
-                                                                            <CartCounter defaultValue={4} />
-                                                                        </div>
-                                                                    </td>
-                                                                    <td className="fs-13 fw-semibold text-gray-9 text-end">
-                                                                        $3000
-                                                                    </td>
-                                                                </tr>
-                                                            </tbody>
-                                                        </table>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div className="discount-item d-flex align-items-center justify-content-between  bg-purple-transparent mt-3 flex-wrap gap-2">
-                                                <div className="d-flex align-items-center">
-                                                    <span className="bg-purple discount-icon br-5 flex-shrink-0 me-2">
-                                                        <img src="assets/img/icons/discount-icon.svg" alt="img" />
-                                                    </span>
-                                                    <div>
-                                                        <h6 className="fs-14 fw-bold text-purple mb-1">
-                                                            Discount 5%
-                                                        </h6>
-                                                        <p className="mb-0">
-                                                            For $20 Minimum Purchase, all Items
-                                                        </p>
-                                                        <p></p>
-                                                    </div>
-                                                </div>
-                                                <Link to="#" className="close-icon">
-                                                    <i className="ti ti-trash" />
-                                                </Link>
-                                            </div>
-                                        </div>
-                                        <div className="order-total bg-total bg-white p-0">
-                                            <h5 className="mb-3">Payment Summary</h5>
-                                            <table className="table table-responsive table-borderless">
-                                                <tbody>
-                                                    <tr>
-                                                        <td>
-                                                            Shipping
-                                                            <Link
-                                                                to="#"
-                                                                className="ms-3 link-default"
-                                                                data-bs-toggle="modal"
-                                                                data-bs-target="#shipping-cost"
-                                                            >
-                                                                <i className="ti ti-edit" />
-                                                            </Link>
-                                                        </td>
-                                                        <td className="text-gray-9 text-end">$40.21</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>
-                                                            Tax
-                                                            <Link
-                                                                to="#"
-                                                                className="ms-3 link-default"
-                                                                data-bs-toggle="modal"
-                                                                data-bs-target="#order-tax"
-                                                            >
-                                                                <i className="ti ti-edit" />
-                                                            </Link>
-                                                        </td>
-                                                        <td className="text-gray-9 text-end">$25</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>
-                                                            Coupon
-                                                            <Link
-                                                                to="#"
-                                                                className="ms-3 link-default"
-                                                                data-bs-toggle="modal"
-                                                                data-bs-target="#coupon-code"
-                                                            >
-                                                                <i className="ti ti-edit" />
-                                                            </Link>
-                                                        </td>
-                                                        <td className="text-gray-9 text-end">$25</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>
-                                                            <span className="text-danger">Discount</span>
-                                                            <Link
-                                                                to="#"
-                                                                className="ms-3 link-default"
-                                                                data-bs-toggle="modal"
-                                                                data-bs-target="#discount"
-                                                            >
-                                                                <i className="ti ti-edit" />
-                                                            </Link>
-                                                        </td>
-                                                        <td className="text-danger text-end">$15.21</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>
-                                                            <div className="form-check form-switch">
-                                                                <input
-                                                                    className="form-check-input"
-                                                                    type="checkbox"
-                                                                    role="switch"
-                                                                    id="round"
-                                                                    defaultChecked
-                                                                />
-                                                                <label className="form-check-label" htmlFor="round">
-                                                                    Roundoff
-                                                                </label>
-                                                            </div>
-                                                        </td>
-                                                        <td className="text-gray-9 text-end">+0.11</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>Sub Total</td>
-                                                        <td className="text-gray-9 text-end">$60,454</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td className="fw-bold border-top border-dashed">
-                                                            Total Payable
-                                                        </td>
-                                                        <td className="text-gray-9 fw-bold text-end border-top border-dashed">
-                                                            $56590
-                                                        </td>
-                                                    </tr>
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="card payment-method">
-                                    <div className="card-body">
-                                        <h5 className="mb-3">Select Payment</h5>
-                                        <div className="row align-items-center methods g-2">
-                                            <div className="col-sm-6 col-md-4 d-flex">
-                                                <Link
-                                                    to="#"
-                                                    className="payment-item d-flex align-items-center justify-content-center p-2 flex-fill"
-                                                    data-bs-toggle="modal"
-                                                    data-bs-target="#payment-cash"
-                                                >
-                                                    <img
-                                                        src="assets/img/icons/cash-icon.svg"
-                                                        className="me-2"
-                                                        alt="img"
-                                                    />
-                                                    <p className="fs-14 fw-medium">Cash</p>
-                                                </Link>
-                                            </div>
-                                            <div className="col-sm-6 col-md-4 d-flex">
-                                                <Link
-                                                    to="#"
-                                                    className="payment-item d-flex align-items-center justify-content-center p-2 flex-fill"
-                                                    data-bs-toggle="modal"
-                                                    data-bs-target="#payment-card"
-                                                >
-                                                    <img
-                                                        src="assets/img/icons/card.svg"
-                                                        className="me-2"
-                                                        alt="img"
-                                                    />
-                                                    <p className="fs-14 fw-medium">Card</p>
-                                                </Link>
-                                            </div>
-                                            <div className="col-sm-6 col-md-4 d-flex">
-                                                <Link
-                                                    to="#"
-                                                    className="payment-item d-flex align-items-center justify-content-center p-2 flex-fill"
-                                                    data-bs-toggle="modal"
-                                                    data-bs-target="#payment-points"
-                                                >
-                                                    <img
-                                                        src="assets/img/icons/points.svg"
-                                                        className="me-2"
-                                                        alt="img"
-                                                    />
-                                                    <p className="fs-14 fw-medium">Points</p>
-                                                </Link>
-                                            </div>
-                                            <div className="col-sm-6 col-md-4 d-flex">
-                                                <Link
-                                                    to="#"
-                                                    className="payment-item d-flex align-items-center justify-content-center p-2 flex-fill"
-                                                    data-bs-toggle="modal"
-                                                    data-bs-target="#payment-deposit"
-                                                >
-                                                    <img
-                                                        src="assets/img/icons/deposit.svg"
-                                                        className="me-2"
-                                                        alt="img"
-                                                    />
-                                                    <p className="fs-14 fw-medium">Deposit</p>
-                                                </Link>
-                                            </div>
-                                            <div className="col-sm-6 col-md-4 d-flex">
-                                                <Link
-                                                    to="#"
-                                                    className="payment-item d-flex align-items-center justify-content-center p-2 flex-fill"
-                                                    data-bs-toggle="modal"
-                                                    data-bs-target="#payment-cheque"
-                                                >
-                                                    <img
-                                                        src="assets/img/icons/cheque.svg"
-                                                        className="me-2"
-                                                        alt="img"
-                                                    />
-                                                    <p className="fs-14 fw-medium">Cheque</p>
-                                                </Link>
-                                            </div>
-                                            <div className="col-sm-6 col-md-4 d-flex">
-                                                <Link
-                                                    to="#"
-                                                    className="payment-item d-flex align-items-center justify-content-center p-2 flex-fill"
-                                                    data-bs-toggle="modal"
-                                                    data-bs-target="#gift-payment"
-                                                >
-                                                    <img
-                                                        src="assets/img/icons/giftcard.svg"
-                                                        className="me-2"
-                                                        alt="img"
-                                                    />
-                                                    <p className="fs-14 fw-medium">Gift Card</p>
-                                                </Link>
-                                            </div>
-                                            <div className="col-sm-6 col-md-4 d-flex">
-                                                <Link
-                                                    to="#"
-                                                    className="payment-item d-flex align-items-center justify-content-center p-2 flex-fill"
-                                                    data-bs-toggle="modal"
-                                                    data-bs-target="#scan-payment"
-                                                >
-                                                    <img
-                                                        src="assets/img/icons/scan-icon.svg"
-                                                        className="me-2"
-                                                        alt="img"
-                                                    />
-                                                    <p className="fs-14 fw-medium">Scan</p>
-                                                </Link>
-                                            </div>
-                                            <div className="col-sm-6 col-md-4 d-flex">
-                                                <Link
-                                                    to="#"
-                                                    className="payment-item d-flex align-items-center justify-content-center p-2 flex-fill"
-                                                >
-                                                    <img
-                                                        src="assets/img/icons/paylater.svg"
-                                                        className="me-2"
-                                                        alt="img"
-                                                    />
-                                                    <p className="fs-14 fw-medium">Pay Later</p>
-                                                </Link>
-                                            </div>
-                                            <div className="col-sm-6 col-md-4 d-flex">
-                                                <Link
-                                                    to="#"
-                                                    className="payment-item d-flex align-items-center justify-content-center p-2 flex-fill"
-                                                >
-                                                    <img
-                                                        src="assets/img/icons/external.svg"
-                                                        className="me-2"
-                                                        alt="img"
-                                                    />
-                                                    <p className="fs-14 fw-medium">External</p>
-                                                </Link>
-                                            </div>
-                                            <div className="col-sm-6 col-md-4 d-flex">
-                                                <Link
-                                                    to="#"
-                                                    className="payment-item d-flex align-items-center justify-content-center p-2 flex-fill"
-                                                    data-bs-toggle="modal"
-                                                    data-bs-target="#split-payment"
-                                                >
-                                                    <img
-                                                        src="assets/img/icons/split-bill.svg"
-                                                        className="me-2"
-                                                        alt="img"
-                                                    />
-                                                    <p className="fs-14 fw-medium">Split Bill</p>
-                                                </Link>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="btn-row d-flex align-items-center justify-content-between gap-3">
-                                    <Link
-                                        to="#"
-                                        className="btn btn-white d-flex align-items-center justify-content-center flex-fill m-0"
-                                        data-bs-toggle="modal"
-                                        data-bs-target="#hold-order"
-                                    >
-                                        <i className="ti ti-printer me-2" />
-                                        Print Order
-                                    </Link>
-                                    <Link
-                                        to="#"
-                                        className="btn btn-secondary d-flex align-items-center justify-content-center flex-fill m-0"
-                                    >
-                                        <i className="ti ti-shopping-cart me-2" />
-                                        Place Order
-                                    </Link>
-                                </div>
-                            </aside>
-                        </div>
-                        {/* /Order Details */}
+                        {filteredProducts.length === 0 && (
+                          <div className="col-12 text-center py-5">
+                            <i className="ti ti-package-off fs-40 text-muted mb-2 d-block" />
+                            <h5 className="text-muted">No products found matching "{searchQuery}"</h5>
+                          </div>
+                        )}
+                      </div>
                     </div>
-                    <div className="pos-footer bg-white p-3 border-top">
-                        <div className="d-flex align-items-center justify-content-center flex-wrap gap-2">
-                            <Link
-                                to="#"
-                                className="btn btn-orange d-inline-flex align-items-center justify-content-center"
-                                data-bs-toggle="modal"
-                                data-bs-target="#hold-order"
-                            >
-                                <i className="ti ti-player-pause me-2" />
-                                Hold
-                            </Link>
-                            <Link
-                                to="#"
-                                className="btn btn-info d-inline-flex align-items-center justify-content-center"
-                            >
-                                <i className="ti ti-trash me-2" />
-                                Void
-                            </Link>
-                            <Link
-                                to="#"
-                                className="btn btn-cyan d-flex align-items-center justify-content-center"
-                                data-bs-toggle="modal"
-                                data-bs-target="#payment-completed"
-                            >
-                                <i className="ti ti-cash-banknote me-2" />
-                                Payment
-                            </Link>
-                            <Link
-                                to="#"
-                                className="btn btn-secondary d-inline-flex align-items-center justify-content-center"
-                                data-bs-toggle="modal"
-                                data-bs-target="#orders"
-                            >
-                                <i className="ti ti-shopping-cart me-2" />
-                                View Orders
-                            </Link>
-                            <Link
-                                to="#"
-                                className="btn btn-indigo d-inline-flex align-items-center justify-content-center"
-                                data-bs-toggle="modal"
-                                data-bs-target="#reset"
-                            >
-                                <i className="ti ti-reload me-2" />
-                                Reset
-                            </Link>
-                            <Link
-                                to="#"
-                                className="btn btn-danger d-inline-flex align-items-center justify-content-center"
-                                data-bs-toggle="modal"
-                                data-bs-target="#recents"
-                            >
-                                <i className="ti ti-refresh-dot me-2" />
-                                Transaction
-                            </Link>
-                        </div>
-                    </div>
+                  </div>
                 </div>
+              </div>
             </div>
-            <PosModals />
+
+            {/* Right-Hand Cart & Checkout Sidebar */}
+            <div className="col-md-12 col-lg-5 col-xl-4 ps-0 theiaStickySidebar d-lg-flex">
+              <aside className="product-order-list bg-secondary-transparent flex-fill">
+                <div className="card h-100 mb-0 d-flex flex-column justify-content-between">
+                  <div className="card-body p-3">
+                    {/* Header */}
+                    <div className="order-head d-flex align-items-center justify-content-between w-100 mb-3">
+                      <div>
+                        <h4 className="fw-bold mb-0">Active Register Cart</h4>
+                      </div>
+                      <div className="d-flex align-items-center gap-2">
+                        <span className="badge badge-dark fs-11 fw-semibold">
+                          #TXN-{Date.now().toString().slice(-4)}
+                        </span>
+                        <button
+                          type="button"
+                          className="btn btn-link link-danger fs-16 p-0 border-0"
+                          onClick={clearCart}
+                          title="Clear Cart"
+                        >
+                          <i className="ti ti-trash-x-filled" />
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Customer Info */}
+                    <div className="customer-info block-section mb-3">
+                      <h6 className="fs-13 fw-semibold mb-2">Customer Assignment</h6>
+                      <div className="d-flex align-items-center gap-2">
+                        <div className="flex-grow-1">
+                          <Select
+                            options={customerOptions}
+                            classNamePrefix="react-select select"
+                            placeholder="Select Customer"
+                            defaultValue={customerOptions[0]}
+                            onChange={(opt) => {
+                              if (opt) setCustomer({ id: opt.value, name: opt.label });
+                            }}
+                          />
+                        </div>
+                        <button
+                          type="button"
+                          className="btn btn-teal btn-icon fs-18 d-flex align-items-center justify-content-center"
+                          data-bs-toggle="modal"
+                          data-bs-target="#create"
+                          title="Add New Customer"
+                        >
+                          <i className="ti ti-user-plus" />
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Order Details List */}
+                    <div className="product-added block-section">
+                      <div className="head-text d-flex align-items-center justify-content-between mb-2">
+                        <div className="d-flex align-items-center">
+                          <h6 className="me-2 mb-0 fw-bold">Order Details</h6>
+                          <div className="badge bg-light text-gray-9 fs-12 fw-semibold py-1 px-2 border rounded">
+                            Items : <span className="text-teal">{getItemCount()}</span>
+                          </div>
+                        </div>
+                        <button
+                          type="button"
+                          className="btn btn-link clear-icon fs-11 fw-medium text-danger text-decoration-none p-0"
+                          onClick={clearCart}
+                        >
+                          Clear all
+                        </button>
+                      </div>
+
+                      <div className="product-wrap">
+                        {cart.length === 0 ? (
+                          <div className="empty-cart text-center py-4 bg-light rounded border border-dashed my-2">
+                            <div className="fs-32 text-muted mb-1">
+                              <i className="ti ti-shopping-cart" />
+                            </div>
+                            <p className="fw-semibold text-muted mb-0">No Products Selected</p>
+                            <small className="text-muted">Scan barcode or click items to add</small>
+                          </div>
+                        ) : (
+                          <div className="product-list border-0 p-0" style={{ maxHeight: "280px", overflowY: "auto" }}>
+                            <div className="table-responsive">
+                              <table className="table table-borderless align-middle mb-0">
+                                <thead>
+                                  <tr>
+                                    <th className="fw-bold bg-light fs-12 py-2">Item</th>
+                                    <th className="fw-bold bg-light fs-12 py-2 text-center">QTY</th>
+                                    <th className="fw-bold bg-light fs-12 py-2 text-end">Cost</th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  {cart.map((item) => (
+                                    <tr key={item.cartKey} className="border-bottom">
+                                      <td className="py-2">
+                                        <div className="d-flex align-items-start">
+                                          <button
+                                            type="button"
+                                            className="btn btn-link text-danger p-0 me-2 delete-icon border-0"
+                                            onClick={() => removeItem(item.cartKey)}
+                                            title="Remove line"
+                                          >
+                                            <i className="ti ti-trash-x-filled" />
+                                          </button>
+                                          <div>
+                                            <h6 className="fs-13 fw-semibold mb-0 text-truncate" style={{ maxWidth: "140px" }}>
+                                              {item.name}
+                                            </h6>
+                                            {(item.size || item.color) && (
+                                              <small className="text-muted d-block" style={{ fontSize: "11px" }}>
+                                                {item.color} {item.size ? `[${item.size}]` : ""}
+                                              </small>
+                                            )}
+                                            <small className="badge bg-light text-muted" style={{ fontSize: "10px" }}>
+                                              {item.sku}
+                                            </small>
+                                          </div>
+                                        </div>
+                                      </td>
+                                      <td className="py-2">
+                                        <div className="qty-item m-0 d-flex align-items-center justify-content-center">
+                                          <button
+                                            type="button"
+                                            className="btn btn-xs btn-light border p-0 px-2 fw-bold"
+                                            onClick={() => updateQuantity(item.cartKey, item.quantity - 1)}
+                                          >
+                                            -
+                                          </button>
+                                          <span className="mx-2 fw-bold fs-13">{item.quantity}</span>
+                                          <button
+                                            type="button"
+                                            className="btn btn-xs btn-light border p-0 px-2 fw-bold"
+                                            onClick={() => updateQuantity(item.cartKey, item.quantity + 1)}
+                                          >
+                                            +
+                                          </button>
+                                        </div>
+                                      </td>
+                                      <td className="fs-13 fw-semibold text-gray-9 text-end py-2">
+                                        ${(item.price * item.quantity - item.discount).toFixed(2)}
+                                      </td>
+                                    </tr>
+                                  ))}
+                                </tbody>
+                              </table>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Payment Summary */}
+                      <div className="order-total bg-white p-0 mt-3 pt-2 border-top">
+                        <h6 className="fw-bold mb-2">Payment Summary</h6>
+                        <table className="table table-borderless table-sm mb-0">
+                          <tbody>
+                            <tr>
+                              <td className="text-muted fs-13 py-1">Sub Total</td>
+                              <td className="text-gray-9 fw-semibold text-end py-1">${getSubtotal().toFixed(2)}</td>
+                            </tr>
+                            {orderDiscount > 0 && (
+                              <tr>
+                                <td className="text-danger fs-13 py-1">Discount</td>
+                                <td className="text-danger fw-semibold text-end py-1">-${orderDiscount.toFixed(2)}</td>
+                              </tr>
+                            )}
+                            <tr>
+                              <td className="text-muted fs-13 py-1">Sales Tax (Est.)</td>
+                              <td className="text-gray-9 fw-semibold text-end py-1">${getTotalTax().toFixed(2)}</td>
+                            </tr>
+                            {shippingFee > 0 && (
+                              <tr>
+                                <td className="text-muted fs-13 py-1">Shipping</td>
+                                <td className="text-gray-9 fw-semibold text-end py-1">${shippingFee.toFixed(2)}</td>
+                              </tr>
+                            )}
+                            <tr className="border-top border-dashed">
+                              <td className="fw-bold fs-15 py-2">Total Payable</td>
+                              <td className="text-primary fw-bold text-end fs-16 py-2">${getGrandTotal().toFixed(2)}</td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+
+                    {/* Quick Payment Tender Selectors */}
+                    <div className="card payment-method bg-light border p-2 mt-3 mb-3">
+                      <h6 className="fs-12 fw-bold text-muted mb-2 text-uppercase">Tender Method</h6>
+                      <div className="row g-2">
+                        <div className="col-3">
+                          <button
+                            type="button"
+                            className="btn btn-sm btn-white border w-100 py-2 d-flex flex-column align-items-center"
+                            onClick={handleOpenCheckout}
+                            disabled={cart.length === 0}
+                          >
+                            <img src="assets/img/icons/cash-icon.svg" style={{ width: "20px" }} className="mb-1" alt="Cash" />
+                            <span className="fs-11 fw-semibold">Cash</span>
+                          </button>
+                        </div>
+                        <div className="col-3">
+                          <button
+                            type="button"
+                            className="btn btn-sm btn-white border w-100 py-2 d-flex flex-column align-items-center"
+                            onClick={handleOpenCheckout}
+                            disabled={cart.length === 0}
+                          >
+                            <img src="assets/img/icons/card.svg" style={{ width: "20px" }} className="mb-1" alt="Card" />
+                            <span className="fs-11 fw-semibold">Card</span>
+                          </button>
+                        </div>
+                        <div className="col-3">
+                          <button
+                            type="button"
+                            className="btn btn-sm btn-white border w-100 py-2 d-flex flex-column align-items-center"
+                            onClick={handleOpenCheckout}
+                            disabled={cart.length === 0}
+                          >
+                            <img src="assets/img/icons/scan-icon.svg" style={{ width: "20px" }} className="mb-1" alt="Bank" />
+                            <span className="fs-11 fw-semibold">Bank</span>
+                          </button>
+                        </div>
+                        <div className="col-3">
+                          <button
+                            type="button"
+                            className="btn btn-sm btn-white border w-100 py-2 d-flex flex-column align-items-center"
+                            onClick={handleOpenCheckout}
+                            disabled={cart.length === 0}
+                          >
+                            <img src="assets/img/icons/split-bill.svg" style={{ width: "20px" }} className="mb-1" alt="Split" />
+                            <span className="fs-11 fw-semibold">Split</span>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Place Order Checkout Button */}
+                    <button
+                      type="button"
+                      className="btn btn-primary w-100 py-3 fw-bold fs-16 d-flex align-items-center justify-content-center shadow-sm"
+                      onClick={handleOpenCheckout}
+                      disabled={cart.length === 0}
+                    >
+                      <i className="ti ti-shopping-cart me-2 fs-18" />
+                      Place Order (${getGrandTotal().toFixed(2)})
+                    </button>
+                  </div>
+                </div>
+              </aside>
+            </div>
+          </div>
+
+          {/* Bottom POS Quick Actions Bar */}
+          <div className="pos-footer bg-white p-3 border-top">
+            <div className="d-flex align-items-center justify-content-center flex-wrap gap-2">
+              <button
+                type="button"
+                className="btn btn-orange d-inline-flex align-items-center justify-content-center"
+                onClick={() => holdCurrentOrder(`Hold Order #${heldOrders.length + 1}`)}
+                disabled={cart.length === 0}
+              >
+                <i className="ti ti-player-pause me-2" />
+                Hold Order
+              </button>
+              <button
+                type="button"
+                className="btn btn-info d-inline-flex align-items-center justify-content-center position-relative"
+                onClick={() => setShowHeldOrdersModal(true)}
+              >
+                <i className="ti ti-shopping-bag me-2" />
+                View Held Orders
+                {heldOrders.length > 0 && (
+                  <span className="badge bg-danger ms-2">{heldOrders.length}</span>
+                )}
+              </button>
+              <button
+                type="button"
+                className="btn btn-cyan d-inline-flex align-items-center justify-content-center"
+                onClick={handleOpenCheckout}
+                disabled={cart.length === 0}
+              >
+                <i className="ti ti-cash-banknote me-2" />
+                Checkout
+              </button>
+              <button
+                type="button"
+                className="btn btn-indigo d-inline-flex align-items-center justify-content-center"
+                onClick={clearCart}
+              >
+                <i className="ti ti-reload me-2" />
+                Reset Cart
+              </button>
+              <button
+                type="button"
+                className="btn btn-secondary d-inline-flex align-items-center justify-content-center"
+                onClick={() => setShowReceiptModal(true)}
+                disabled={!lastCompletedSale}
+              >
+                <i className="ti ti-printer me-2" />
+                Print Last Receipt
+              </button>
+              <button
+                type="button"
+                className="btn btn-danger d-inline-flex align-items-center justify-content-center"
+                onClick={() => setShowExchangeModal(true)}
+              >
+                <i className="ti ti-repeat me-2" />
+                Clothing Exchange
+              </button>
+            </div>
+          </div>
         </div>
+      </div>
 
+      {/* Held Orders Custom Modal */}
+      {showHeldOrdersModal && (
+        <div className="modal fade show d-block" style={{ backgroundColor: "rgba(0,0,0,0.6)" }} tabIndex={-1}>
+          <div className="modal-dialog modal-dialog-centered modal-lg">
+            <div className="modal-content">
+              <div className="modal-header border-bottom py-3">
+                <h5 className="modal-title fs-16 fw-bold">
+                  <i className="ti ti-player-pause me-2 text-primary" /> Active Held Orders ({heldOrders.length})
+                </h5>
+                <button type="button" className="btn-close" onClick={() => setShowHeldOrdersModal(false)}></button>
+              </div>
+              <div className="modal-body p-4">
+                {heldOrders.length === 0 ? (
+                  <div className="text-center py-5 text-muted">
+                    <i className="ti ti-inbox fs-40 mb-2 d-block" />
+                    No orders currently on hold.
+                  </div>
+                ) : (
+                  <div className="table-responsive">
+                    <table className="table table-bordered align-middle">
+                      <thead className="bg-light">
+                        <tr>
+                          <th>Reference</th>
+                          <th>Time</th>
+                          <th>Customer</th>
+                          <th>Items</th>
+                          <th>Total</th>
+                          <th className="text-center">Action</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {heldOrders.map((h) => {
+                          const orderTotal = h.items.reduce((s, it) => s + (it.price * it.quantity - it.discount), 0);
+                          return (
+                            <tr key={h.id}>
+                              <td className="fw-bold">{h.referenceName}</td>
+                              <td>{h.heldAt}</td>
+                              <td>{h.customer?.name || "Walk-in Customer"}</td>
+                              <td>{h.items.length} items</td>
+                              <td className="fw-bold text-primary">${orderTotal.toFixed(2)}</td>
+                              <td className="text-center">
+                                <button
+                                  type="button"
+                                  className="btn btn-sm btn-success me-2"
+                                  onClick={() => {
+                                    recallOrder(h.id);
+                                    setShowHeldOrdersModal(false);
+                                  }}
+                                >
+                                  Recall & Resume
+                                </button>
+                                <button
+                                  type="button"
+                                  className="btn btn-sm btn-danger"
+                                  onClick={() => deleteHeldOrder(h.id)}
+                                >
+                                  Delete
+                                </button>
+                              </td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+              </div>
+              <div className="modal-footer border-top py-2">
+                <button type="button" className="btn btn-secondary btn-sm" onClick={() => setShowHeldOrdersModal(false)}>
+                  Close
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
-    )
-}
+      {/* Multi-Tender Express Checkout Modal */}
+      <CheckoutModal
+        isOpen={showCheckoutModal}
+        onClose={() => setShowCheckoutModal(false)}
+        onSuccess={handleCheckoutSuccess}
+      />
 
-export default Pos
+      {/* 58mm / 80mm Printable Thermal Receipt Modal */}
+      <ThermalReceiptModal
+        saleData={lastCompletedSale}
+        onClose={() => setShowReceiptModal(false)}
+      />
+
+      {/* Cash Register Shift Reconciliation Modal */}
+      <CashRegisterModal
+        isOpen={showRegisterModal}
+        onClose={() => setShowRegisterModal(false)}
+      />
+
+      {/* Clothing Size / Color Exchange Modal */}
+      <ClothingExchangeModal
+        isOpen={showExchangeModal}
+        onClose={() => setShowExchangeModal(false)}
+      />
+
+      {/* Template Existing Native Modals (Tax, Shipping, Discount, Barcode modals) */}
+      <PosModals />
+    </div>
+  );
+};
+
+export default Pos;

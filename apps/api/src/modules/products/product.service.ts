@@ -4,7 +4,7 @@ import { ProductCreateInput } from "@dreamspos/shared";
 export class ProductService {
   async list(companyId: string, options: { page?: number; limit?: number; search?: string; categoryId?: string; brandId?: string }) {
     const page = Math.max(1, options.page || 1);
-    const limit = Math.min(100, Math.max(1, options.limit || 10));
+    const limit = Math.min(100, Math.max(1, options.limit || 20));
     const skip = (page - 1) * limit;
 
     const where: any = { companyId, isActive: true };
@@ -13,14 +13,12 @@ export class ProductService {
       where.OR = [
         { name: { contains: options.search } },
         { sku: { contains: options.search } },
-        { barcode: { contains: options.search } }
+        { barcode: { contains: options.search } },
+        { variants: { some: { OR: [{ sku: { contains: options.search } }, { barcode: { contains: options.search } }] } } }
       ];
     }
-    if (options.categoryId) {
+    if (options.categoryId && options.categoryId !== "all") {
       where.categoryId = options.categoryId;
-    }
-    if (options.brandId) {
-      where.brandId = options.brandId;
     }
 
     const [products, total] = await Promise.all([
@@ -30,8 +28,8 @@ export class ProductService {
         take: limit,
         include: {
           category: true,
-          brand: true,
           unit: true,
+          variants: { where: { isActive: true } },
           stockBalances: true
         },
         orderBy: { createdAt: "desc" }
@@ -48,9 +46,6 @@ export class ProductService {
         barcode: p.barcode,
         categoryId: p.categoryId,
         categoryName: p.category.name,
-        brandId: p.brandId,
-        brandName: p.brand?.name || null,
-        unitId: p.unitId,
         unitName: p.unit.shortName,
         costPrice: Number(p.costPrice),
         sellingPrice: Number(p.sellingPrice),
@@ -59,6 +54,15 @@ export class ProductService {
         alertQuantity: p.alertQuantity,
         stockQuantity: totalStock,
         image: p.image,
+        variants: p.variants.map(v => ({
+          id: v.id,
+          size: v.size,
+          color: v.color,
+          sku: v.sku,
+          barcode: v.barcode,
+          price: Number(p.sellingPrice) + Number(v.priceDiff),
+          stockQty: Number(v.stockQty)
+        })),
         isActive: p.isActive,
         createdAt: p.createdAt.toISOString()
       };
@@ -76,6 +80,52 @@ export class ProductService {
   }
 
   async findByBarcode(companyId: string, barcode: string) {
+    // 1. Check if barcode belongs to a specific variant (clothing size/color)
+    const variant = await prisma.productVariant.findFirst({
+      where: {
+        OR: [{ barcode }, { sku: barcode }],
+        isActive: true,
+        product: { companyId }
+      },
+      include: {
+        product: {
+          include: { category: true, unit: true, variants: { where: { isActive: true } } }
+        }
+      }
+    });
+
+    if (variant) {
+      return {
+        id: variant.product.id,
+        variantId: variant.id,
+        name: `${variant.product.name} (${variant.color} - ${variant.size})`,
+        baseName: variant.product.name,
+        size: variant.size,
+        color: variant.color,
+        sku: variant.sku,
+        barcode: variant.barcode,
+        categoryId: variant.product.categoryId,
+        categoryName: variant.product.category.name,
+        unitName: variant.product.unit.shortName,
+        costPrice: Number(variant.product.costPrice),
+        sellingPrice: Number(variant.product.sellingPrice) + Number(variant.priceDiff),
+        taxRate: Number(variant.product.taxRate),
+        taxType: variant.product.taxType,
+        stockQuantity: Number(variant.stockQty),
+        image: variant.image || variant.product.image,
+        variants: variant.product.variants.map(v => ({
+          id: v.id,
+          size: v.size,
+          color: v.color,
+          sku: v.sku,
+          barcode: v.barcode,
+          price: Number(variant.product.sellingPrice) + Number(v.priceDiff),
+          stockQty: Number(v.stockQty)
+        }))
+      };
+    }
+
+    // 2. Otherwise check base product barcode
     const product = await prisma.product.findFirst({
       where: {
         companyId,
@@ -85,6 +135,7 @@ export class ProductService {
       include: {
         category: true,
         unit: true,
+        variants: { where: { isActive: true } },
         stockBalances: true
       }
     });
@@ -94,7 +145,11 @@ export class ProductService {
     const totalStock = product.stockBalances.reduce((sum, b) => sum + Number(b.quantity), 0);
     return {
       id: product.id,
+      variantId: null,
       name: product.name,
+      baseName: product.name,
+      size: null,
+      color: null,
       sku: product.sku,
       barcode: product.barcode,
       categoryId: product.categoryId,
@@ -105,7 +160,16 @@ export class ProductService {
       taxRate: Number(product.taxRate),
       taxType: product.taxType,
       stockQuantity: totalStock,
-      image: product.image
+      image: product.image,
+      variants: product.variants.map(v => ({
+        id: v.id,
+        size: v.size,
+        color: v.color,
+        sku: v.sku,
+        barcode: v.barcode,
+        price: Number(product.sellingPrice) + Number(v.priceDiff),
+        stockQty: Number(v.stockQty)
+      }))
     };
   }
 

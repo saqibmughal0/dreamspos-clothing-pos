@@ -8,3 +8,5 @@ saleRouter.use(authenticate);
 
 saleRouter.get("/", saleController.list);
 saleRouter.get("/:id", saleController.getById);
+saleRouter.post("/returns", saleController.processReturn);
+saleRouter.post("/exchange", saleController.processExchange);

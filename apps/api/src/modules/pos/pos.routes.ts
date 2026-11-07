@@ -9,4 +9,9 @@ export const posRouter = Router();
 posRouter.use(authenticate);
 
 posRouter.post("/checkout", validateBody(PosCheckoutSchema), posController.checkout);
-posRouter.get("/orders", posController.getRecentOrders);
+posRouter.get("/receipt/:saleId", posController.getReceiptData);
+
+// Cash Register Shift endpoints
+posRouter.post("/register/open", posController.openRegister);
+posRouter.post("/register/close", posController.closeRegister);
+posRouter.get("/register/active", posController.getActiveRegister);

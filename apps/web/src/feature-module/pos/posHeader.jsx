@@ -4,10 +4,18 @@ import { Link } from 'react-router-dom'
 import { Tooltip } from 'antd';
 import { all_routes } from '../../Router/all_routes';
 import { Settings, User } from 'feather-icons-react/build/IconComponents';
+import { CashRegisterModal } from '../../core/modals/pos-modal/CashRegisterModal';
+import { ThermalReceiptModal } from '../../core/modals/pos-modal/ThermalReceiptModal';
+import { ClothingExchangeModal } from '../../core/modals/pos-modal/ClothingExchangeModal';
+import { usePosStore } from '../../core/posStore';
 
 const PosHeader = () => {
 
     const [isFullscreen, setIsFullscreen] = useState(false);
+    const [showRegisterModal, setShowRegisterModal] = useState(false);
+    const [showReceiptModal, setShowReceiptModal] = useState(false);
+    const [showExchangeModal, setShowExchangeModal] = useState(false);
+    const lastSale = usePosStore((state) => state.lastCompletedSale);
 
     const toggleFullscreen = (elem) => {
         elem = elem || document.documentElement;
@@ -203,9 +211,22 @@ const PosHeader = () => {
                         data-bs-placement="top"
                         data-bs-title="Cash Register"
                     >
-                        <Tooltip title='Cash Register' placement='right'>
-                            <Link to="#" data-bs-toggle="modal" data-bs-target="#cash-register">
+                        <Tooltip title='Cash Register Shift' placement='right'>
+                            <Link to="#" onClick={(e) => { e.preventDefault(); setShowRegisterModal(true); }}>
                                 <i className="ti ti-cash" />
+                            </Link>
+                        </Tooltip>
+
+                    </li>
+                    <li
+                        className="nav-item nav-item-box"
+                        data-bs-toggle="tooltip"
+                        data-bs-placement="top"
+                        data-bs-title="Clothing Exchange / Returns"
+                    >
+                        <Tooltip title='Clothing Exchange / Return' placement='right'>
+                            <Link to="#" onClick={(e) => { e.preventDefault(); setShowExchangeModal(true); }}>
+                                <i className="ti ti-repeat" />
                             </Link>
                         </Tooltip>
 
@@ -216,8 +237,8 @@ const PosHeader = () => {
                         data-bs-placement="top"
                         data-bs-title="Print Last Reciept"
                     >
-                        <Tooltip title='Print Last Reciept' placement='right'>
-                            <Link to="#">
+                        <Tooltip title='Print Last Receipt (58mm/80mm)' placement='right'>
+                            <Link to="#" onClick={(e) => { e.preventDefault(); setShowReceiptModal(true); }}>
                                 <i className="ti ti-printer" />
                             </Link>
                         </Tooltip>
@@ -335,6 +356,24 @@ const PosHeader = () => {
                 {/* /Mobile Menu */}
             </div>
             {/* Header */}
+
+            {/* Shift Reconciliation Modal */}
+            <CashRegisterModal
+                isOpen={showRegisterModal}
+                onClose={() => setShowRegisterModal(false)}
+            />
+
+            {/* Thermal Receipt 58mm / 80mm Modal */}
+            <ThermalReceiptModal
+                saleData={lastSale}
+                onClose={() => setShowReceiptModal(false)}
+            />
+
+            {/* Clothing Size / Color Exchange Modal */}
+            <ClothingExchangeModal
+                isOpen={showExchangeModal}
+                onClose={() => setShowExchangeModal(false)}
+            />
         </>
 
     )

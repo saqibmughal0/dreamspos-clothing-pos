@@ -23,7 +23,10 @@ const PosModals = () => {
 
   const handleSolve = () => {
     try {
-      setInput(eval(input).toString()); // Evaluates the expression safely
+      // Evaluate basic arithmetic safely
+      const sanitized = input.replace(/[^0-9+\-*/%.()]/g, '');
+      const result = new Function(`'use strict'; return (${sanitized});`)();
+      setInput(result ? result.toString() : '0');
     } catch (error) {
       setInput("Error");
     }

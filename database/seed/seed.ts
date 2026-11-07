@@ -2,16 +2,16 @@ import bcrypt from "bcrypt";
 import { prisma } from "../src";
 
 async function main() {
-  console.log("Seeding DreamsPOS database...");
+  console.log("Seeding DreamsPOS Clothing Retail database...");
 
-  // 1. Create or ensure Company
+  // 1. Create or ensure Company (Single-Brand Clothing Retail)
   let company = await prisma.company.findUnique({ where: { code: "DREAMS-01" } });
   if (!company) {
     company = await prisma.company.create({
       data: {
-        name: "Dreams Technologies Retail",
+        name: "Dreams Apparel Retail",
         code: "DREAMS-01",
-        email: "contact@dreamspos.com",
+        email: "store@dreamsapparel.com",
         phone: "+1 800 555 0199",
         currency: "USD"
       }
@@ -25,9 +25,9 @@ async function main() {
     store = await prisma.store.create({
       data: {
         companyId: company.id,
-        name: "Main Flagship Store",
+        name: "Flagship Retail Store",
         code: "STORE-01",
-        address: "123 Retail Boulevard, Commerce City",
+        address: "100 Fashion Avenue, Suite 10",
         phone: "+1 800 555 0101"
       }
     });
@@ -40,9 +40,9 @@ async function main() {
     warehouse = await prisma.warehouse.create({
       data: {
         companyId: company.id,
-        name: "Central Logistics Warehouse",
+        name: "Main Stockroom / Warehouse",
         code: "WH-01",
-        address: "789 Logistics Park, Hub City"
+        address: "200 Logistics Drive"
       }
     });
     console.log("Created Warehouse:", warehouse.name);
@@ -50,9 +50,9 @@ async function main() {
 
   // 4. Create Roles
   const roles = [
-    { name: "SUPER_ADMIN", description: "Super Administrator with global access" },
-    { name: "STORE_MANAGER", description: "Store inventory, purchases, and reporting manager" },
-    { name: "CASHIER", description: "Front-line POS billing and customer checkout cashier" }
+    { name: "SUPER_ADMIN", description: "Super Administrator" },
+    { name: "STORE_MANAGER", description: "Store Manager" },
+    { name: "CASHIER", description: "POS Cashier" }
   ];
 
   for (const r of roles) {
@@ -77,7 +77,7 @@ async function main() {
       companyId: company.id,
       storeId: store.id,
       roleId: superAdminRole!.id,
-      name: "DreamsPOS Administrator",
+      name: "Admin Manager",
       email: "admin@dreamspos.com",
       passwordHash: passwordHash
     }
@@ -90,31 +90,54 @@ async function main() {
       companyId: company.id,
       storeId: store.id,
       roleId: cashierRole!.id,
-      name: "Front Desk Cashier",
+      name: "Floor Cashier",
       email: "cashier@dreamspos.com",
       passwordHash: cashierHash
     }
   });
 
-  console.log("Created Users: admin@dreamspos.com, cashier@dreamspos.com");
-
-  // 6. Categories & Units & Brands
-  const catElectronics = await prisma.category.upsert({
-    where: { code: "CAT-ELEC" },
+  // 6. Cash Register
+  await prisma.cashRegister.upsert({
+    where: { id: "reg-01" },
     update: {},
-    create: { name: "Electronics", code: "CAT-ELEC", slug: "electronics" }
+    create: {
+      id: "reg-01",
+      storeId: store.id,
+      name: "Checkout Register 01",
+      terminalId: "TERM-01",
+      isActive: true
+    }
   });
 
-  const catComputers = await prisma.category.upsert({
-    where: { code: "CAT-COMP" },
+  // 7. Clothing Categories
+  const catTees = await prisma.category.upsert({
+    where: { code: "CAT-TEES" },
     update: {},
-    create: { name: "Computers", code: "CAT-COMP", slug: "computers" }
+    create: { name: "T-Shirts & Tops", code: "CAT-TEES", slug: "t-shirts", image: "assets/img/categories/category-01.svg" }
   });
 
-  const catGrocery = await prisma.category.upsert({
-    where: { code: "CAT-GROC" },
+  const catShirts = await prisma.category.upsert({
+    where: { code: "CAT-SHIRTS" },
     update: {},
-    create: { name: "Grocery", code: "CAT-GROC", slug: "grocery" }
+    create: { name: "Shirts", code: "CAT-SHIRTS", slug: "shirts", image: "assets/img/categories/category-02.svg" }
+  });
+
+  const catJeans = await prisma.category.upsert({
+    where: { code: "CAT-JEANS" },
+    update: {},
+    create: { name: "Jeans & Trousers", code: "CAT-JEANS", slug: "jeans", image: "assets/img/categories/category-03.svg" }
+  });
+
+  const catHoodies = await prisma.category.upsert({
+    where: { code: "CAT-HOODIES" },
+    update: {},
+    create: { name: "Hoodies & Jackets", code: "CAT-HOODIES", slug: "hoodies", image: "assets/img/categories/category-04.svg" }
+  });
+
+  const catShorts = await prisma.category.upsert({
+    where: { code: "CAT-SHORTS" },
+    update: {},
+    create: { name: "Shorts", code: "CAT-SHORTS", slug: "shorts", image: "assets/img/categories/category-05.svg" }
   });
 
   const unitPcs = await prisma.unit.upsert({
@@ -123,85 +146,142 @@ async function main() {
     create: { name: "Pieces", shortName: "pcs", allowDecimal: false }
   });
 
-  const brandLenovo = await prisma.brand.upsert({
-    where: { name: "Lenovo" },
+  const brandOwn = await prisma.brand.upsert({
+    where: { name: "Dreams Apparel" },
     update: {},
-    create: { name: "Lenovo", description: "Lenovo Computing" }
+    create: { name: "Dreams Apparel", description: "In-House Clothing Brand" }
   });
 
-  const brandApple = await prisma.brand.upsert({
-    where: { name: "Apple" },
-    update: {},
-    create: { name: "Apple", description: "Apple Consumer Electronics" }
-  });
-
-  // 7. Seed Products with Stock
-  const demoProducts = [
+  // 8. Clothing Products & Variants
+  const apparelCatalog = [
     {
-      name: "Lenovo 3rd Generation 15.6 Laptop",
-      sku: "PT001",
-      barcode: "123456789012",
-      categoryId: catComputers.id,
-      brandId: brandLenovo.id,
-      unitId: unitPcs.id,
-      costPrice: 450.00,
-      sellingPrice: 650.00,
-      stockQty: 50
+      name: "Classic Crewneck Cotton Tee",
+      sku: "APP-TSH-01",
+      barcode: "890123450010",
+      categoryId: catTees.id,
+      costPrice: 8.50,
+      sellingPrice: 24.99,
+      image: "assets/img/products/pos-product-01.png",
+      variants: [
+        { size: "S", color: "Jet Black", sku: "APP-TSH-BLK-S", barcode: "890123450101", stockQty: 25 },
+        { size: "M", color: "Jet Black", sku: "APP-TSH-BLK-M", barcode: "890123450102", stockQty: 40 },
+        { size: "L", color: "Jet Black", sku: "APP-TSH-BLK-L", barcode: "890123450103", stockQty: 30 },
+        { size: "M", color: "Pure White", sku: "APP-TSH-WHT-M", barcode: "890123450104", stockQty: 35 },
+        { size: "L", color: "Pure White", sku: "APP-TSH-WHT-L", barcode: "890123450105", stockQty: 20 },
+        { size: "M", color: "Navy Blue", sku: "APP-TSH-NVY-M", barcode: "890123450106", stockQty: 30 }
+      ]
     },
     {
-      name: "Apple iPhone 15 Pro 128GB",
-      sku: "PT002",
-      barcode: "123456789013",
-      categoryId: catElectronics.id,
-      brandId: brandApple.id,
-      unitId: unitPcs.id,
-      costPrice: 850.00,
-      sellingPrice: 1099.00,
-      stockQty: 35
+      name: "Oxford Button-Down Long Sleeve Shirt",
+      sku: "APP-SHT-01",
+      barcode: "890123450020",
+      categoryId: catShirts.id,
+      costPrice: 18.00,
+      sellingPrice: 49.99,
+      image: "assets/img/products/pos-product-02.png",
+      variants: [
+        { size: "M", color: "Sky Blue", sku: "APP-SHT-BLU-M", barcode: "890123450201", stockQty: 20 },
+        { size: "L", color: "Sky Blue", sku: "APP-SHT-BLU-L", barcode: "890123450202", stockQty: 18 },
+        { size: "M", color: "Crisp White", sku: "APP-SHT-WHT-M", barcode: "890123450203", stockQty: 25 },
+        { size: "L", color: "Crisp White", sku: "APP-SHT-WHT-L", barcode: "890123450204", stockQty: 15 }
+      ]
     },
     {
-      name: "Logitech MX Master 3S Wireless Mouse",
-      sku: "PT003",
-      barcode: "123456789014",
-      categoryId: catComputers.id,
-      unitId: unitPcs.id,
-      costPrice: 65.00,
-      sellingPrice: 99.00,
-      stockQty: 80
+      name: "Slim Fit Stretch Denim Jeans",
+      sku: "APP-JNS-01",
+      barcode: "890123450030",
+      categoryId: catJeans.id,
+      costPrice: 24.00,
+      sellingPrice: 69.99,
+      image: "assets/img/products/pos-product-03.png",
+      variants: [
+        { size: "30", color: "Dark Indigo", sku: "APP-JNS-IND-30", barcode: "890123450301", stockQty: 15 },
+        { size: "32", color: "Dark Indigo", sku: "APP-JNS-IND-32", barcode: "890123450302", stockQty: 28 },
+        { size: "34", color: "Dark Indigo", sku: "APP-JNS-IND-34", barcode: "890123450303", stockQty: 20 },
+        { size: "32", color: "Washed Black", sku: "APP-JNS-BLK-32", barcode: "890123450304", stockQty: 22 },
+        { size: "34", color: "Washed Black", sku: "APP-JNS-BLK-34", barcode: "890123450305", stockQty: 14 }
+      ]
     },
     {
-      name: "Nescafe Gold Blend Coffee 200g",
-      sku: "PT004",
-      barcode: "123456789015",
-      categoryId: catGrocery.id,
-      unitId: unitPcs.id,
-      costPrice: 6.50,
-      sellingPrice: 11.99,
-      stockQty: 150
+      name: "Heavyweight Fleece Pullover Hoodie",
+      sku: "APP-HOD-01",
+      barcode: "890123450040",
+      categoryId: catHoodies.id,
+      costPrice: 22.50,
+      sellingPrice: 59.99,
+      image: "assets/img/products/pos-product-04.png",
+      variants: [
+        { size: "S", color: "Heather Grey", sku: "APP-HOD-GRY-S", barcode: "890123450401", stockQty: 15 },
+        { size: "M", color: "Heather Grey", sku: "APP-HOD-GRY-M", barcode: "890123450402", stockQty: 25 },
+        { size: "L", color: "Heather Grey", sku: "APP-HOD-GRY-L", barcode: "890123450403", stockQty: 20 },
+        { size: "M", color: "Onyx Black", sku: "APP-HOD-BLK-M", barcode: "890123450404", stockQty: 30 },
+        { size: "L", color: "Onyx Black", sku: "APP-HOD-BLK-L", barcode: "890123450405", stockQty: 22 }
+      ]
+    },
+    {
+      name: "Casual Tailored Chino Shorts",
+      sku: "APP-SHTS-01",
+      barcode: "890123450050",
+      categoryId: catShorts.id,
+      costPrice: 12.00,
+      sellingPrice: 34.99,
+      image: "assets/img/products/pos-product-05.png",
+      variants: [
+        { size: "30", color: "Classic Khaki", sku: "APP-SHTS-KHA-30", barcode: "890123450501", stockQty: 12 },
+        { size: "32", color: "Classic Khaki", sku: "APP-SHTS-KHA-32", barcode: "890123450502", stockQty: 24 },
+        { size: "34", color: "Classic Khaki", sku: "APP-SHTS-KHA-34", barcode: "890123450503", stockQty: 18 },
+        { size: "32", color: "Olive Green", sku: "APP-SHTS-OLV-32", barcode: "890123450504", stockQty: 16 }
+      ]
     }
   ];
 
-  for (const p of demoProducts) {
+  for (const item of apparelCatalog) {
     const prod = await prisma.product.upsert({
-      where: { sku: p.sku },
-      update: {},
+      where: { sku: item.sku },
+      update: {
+        costPrice: item.costPrice,
+        sellingPrice: item.sellingPrice,
+        image: item.image
+      },
       create: {
         companyId: company.id,
-        categoryId: p.categoryId,
-        brandId: p.brandId,
-        unitId: p.unitId,
-        name: p.name,
-        sku: p.sku,
-        barcode: p.barcode,
-        costPrice: p.costPrice,
-        sellingPrice: p.sellingPrice,
-        taxRate: 10,
+        categoryId: item.categoryId,
+        brandId: brandOwn.id,
+        unitId: unitPcs.id,
+        name: item.name,
+        sku: item.sku,
+        barcode: item.barcode,
+        costPrice: item.costPrice,
+        sellingPrice: item.sellingPrice,
+        taxRate: 8.5,
         taxType: "EXCLUSIVE",
-        alertQuantity: 10
+        alertQuantity: 10,
+        image: item.image
       }
     });
 
-    // Upsert stock balance
+    let totalProdStock = 0;
+    for (const v of item.variants) {
+      await prisma.productVariant.upsert({
+        where: { sku: v.sku },
+        update: {
+          stockQty: v.stockQty,
+          barcode: v.barcode
+        },
+        create: {
+          productId: prod.id,
+          size: v.size,
+          color: v.color,
+          sku: v.sku,
+          barcode: v.barcode,
+          priceDiff: 0,
+          stockQty: v.stockQty
+        }
+      });
+      totalProdStock += v.stockQty;
+    }
+
+    // Set warehouse stock balance
     await prisma.stockBalance.upsert({
       where: {
         productId_warehouseId: {
@@ -209,16 +289,16 @@ async function main() {
           warehouseId: warehouse.id
         }
       },
-      update: {},
+      update: { quantity: totalProdStock },
       create: {
         productId: prod.id,
         warehouseId: warehouse.id,
-        quantity: p.stockQty
+        quantity: totalProdStock
       }
     });
   }
 
-  // 8. Customers & Suppliers
+  // 9. Customers
   await prisma.customer.upsert({
     where: { id: "cust-walkin" },
     update: {},
@@ -226,37 +306,25 @@ async function main() {
       id: "cust-walkin",
       companyId: company.id,
       name: "Walk-in Customer",
-      email: "walkin@example.com",
+      email: "walkin@clothingpos.com",
       phone: "000-000-0000"
     }
   });
 
   await prisma.customer.upsert({
-    where: { id: "cust-johndoe" },
+    where: { id: "cust-emily" },
     update: {},
     create: {
-      id: "cust-johndoe",
+      id: "cust-emily",
       companyId: company.id,
-      name: "John Doe",
-      email: "johndoe@example.com",
-      phone: "+1 555 123 4567",
-      address: "456 Elm Street"
+      name: "Emily Watson",
+      email: "emily.watson@example.com",
+      phone: "+1 555 789 1234",
+      address: "24 Park Avenue, Cityville"
     }
   });
 
-  await prisma.supplier.upsert({
-    where: { id: "supp-apex" },
-    update: {},
-    create: {
-      id: "supp-apex",
-      companyId: company.id,
-      name: "Apex Electronics Wholesalers",
-      email: "sales@apexwholesalers.com",
-      phone: "+1 800 555 4321"
-    }
-  });
-
-  console.log("Database seeded successfully!");
+  console.log("Clothing retail database seeded successfully!");
 }
 
 main()

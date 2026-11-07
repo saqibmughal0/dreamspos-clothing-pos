@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { prisma } from "@dreamspos/database";
+import { saleService } from "./sale.service";
 
 export class SaleController {
   async list(req: Request, res: Response, next: NextFunction): Promise<void> {
@@ -19,8 +20,9 @@ export class SaleController {
         include: {
           customer: true,
           cashier: true,
-          items: { include: { product: true } },
-          payments: true
+          items: { include: { product: true, variant: true } },
+          payments: true,
+          returns: true
         }
       });
 
@@ -40,8 +42,9 @@ export class SaleController {
         include: {
           customer: true,
           cashier: true,
-          items: { include: { product: true } },
-          payments: true
+          items: { include: { product: true, variant: true } },
+          payments: true,
+          returns: { include: { items: true } }
         }
       });
 
@@ -51,6 +54,30 @@ export class SaleController {
       }
 
       res.status(200).json({ success: true, data: sale });
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  async processReturn(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const companyId = req.user!.companyId;
+      const storeId = req.user!.storeId || req.body.storeId;
+
+      const result = await saleService.processReturn(companyId, storeId, req.body);
+      res.status(201).json({ success: true, data: result });
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  async processExchange(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const companyId = req.user!.companyId;
+      const storeId = req.user!.storeId || req.body.storeId;
+
+      const result = await saleService.processExchange(companyId, storeId, req.body);
+      res.status(200).json({ success: true, data: result });
     } catch (err) {
       next(err);
     }

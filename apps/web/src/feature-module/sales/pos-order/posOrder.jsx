@@ -1,8 +1,8 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import TooltipIcons from '../../../core/common/tooltip-content/tooltipIcons'
 import RefreshIcon from '../../../core/common/tooltip-content/refresh'
 import CollapesIcon from '../../../core/common/tooltip-content/collapes'
-import { DollarSign, Download, Edit, Eye, PlusCircle, Trash2 } from 'feather-icons-react/build/IconComponents'
+import { DollarSign, Download, Edit, Eye, PlusCircle, Printer, Trash2 } from 'feather-icons-react/build/IconComponents'
 import Table from "../../../core/pagination/datatable";
 import { onlineOrderData } from '../../../core/json/onlineOrderData'
 import { Link } from 'react-router-dom'
@@ -10,10 +10,44 @@ import ImageWithBasePath from '../../../core/img/imagewithbasebath'
 import OnlineorderModal from '../online-order/onlineorderModal'
 import CommonDeleteModal from '../../../core/common/modal/commonDeleteModal'
 import CommonFooter from '../../../core/common/footer/commonFooter'
+import { apiClient } from '../../../core/apiClient'
+import { ThermalReceiptModal } from '../../../core/modals/pos-modal/ThermalReceiptModal'
 
 const PosOrder = () => {
 
-    const dataSource = onlineOrderData;
+    const [dataSource, setDataSource] = useState(onlineOrderData);
+    const [selectedSaleForPrint, setSelectedSaleForPrint] = useState(null);
+    const [showReceiptModal, setShowReceiptModal] = useState(false);
+
+    const fetchSales = async () => {
+        try {
+            const res = await apiClient.get('/sales');
+            if (res.data?.success && res.data.data?.length > 0) {
+                const mapped = res.data.data.map((s, idx) => ({
+                    id: s.id,
+                    key: s.id || idx,
+                    customer: s.customer?.name || "Walk-in Customer",
+                    reference: s.invoiceNumber,
+                    date: new Date(s.createdAt).toLocaleDateString(),
+                    status: s.status === 'COMPLETED' ? 'Completed' : 'Pending',
+                    total: `$${Number(s.totalAmount).toFixed(2)}`,
+                    paid: `$${Number(s.paidAmount).toFixed(2)}`,
+                    due: `$${Number(s.dueAmount).toFixed(2)}`,
+                    paymentstatus: s.paymentStatus === 'PAID' ? 'Paid' : s.paymentStatus === 'PARTIAL' ? 'Partial' : 'Unpaid',
+                    biller: s.cashier?.name || "POS Cashier",
+                    image: "user-01.jpg",
+                    rawSale: s
+                }));
+                setDataSource(mapped);
+            }
+        } catch (err) {
+            console.warn("Using offline sample orders:", err);
+        }
+    };
+
+    useEffect(() => {
+        fetchSales();
+    }, []);
 
     const columns = [
         {
@@ -83,7 +117,7 @@ const PosOrder = () => {
         {
             title: "",
             dataIndex: "action",
-            render: () => (
+            render: (_text, record) => (
                 <>
                     <Link
                         className="action-set"
@@ -95,6 +129,24 @@ const PosOrder = () => {
 
                     </Link>
                     <ul className="dropdown-menu">
+                        <li>
+                            <button
+                                type="button"
+                                className="dropdown-item btn btn-link text-start"
+                                onClick={() => {
+                                    setSelectedSaleForPrint(record.rawSale || {
+                                        invoiceNumber: record.reference,
+                                        totalAmount: record.total ? Number(record.total.replace('$', '')) : 0,
+                                        customerName: record.customer,
+                                        items: [{ name: "Clothing Items", quantity: 1, price: record.total ? Number(record.total.replace('$', '')) : 0 }]
+                                    });
+                                    setShowReceiptModal(true);
+                                }}
+                            >
+                                <Printer className="info-img me-2" />
+                                Thermal Receipt
+                            </button>
+                        </li>
                         <li>
                             <Link
                                 to="#"
@@ -368,6 +420,10 @@ const PosOrder = () => {
             </div>
             <OnlineorderModal />
             <CommonDeleteModal />
+            <ThermalReceiptModal
+                saleData={selectedSaleForPrint}
+                onClose={() => setShowReceiptModal(false)}
+            />
         </div>
     )
 }

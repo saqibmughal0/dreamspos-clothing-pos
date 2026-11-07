@@ -1,8 +1,12 @@
 import { create } from "zustand";
 
 export interface CartItem {
+  cartKey: string;
   productId: string;
+  variantId?: string | null;
   name: string;
+  size?: string | null;
+  color?: string | null;
   sku: string;
   price: number;
   quantity: number;
@@ -10,6 +14,7 @@ export interface CartItem {
   taxRate: number;
   taxAmount: number;
   image?: string | null;
+  stockQty?: number;
 }
 
 export interface CustomerInfo {
@@ -35,23 +40,29 @@ interface PosState {
   orderDiscount: number;
   shippingFee: number;
   heldOrders: HeldOrder[];
+  lastCompletedSale: any | null;
 
   // Actions
   addItem: (product: {
     id: string;
+    variantId?: string | null;
     name: string;
+    size?: string | null;
+    color?: string | null;
     sku: string;
     sellingPrice: number;
     taxRate?: number;
     image?: string | null;
+    stockQty?: number;
   }) => void;
-  removeItem: (productId: string) => void;
-  updateQuantity: (productId: string, quantity: number) => void;
-  updateLineDiscount: (productId: string, discount: number) => void;
-  updatePriceOverride: (productId: string, newPrice: number) => void;
+  removeItem: (cartKey: string) => void;
+  updateQuantity: (cartKey: string, quantity: number) => void;
+  updateLineDiscount: (cartKey: string, discount: number) => void;
+  updatePriceOverride: (cartKey: string, newPrice: number) => void;
   setOrderDiscount: (discount: number) => void;
   setShippingFee: (fee: number) => void;
   setCustomer: (customer: CustomerInfo | null) => void;
+  setLastCompletedSale: (sale: any | null) => void;
   clearCart: () => void;
 
   // Held Orders
@@ -68,19 +79,21 @@ interface PosState {
 
 export const usePosStore = create<PosState>((set, get) => ({
   cart: [],
-  customer: null,
+  customer: { id: "cust-walkin", name: "Walk-in Customer", phone: "" },
   orderDiscount: 0,
   shippingFee: 0,
   heldOrders: [],
+  lastCompletedSale: null,
 
   addItem: (product) => {
     const { cart } = get();
-    const existing = cart.find(i => i.productId === product.id);
+    const cartKey = product.variantId ? `${product.id}_${product.variantId}` : product.id;
+    const existing = cart.find(i => i.cartKey === cartKey);
 
     if (existing) {
       set({
         cart: cart.map(i =>
-          i.productId === product.id ? { ...i, quantity: i.quantity + 1 } : i
+          i.cartKey === cartKey ? { ...i, quantity: i.quantity + 1 } : i
         )
       });
     } else {
@@ -90,49 +103,54 @@ export const usePosStore = create<PosState>((set, get) => ({
         cart: [
           ...cart,
           {
+            cartKey,
             productId: product.id,
+            variantId: product.variantId || null,
             name: product.name,
+            size: product.size || null,
+            color: product.color || null,
             sku: product.sku,
             price: product.sellingPrice,
             quantity: 1,
             discount: 0,
             taxRate,
             taxAmount,
-            image: product.image
+            image: product.image,
+            stockQty: product.stockQty
           }
         ]
       });
     }
   },
 
-  removeItem: (productId) => {
-    set({ cart: get().cart.filter(i => i.productId !== productId) });
+  removeItem: (cartKey) => {
+    set({ cart: get().cart.filter(i => i.cartKey !== cartKey) });
   },
 
-  updateQuantity: (productId, quantity) => {
+  updateQuantity: (cartKey, quantity) => {
     if (quantity <= 0) {
-      get().removeItem(productId);
+      get().removeItem(cartKey);
       return;
     }
     set({
       cart: get().cart.map(i =>
-        i.productId === productId ? { ...i, quantity } : i
+        i.cartKey === cartKey ? { ...i, quantity } : i
       )
     });
   },
 
-  updateLineDiscount: (productId, discount) => {
+  updateLineDiscount: (cartKey, discount) => {
     set({
       cart: get().cart.map(i =>
-        i.productId === productId ? { ...i, discount: Math.max(0, discount) } : i
+        i.cartKey === cartKey ? { ...i, discount: Math.max(0, discount) } : i
       )
     });
   },
 
-  updatePriceOverride: (productId, newPrice) => {
+  updatePriceOverride: (cartKey, newPrice) => {
     set({
       cart: get().cart.map(i =>
-        i.productId === productId ? { ...i, price: Math.max(0, newPrice) } : i
+        i.cartKey === cartKey ? { ...i, price: Math.max(0, newPrice) } : i
       )
     });
   },
@@ -140,7 +158,14 @@ export const usePosStore = create<PosState>((set, get) => ({
   setOrderDiscount: (discount) => set({ orderDiscount: Math.max(0, discount) }),
   setShippingFee: (fee) => set({ shippingFee: Math.max(0, fee) }),
   setCustomer: (customer) => set({ customer }),
-  clearCart: () => set({ cart: [], orderDiscount: 0, shippingFee: 0, customer: null }),
+  setLastCompletedSale: (sale) => set({ lastCompletedSale: sale }),
+  clearCart: () =>
+    set({
+      cart: [],
+      orderDiscount: 0,
+      shippingFee: 0,
+      customer: { id: "cust-walkin", name: "Walk-in Customer", phone: "" }
+    }),
 
   holdCurrentOrder: (referenceName = "Held Order") => {
     const { cart, customer, orderDiscount, shippingFee, heldOrders } = get();
@@ -161,7 +186,7 @@ export const usePosStore = create<PosState>((set, get) => ({
       cart: [],
       orderDiscount: 0,
       shippingFee: 0,
-      customer: null
+      customer: { id: "cust-walkin", name: "Walk-in Customer", phone: "" }
     });
   },
 
@@ -172,7 +197,7 @@ export const usePosStore = create<PosState>((set, get) => ({
 
     set({
       cart: order.items,
-      customer: order.customer || null,
+      customer: order.customer || { id: "cust-walkin", name: "Walk-in Customer", phone: "" },
       orderDiscount: order.orderDiscount,
       shippingFee: order.shippingFee,
       heldOrders: heldOrders.filter(h => h.id !== heldOrderId)
