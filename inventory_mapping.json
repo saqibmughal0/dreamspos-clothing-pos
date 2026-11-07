@@ -1,0 +1,1700 @@
+[
+  {
+    "htmlFile": "account-list.html",
+    "baseName": "account-list",
+    "matchedRoute": "/account-list",
+    "category": "Finance & Accounts"
+  },
+  {
+    "htmlFile": "account-statement.html",
+    "baseName": "account-statement",
+    "matchedRoute": "/account-statement",
+    "category": "Finance & Accounts"
+  },
+  {
+    "htmlFile": "activities.html",
+    "baseName": "activities",
+    "matchedRoute": "/activities",
+    "category": "Application Pages"
+  },
+  {
+    "htmlFile": "add-employee.html",
+    "baseName": "add-employee",
+    "matchedRoute": "/add-employee",
+    "category": "HRM"
+  },
+  {
+    "htmlFile": "add-product.html",
+    "baseName": "add-product",
+    "matchedRoute": "/add-product",
+    "category": "Inventory Management"
+  },
+  {
+    "htmlFile": "admin-dashboard.html",
+    "baseName": "admin-dashboard",
+    "matchedRoute": "/admin-dashboard",
+    "category": "Dashboards"
+  },
+  {
+    "htmlFile": "all-blog.html",
+    "baseName": "all-blog",
+    "matchedRoute": "/all-blog",
+    "category": "Content Management (CMS)"
+  },
+  {
+    "htmlFile": "annual-report.html",
+    "baseName": "annual-report",
+    "matchedRoute": "/annual-report",
+    "category": "Reports"
+  },
+  {
+    "htmlFile": "appearance.html",
+    "baseName": "appearance",
+    "matchedRoute": "/appearance",
+    "category": "Settings"
+  },
+  {
+    "htmlFile": "attendance-admin.html",
+    "baseName": "attendance-admin",
+    "matchedRoute": "attendance-admin",
+    "category": "HRM"
+  },
+  {
+    "htmlFile": "attendance-employee.html",
+    "baseName": "attendance-employee",
+    "matchedRoute": "/attendance-employee",
+    "category": "HRM"
+  },
+  {
+    "htmlFile": "audio-call.html",
+    "baseName": "audio-call",
+    "matchedRoute": "/audio-call",
+    "category": "Application Pages"
+  },
+  {
+    "htmlFile": "balance-sheet-v2.html",
+    "baseName": "balance-sheet-v2",
+    "matchedRoute": "/balance-sheet-v2",
+    "category": "Finance & Accounts"
+  },
+  {
+    "htmlFile": "balance-sheet.html",
+    "baseName": "balance-sheet",
+    "matchedRoute": "/balance-sheet",
+    "category": "Finance & Accounts"
+  },
+  {
+    "htmlFile": "ban-ip-address.html",
+    "baseName": "ban-ip-address",
+    "matchedRoute": "/ban-ip-address",
+    "category": "Settings"
+  },
+  {
+    "htmlFile": "bank-settings-grid.html",
+    "baseName": "bank-settings-grid",
+    "matchedRoute": "/bank-settings-grid",
+    "category": "Settings"
+  },
+  {
+    "htmlFile": "barcode.html",
+    "baseName": "barcode",
+    "matchedRoute": "/barcode",
+    "category": "Inventory Management"
+  },
+  {
+    "htmlFile": "best-seller.html",
+    "baseName": "best-seller",
+    "matchedRoute": "/best-seller",
+    "category": "Application Pages"
+  },
+  {
+    "htmlFile": "billers.html",
+    "baseName": "billers",
+    "matchedRoute": "/billers",
+    "category": "People Management"
+  },
+  {
+    "htmlFile": "blank-page.html",
+    "baseName": "blank-page",
+    "matchedRoute": "/blank-page",
+    "category": "Application Pages"
+  },
+  {
+    "htmlFile": "blog-categories.html",
+    "baseName": "blog-categories",
+    "matchedRoute": "/blog-categories",
+    "category": "Content Management (CMS)"
+  },
+  {
+    "htmlFile": "blog-comments.html",
+    "baseName": "blog-comments",
+    "matchedRoute": "/blog-comments",
+    "category": "Content Management (CMS)"
+  },
+  {
+    "htmlFile": "blog-details.html",
+    "baseName": "blog-details",
+    "matchedRoute": "/blog-details",
+    "category": "Content Management (CMS)"
+  },
+  {
+    "htmlFile": "blog-tag.html",
+    "baseName": "blog-tag",
+    "matchedRoute": "/blog-tag",
+    "category": "Content Management (CMS)"
+  },
+  {
+    "htmlFile": "brand-list.html",
+    "baseName": "brand-list",
+    "matchedRoute": "/brand-list",
+    "category": "Inventory Management"
+  },
+  {
+    "htmlFile": "calendar.html",
+    "baseName": "calendar",
+    "matchedRoute": "/calendar",
+    "category": "Application Pages"
+  },
+  {
+    "htmlFile": "call-history.html",
+    "baseName": "call-history",
+    "matchedRoute": "/call-history",
+    "category": "Application Pages"
+  },
+  {
+    "htmlFile": "cart.html",
+    "baseName": "cart",
+    "matchedRoute": "/cart",
+    "category": "Application Pages"
+  },
+  {
+    "htmlFile": "cash-flow-v2.html",
+    "baseName": "cash-flow-v2",
+    "matchedRoute": "/cash-flow-v2",
+    "category": "Finance & Accounts"
+  },
+  {
+    "htmlFile": "cash-flow.html",
+    "baseName": "cash-flow",
+    "matchedRoute": "/cash-flow",
+    "category": "Finance & Accounts"
+  },
+  {
+    "htmlFile": "category-list.html",
+    "baseName": "category-list",
+    "matchedRoute": "/category-list",
+    "category": "Inventory Management"
+  },
+  {
+    "htmlFile": "chart-apex.html",
+    "baseName": "chart-apex",
+    "matchedRoute": "/chart-apex",
+    "category": "UI Interface & Elements"
+  },
+  {
+    "htmlFile": "chart-c3.html",
+    "baseName": "chart-c3",
+    "matchedRoute": "/chart-c3",
+    "category": "UI Interface & Elements"
+  },
+  {
+    "htmlFile": "chart-flot.html",
+    "baseName": "chart-flot",
+    "matchedRoute": "/chart-flot",
+    "category": "UI Interface & Elements"
+  },
+  {
+    "htmlFile": "chart-js.html",
+    "baseName": "chart-js",
+    "matchedRoute": "/chart-js",
+    "category": "UI Interface & Elements"
+  },
+  {
+    "htmlFile": "chart-morris.html",
+    "baseName": "chart-morris",
+    "matchedRoute": "/chart-morris",
+    "category": "UI Interface & Elements"
+  },
+  {
+    "htmlFile": "chart-peity.html",
+    "baseName": "chart-peity",
+    "matchedRoute": "/chart-peity",
+    "category": "UI Interface & Elements"
+  },
+  {
+    "htmlFile": "chat.html",
+    "baseName": "chat",
+    "matchedRoute": "/chat",
+    "category": "Application Pages"
+  },
+  {
+    "htmlFile": "checkout.html",
+    "baseName": "checkout",
+    "matchedRoute": "/checkout",
+    "category": "Application Pages"
+  },
+  {
+    "htmlFile": "cities.html",
+    "baseName": "cities",
+    "matchedRoute": "/cities",
+    "category": "Content Management (CMS)"
+  },
+  {
+    "htmlFile": "coming-soon.html",
+    "baseName": "coming-soon",
+    "matchedRoute": "/coming-soon",
+    "category": "Authentication & System"
+  },
+  {
+    "htmlFile": "companies.html",
+    "baseName": "companies",
+    "matchedRoute": "/companies",
+    "category": "Application Pages"
+  },
+  {
+    "htmlFile": "company-settings.html",
+    "baseName": "company-settings",
+    "matchedRoute": "/company-settings",
+    "category": "Settings"
+  },
+  {
+    "htmlFile": "connected-apps.html",
+    "baseName": "connected-apps",
+    "matchedRoute": "/connected-apps",
+    "category": "Application Pages"
+  },
+  {
+    "htmlFile": "contacts.html",
+    "baseName": "contacts",
+    "matchedRoute": "/contacts",
+    "category": "Application Pages"
+  },
+  {
+    "htmlFile": "countries.html",
+    "baseName": "countries",
+    "matchedRoute": "/countries",
+    "category": "Content Management (CMS)"
+  },
+  {
+    "htmlFile": "coupons.html",
+    "baseName": "coupons",
+    "matchedRoute": "/coupons",
+    "category": "Promotions"
+  },
+  {
+    "htmlFile": "currency-settings.html",
+    "baseName": "currency-settings",
+    "matchedRoute": "/currency-settings",
+    "category": "Settings"
+  },
+  {
+    "htmlFile": "custom-fields.html",
+    "baseName": "custom-fields",
+    "matchedRoute": "/custom-fields",
+    "category": "Settings"
+  },
+  {
+    "htmlFile": "customer-due-report.html",
+    "baseName": "customer-due-report",
+    "matchedRoute": "/customer-due-report",
+    "category": "People Management"
+  },
+  {
+    "htmlFile": "customer-report.html",
+    "baseName": "customer-report",
+    "matchedRoute": "/customer-report",
+    "category": "People Management"
+  },
+  {
+    "htmlFile": "customers.html",
+    "baseName": "customers",
+    "matchedRoute": "/customers",
+    "category": "People Management"
+  },
+  {
+    "htmlFile": "dashboard.html",
+    "baseName": "dashboard",
+    "matchedRoute": "/admin-dashboard",
+    "category": "Dashboards"
+  },
+  {
+    "htmlFile": "data-tables.html",
+    "baseName": "data-tables",
+    "matchedRoute": "/data-tables",
+    "category": "UI Interface & Elements"
+  },
+  {
+    "htmlFile": "delete-account.html",
+    "baseName": "delete-account",
+    "matchedRoute": "/delete-account",
+    "category": "Finance & Accounts"
+  },
+  {
+    "htmlFile": "department-grid.html",
+    "baseName": "department-grid",
+    "matchedRoute": "/department-grid",
+    "category": "HRM"
+  },
+  {
+    "htmlFile": "department-list.html",
+    "baseName": "department-list",
+    "matchedRoute": "/department-list",
+    "category": "HRM"
+  },
+  {
+    "htmlFile": "designation.html",
+    "baseName": "designation",
+    "matchedRoute": "/designation",
+    "category": "HRM"
+  },
+  {
+    "htmlFile": "discount-plan.html",
+    "baseName": "discount-plan",
+    "matchedRoute": "/discount-plan",
+    "category": "Promotions"
+  },
+  {
+    "htmlFile": "discount.html",
+    "baseName": "discount",
+    "matchedRoute": "/discount",
+    "category": "Promotions"
+  },
+  {
+    "htmlFile": "domain.html",
+    "baseName": "domain",
+    "matchedRoute": "/domain",
+    "category": "Super Admin"
+  },
+  {
+    "htmlFile": "edit-employee.html",
+    "baseName": "edit-employee",
+    "matchedRoute": "/edit-employee",
+    "category": "HRM"
+  },
+  {
+    "htmlFile": "edit-product.html",
+    "baseName": "edit-product",
+    "matchedRoute": "/edit-product",
+    "category": "Inventory Management"
+  },
+  {
+    "htmlFile": "email-reply.html",
+    "baseName": "email-reply",
+    "matchedRoute": "/email-replay",
+    "category": "Application Pages"
+  },
+  {
+    "htmlFile": "email-settings.html",
+    "baseName": "email-settings",
+    "matchedRoute": "/email-settings",
+    "category": "Settings"
+  },
+  {
+    "htmlFile": "email-templates.html",
+    "baseName": "email-templates",
+    "matchedRoute": "/email-templates",
+    "category": "Application Pages"
+  },
+  {
+    "htmlFile": "email-verification-2.html",
+    "baseName": "email-verification-2",
+    "matchedRoute": "/email-verification-2",
+    "category": "Authentication & System"
+  },
+  {
+    "htmlFile": "email-verification-3.html",
+    "baseName": "email-verification-3",
+    "matchedRoute": "/email-verification-3",
+    "category": "Authentication & System"
+  },
+  {
+    "htmlFile": "email-verification.html",
+    "baseName": "email-verification",
+    "matchedRoute": "/email-verification",
+    "category": "Authentication & System"
+  },
+  {
+    "htmlFile": "email.html",
+    "baseName": "email",
+    "matchedRoute": "/email",
+    "category": "Application Pages"
+  },
+  {
+    "htmlFile": "employee-details.html",
+    "baseName": "employee-details",
+    "matchedRoute": "/employee-details",
+    "category": "HRM"
+  },
+  {
+    "htmlFile": "employee-salary.html",
+    "baseName": "employee-salary",
+    "matchedRoute": "/employee-salary",
+    "category": "HRM"
+  },
+  {
+    "htmlFile": "employees-grid.html",
+    "baseName": "employees-grid",
+    "matchedRoute": "/employees-grid",
+    "category": "HRM"
+  },
+  {
+    "htmlFile": "employees-list.html",
+    "baseName": "employees-list",
+    "matchedRoute": "/employees-list",
+    "category": "HRM"
+  },
+  {
+    "htmlFile": "error-404.html",
+    "baseName": "error-404",
+    "matchedRoute": "/error-404",
+    "category": "Authentication & System"
+  },
+  {
+    "htmlFile": "error-500.html",
+    "baseName": "error-500",
+    "matchedRoute": "/error-500",
+    "category": "Authentication & System"
+  },
+  {
+    "htmlFile": "expense-category.html",
+    "baseName": "expense-category",
+    "matchedRoute": "/expense-category",
+    "category": "Inventory Management"
+  },
+  {
+    "htmlFile": "expense-list.html",
+    "baseName": "expense-list",
+    "matchedRoute": "/expense-list",
+    "category": "Finance & Accounts"
+  },
+  {
+    "htmlFile": "expense-report.html",
+    "baseName": "expense-report",
+    "matchedRoute": "/expense-report",
+    "category": "Finance & Accounts"
+  },
+  {
+    "htmlFile": "expired-products.html",
+    "baseName": "expired-products",
+    "matchedRoute": "/expired-products",
+    "category": "Inventory Management"
+  },
+  {
+    "htmlFile": "faq.html",
+    "baseName": "faq",
+    "matchedRoute": "/faq",
+    "category": "Content Management (CMS)"
+  },
+  {
+    "htmlFile": "file-manager.html",
+    "baseName": "file-manager",
+    "matchedRoute": "/file-manager",
+    "category": "Application Pages"
+  },
+  {
+    "htmlFile": "forgot-password-2.html",
+    "baseName": "forgot-password-2",
+    "matchedRoute": "/forgot-password-2",
+    "category": "Authentication & System"
+  },
+  {
+    "htmlFile": "forgot-password-3.html",
+    "baseName": "forgot-password-3",
+    "matchedRoute": "/forgot-password-3",
+    "category": "Authentication & System"
+  },
+  {
+    "htmlFile": "forgot-password.html",
+    "baseName": "forgot-password",
+    "matchedRoute": "/forgot-password",
+    "category": "Authentication & System"
+  },
+  {
+    "htmlFile": "form-basic-inputs.html",
+    "baseName": "form-basic-inputs",
+    "matchedRoute": "/form-basic-inputs",
+    "category": "UI Interface & Elements"
+  },
+  {
+    "htmlFile": "form-checkbox-radios.html",
+    "baseName": "form-checkbox-radios",
+    "matchedRoute": "/form-checkbox-radios",
+    "category": "UI Interface & Elements"
+  },
+  {
+    "htmlFile": "form-elements.html",
+    "baseName": "form-elements",
+    "matchedRoute": "/form-elements",
+    "category": "UI Interface & Elements"
+  },
+  {
+    "htmlFile": "form-fileupload.html",
+    "baseName": "form-fileupload",
+    "matchedRoute": "/form-fileupload",
+    "category": "UI Interface & Elements"
+  },
+  {
+    "htmlFile": "form-floating-labels.html",
+    "baseName": "form-floating-labels",
+    "matchedRoute": "/form-floating-labels",
+    "category": "UI Interface & Elements"
+  },
+  {
+    "htmlFile": "form-grid-gutters.html",
+    "baseName": "form-grid-gutters",
+    "matchedRoute": "/form-grid-gutters",
+    "category": "UI Interface & Elements"
+  },
+  {
+    "htmlFile": "form-horizontal.html",
+    "baseName": "form-horizontal",
+    "matchedRoute": "/form-horizontal",
+    "category": "UI Interface & Elements"
+  },
+  {
+    "htmlFile": "form-input-groups.html",
+    "baseName": "form-input-groups",
+    "matchedRoute": "/form-input-groups",
+    "category": "UI Interface & Elements"
+  },
+  {
+    "htmlFile": "form-mask.html",
+    "baseName": "form-mask",
+    "matchedRoute": "/form-mask",
+    "category": "UI Interface & Elements"
+  },
+  {
+    "htmlFile": "form-pickers.html",
+    "baseName": "form-pickers",
+    "matchedRoute": "/form-pickers",
+    "category": "UI Interface & Elements"
+  },
+  {
+    "htmlFile": "form-select.html",
+    "baseName": "form-select",
+    "matchedRoute": "/form-select",
+    "category": "UI Interface & Elements"
+  },
+  {
+    "htmlFile": "form-select2.html",
+    "baseName": "form-select2",
+    "matchedRoute": "/form-select2",
+    "category": "UI Interface & Elements"
+  },
+  {
+    "htmlFile": "form-validation.html",
+    "baseName": "form-validation",
+    "matchedRoute": "/form-validation",
+    "category": "UI Interface & Elements"
+  },
+  {
+    "htmlFile": "form-vertical.html",
+    "baseName": "form-vertical",
+    "matchedRoute": "/form-vertical",
+    "category": "UI Interface & Elements"
+  },
+  {
+    "htmlFile": "form-wizard.html",
+    "baseName": "form-wizard",
+    "matchedRoute": "/form-wizard",
+    "category": "UI Interface & Elements"
+  },
+  {
+    "htmlFile": "gdpr-settings.html",
+    "baseName": "gdpr-settings",
+    "matchedRoute": "/gdpr-settings",
+    "category": "Settings"
+  },
+  {
+    "htmlFile": "general-settings.html",
+    "baseName": "general-settings",
+    "matchedRoute": "/general-settings",
+    "category": "Settings"
+  },
+  {
+    "htmlFile": "gift-cards.html",
+    "baseName": "gift-cards",
+    "matchedRoute": "/gift-cards",
+    "category": "Promotions"
+  },
+  {
+    "htmlFile": "holidays.html",
+    "baseName": "holidays",
+    "matchedRoute": "/holidays",
+    "category": "HRM"
+  },
+  {
+    "htmlFile": "icon-bootstrap.html",
+    "baseName": "icon-bootstrap",
+    "matchedRoute": "/icon-bootstrap",
+    "category": "UI Interface & Elements"
+  },
+  {
+    "htmlFile": "icon-feather.html",
+    "baseName": "icon-feather",
+    "matchedRoute": "/icon-feather",
+    "category": "UI Interface & Elements"
+  },
+  {
+    "htmlFile": "icon-flag.html",
+    "baseName": "icon-flag",
+    "matchedRoute": "/icon-flag",
+    "category": "UI Interface & Elements"
+  },
+  {
+    "htmlFile": "icon-fontawesome.html",
+    "baseName": "icon-fontawesome",
+    "matchedRoute": "/icon-fontawesome",
+    "category": "UI Interface & Elements"
+  },
+  {
+    "htmlFile": "icon-ionic.html",
+    "baseName": "icon-ionic",
+    "matchedRoute": "/icon-ionic",
+    "category": "UI Interface & Elements"
+  },
+  {
+    "htmlFile": "icon-material.html",
+    "baseName": "icon-material",
+    "matchedRoute": "/icon-material",
+    "category": "UI Interface & Elements"
+  },
+  {
+    "htmlFile": "icon-pe7.html",
+    "baseName": "icon-pe7",
+    "matchedRoute": "/icon-pe7",
+    "category": "UI Interface & Elements"
+  },
+  {
+    "htmlFile": "icon-remix.html",
+    "baseName": "icon-remix",
+    "matchedRoute": "/icon-remix",
+    "category": "UI Interface & Elements"
+  },
+  {
+    "htmlFile": "icon-simpleline.html",
+    "baseName": "icon-simpleline",
+    "matchedRoute": "/icon-simpleline",
+    "category": "UI Interface & Elements"
+  },
+  {
+    "htmlFile": "icon-tabler.html",
+    "baseName": "icon-tabler",
+    "matchedRoute": "/icon-tabler",
+    "category": "UI Interface & Elements"
+  },
+  {
+    "htmlFile": "icon-themify.html",
+    "baseName": "icon-themify",
+    "matchedRoute": "/icon-themify",
+    "category": "UI Interface & Elements"
+  },
+  {
+    "htmlFile": "icon-typicon.html",
+    "baseName": "icon-typicon",
+    "matchedRoute": "/icon-typicon",
+    "category": "UI Interface & Elements"
+  },
+  {
+    "htmlFile": "icon-weather.html",
+    "baseName": "icon-weather",
+    "matchedRoute": "/icon-weather",
+    "category": "UI Interface & Elements"
+  },
+  {
+    "htmlFile": "income-category.html",
+    "baseName": "income-category",
+    "matchedRoute": "/income-category",
+    "category": "Inventory Management"
+  },
+  {
+    "htmlFile": "income-report.html",
+    "baseName": "income-report",
+    "matchedRoute": "/income-report",
+    "category": "Finance & Accounts"
+  },
+  {
+    "htmlFile": "income.html",
+    "baseName": "income",
+    "matchedRoute": "/income",
+    "category": "Finance & Accounts"
+  },
+  {
+    "htmlFile": "index.html",
+    "baseName": "index",
+    "matchedRoute": "/index",
+    "category": "Dashboards"
+  },
+  {
+    "htmlFile": "inventory-report.html",
+    "baseName": "inventory-report",
+    "matchedRoute": "/inventory-report",
+    "category": "Reports"
+  },
+  {
+    "htmlFile": "invoice-details.html",
+    "baseName": "invoice-details",
+    "matchedRoute": "/invoice-details",
+    "category": "Sales Management"
+  },
+  {
+    "htmlFile": "invoice-report.html",
+    "baseName": "invoice-report",
+    "matchedRoute": "/invoice-report",
+    "category": "Sales Management"
+  },
+  {
+    "htmlFile": "invoice-settings.html",
+    "baseName": "invoice-settings",
+    "matchedRoute": "/invoice-settings",
+    "category": "Sales Management"
+  },
+  {
+    "htmlFile": "invoice-templates.html",
+    "baseName": "invoice-templates",
+    "matchedRoute": "/invoice-templates",
+    "category": "Sales Management"
+  },
+  {
+    "htmlFile": "invoice.html",
+    "baseName": "invoice",
+    "matchedRoute": "/invoice",
+    "category": "Sales Management"
+  },
+  {
+    "htmlFile": "language-settings-web.html",
+    "baseName": "language-settings-web",
+    "matchedRoute": "/language-settings-web",
+    "category": "Settings"
+  },
+  {
+    "htmlFile": "language-settings.html",
+    "baseName": "language-settings",
+    "matchedRoute": "/language-settings",
+    "category": "Settings"
+  },
+  {
+    "htmlFile": "layout-boxed.html",
+    "baseName": "layout-boxed",
+    "matchedRoute": "/layout-boxed",
+    "category": "Application Pages"
+  },
+  {
+    "htmlFile": "layout-dark.html",
+    "baseName": "layout-dark",
+    "matchedRoute": "/layout-dark",
+    "category": "Application Pages"
+  },
+  {
+    "htmlFile": "layout-detached.html",
+    "baseName": "layout-detached",
+    "matchedRoute": "/layout-detached",
+    "category": "Application Pages"
+  },
+  {
+    "htmlFile": "layout-horizontal.html",
+    "baseName": "layout-horizontal",
+    "matchedRoute": "/layout-horizontal",
+    "category": "Application Pages"
+  },
+  {
+    "htmlFile": "layout-hovered.html",
+    "baseName": "layout-hovered",
+    "matchedRoute": "/layout-hovered",
+    "category": "Application Pages"
+  },
+  {
+    "htmlFile": "layout-rtl.html",
+    "baseName": "layout-rtl",
+    "matchedRoute": "/layout-rtl",
+    "category": "Application Pages"
+  },
+  {
+    "htmlFile": "layout-two-column.html",
+    "baseName": "layout-two-column",
+    "matchedRoute": "/layout-two-column",
+    "category": "Application Pages"
+  },
+  {
+    "htmlFile": "leave-types.html",
+    "baseName": "leave-types",
+    "matchedRoute": "/leave-types",
+    "category": "HRM"
+  },
+  {
+    "htmlFile": "leaves-admin.html",
+    "baseName": "leaves-admin",
+    "matchedRoute": "leaves-admin",
+    "category": "HRM"
+  },
+  {
+    "htmlFile": "leaves-employee.html",
+    "baseName": "leaves-employee",
+    "matchedRoute": "/leaves-employee",
+    "category": "HRM"
+  },
+  {
+    "htmlFile": "localization-settings.html",
+    "baseName": "localization-settings",
+    "matchedRoute": "/localization-settings",
+    "category": "Settings"
+  },
+  {
+    "htmlFile": "lock-screen.html",
+    "baseName": "lock-screen",
+    "matchedRoute": "/lock-screen",
+    "category": "Authentication & System"
+  },
+  {
+    "htmlFile": "low-stocks.html",
+    "baseName": "low-stocks",
+    "matchedRoute": "/low-stocks",
+    "category": "Stock Management"
+  },
+  {
+    "htmlFile": "manage-stocks.html",
+    "baseName": "manage-stocks",
+    "matchedRoute": "/manage-stocks",
+    "category": "Stock Management"
+  },
+  {
+    "htmlFile": "maps-leaflet.html",
+    "baseName": "maps-leaflet",
+    "matchedRoute": "/maps-leaflet",
+    "category": "Application Pages"
+  },
+  {
+    "htmlFile": "maps-vector.html",
+    "baseName": "maps-vector",
+    "matchedRoute": "/maps-vector",
+    "category": "Application Pages"
+  },
+  {
+    "htmlFile": "money-transfer.html",
+    "baseName": "money-transfer",
+    "matchedRoute": "/money-transfer",
+    "category": "Finance & Accounts"
+  },
+  {
+    "htmlFile": "notes.html",
+    "baseName": "notes",
+    "matchedRoute": "/notes",
+    "category": "Application Pages"
+  },
+  {
+    "htmlFile": "notification.html",
+    "baseName": "notification",
+    "matchedRoute": "/notification",
+    "category": "Application Pages"
+  },
+  {
+    "htmlFile": "online-orders.html",
+    "baseName": "online-orders",
+    "matchedRoute": "/online-orders",
+    "category": "Sales Management"
+  },
+  {
+    "htmlFile": "orders.html",
+    "baseName": "orders",
+    "matchedRoute": "/orders",
+    "category": "Sales Management"
+  },
+  {
+    "htmlFile": "otp-settings.html",
+    "baseName": "otp-settings",
+    "matchedRoute": "/otp-settings",
+    "category": "Settings"
+  },
+  {
+    "htmlFile": "packages.html",
+    "baseName": "packages",
+    "matchedRoute": "/packages",
+    "category": "Super Admin"
+  },
+  {
+    "htmlFile": "pages.html",
+    "baseName": "pages",
+    "matchedRoute": "/pages",
+    "category": "Application Pages"
+  },
+  {
+    "htmlFile": "payment-gateway-settings.html",
+    "baseName": "payment-gateway-settings",
+    "matchedRoute": "/payment-gateway-settings",
+    "category": "Settings"
+  },
+  {
+    "htmlFile": "payslip.html",
+    "baseName": "payslip",
+    "matchedRoute": "/payslip",
+    "category": "Application Pages"
+  },
+  {
+    "htmlFile": "permissions.html",
+    "baseName": "permissions",
+    "matchedRoute": "/permissions",
+    "category": "User Management"
+  },
+  {
+    "htmlFile": "plugin.html",
+    "baseName": "plugin",
+    "matchedRoute": "/plugin",
+    "category": "Application Pages"
+  },
+  {
+    "htmlFile": "pos-2.html",
+    "baseName": "pos-2",
+    "matchedRoute": "/pos-2",
+    "category": "Point of Sale (POS)"
+  },
+  {
+    "htmlFile": "pos-3.html",
+    "baseName": "pos-3",
+    "matchedRoute": "/pos-3",
+    "category": "Point of Sale (POS)"
+  },
+  {
+    "htmlFile": "pos-4.html",
+    "baseName": "pos-4",
+    "matchedRoute": "/pos-4",
+    "category": "Point of Sale (POS)"
+  },
+  {
+    "htmlFile": "pos-5.html",
+    "baseName": "pos-5",
+    "matchedRoute": "/pos-5",
+    "category": "Point of Sale (POS)"
+  },
+  {
+    "htmlFile": "pos-orders.html",
+    "baseName": "pos-orders",
+    "matchedRoute": "/pos-orders",
+    "category": "Point of Sale (POS)"
+  },
+  {
+    "htmlFile": "pos-settings.html",
+    "baseName": "pos-settings",
+    "matchedRoute": "/pos-settings",
+    "category": "Point of Sale (POS)"
+  },
+  {
+    "htmlFile": "pos.html",
+    "baseName": "pos",
+    "matchedRoute": "/pos",
+    "category": "Point of Sale (POS)"
+  },
+  {
+    "htmlFile": "preference.html",
+    "baseName": "preference",
+    "matchedRoute": "/preference",
+    "category": "Settings"
+  },
+  {
+    "htmlFile": "prefixes.html",
+    "baseName": "prefixes",
+    "matchedRoute": "/prefixes",
+    "category": "Application Pages"
+  },
+  {
+    "htmlFile": "pricing.html",
+    "baseName": "pricing",
+    "matchedRoute": "/pricing",
+    "category": "Application Pages"
+  },
+  {
+    "htmlFile": "printer-settings.html",
+    "baseName": "printer-settings",
+    "matchedRoute": "/printer-settings",
+    "category": "Settings"
+  },
+  {
+    "htmlFile": "product-details.html",
+    "baseName": "product-details",
+    "matchedRoute": "/product-details",
+    "category": "Inventory Management"
+  },
+  {
+    "htmlFile": "product-details2.html",
+    "baseName": "product-details2",
+    "matchedRoute": "/product-details2",
+    "category": "Inventory Management"
+  },
+  {
+    "htmlFile": "product-expiry-report.html",
+    "baseName": "product-expiry-report",
+    "matchedRoute": "/product-expiry-report",
+    "category": "Inventory Management"
+  },
+  {
+    "htmlFile": "product-list.html",
+    "baseName": "product-list",
+    "matchedRoute": "/product-list",
+    "category": "Inventory Management"
+  },
+  {
+    "htmlFile": "product-quantity-alert.html",
+    "baseName": "product-quantity-alert",
+    "matchedRoute": "/product-quantity-alert",
+    "category": "Inventory Management"
+  },
+  {
+    "htmlFile": "product-report.html",
+    "baseName": "product-report",
+    "matchedRoute": "/product-report",
+    "category": "Inventory Management"
+  },
+  {
+    "htmlFile": "products.html",
+    "baseName": "products",
+    "matchedRoute": "/products",
+    "category": "Inventory Management"
+  },
+  {
+    "htmlFile": "profile.html",
+    "baseName": "profile",
+    "matchedRoute": "/profile",
+    "category": "Settings"
+  },
+  {
+    "htmlFile": "profit-and-loss.html",
+    "baseName": "profit-and-loss",
+    "matchedRoute": "/profit-and-loss",
+    "category": "Finance & Accounts"
+  },
+  {
+    "htmlFile": "projects.html",
+    "baseName": "projects",
+    "matchedRoute": "/projects",
+    "category": "Application Pages"
+  },
+  {
+    "htmlFile": "purchase-list.html",
+    "baseName": "purchase-list",
+    "matchedRoute": "/purchase-list",
+    "category": "Purchases"
+  },
+  {
+    "htmlFile": "purchase-order-report.html",
+    "baseName": "purchase-order-report",
+    "matchedRoute": "/purchase-order-report",
+    "category": "Sales Management"
+  },
+  {
+    "htmlFile": "purchase-report.html",
+    "baseName": "purchase-report",
+    "matchedRoute": "/purchase-report",
+    "category": "Purchases"
+  },
+  {
+    "htmlFile": "purchase-returns.html",
+    "baseName": "purchase-returns",
+    "matchedRoute": "/purchase-returns",
+    "category": "Purchases"
+  },
+  {
+    "htmlFile": "purchase-transaction.html",
+    "baseName": "purchase-transaction",
+    "matchedRoute": "/purchase-transaction",
+    "category": "Purchases"
+  },
+  {
+    "htmlFile": "qrcode.html",
+    "baseName": "qrcode",
+    "matchedRoute": "/qrcode",
+    "category": "Inventory Management"
+  },
+  {
+    "htmlFile": "quotation-list.html",
+    "baseName": "quotation-list",
+    "matchedRoute": "/quotation-list",
+    "category": "Sales Management"
+  },
+  {
+    "htmlFile": "register-2.html",
+    "baseName": "register-2",
+    "matchedRoute": "/register-2",
+    "category": "Authentication & System"
+  },
+  {
+    "htmlFile": "register-3.html",
+    "baseName": "register-3",
+    "matchedRoute": "/register-3",
+    "category": "Authentication & System"
+  },
+  {
+    "htmlFile": "register.html",
+    "baseName": "register",
+    "matchedRoute": "/register",
+    "category": "Authentication & System"
+  },
+  {
+    "htmlFile": "reset-password-2.html",
+    "baseName": "reset-password-2",
+    "matchedRoute": "/reset-password-2",
+    "category": "Authentication & System"
+  },
+  {
+    "htmlFile": "reset-password-3.html",
+    "baseName": "reset-password-3",
+    "matchedRoute": "/reset-password-3",
+    "category": "Authentication & System"
+  },
+  {
+    "htmlFile": "reset-password.html",
+    "baseName": "reset-password",
+    "matchedRoute": "/reset-password",
+    "category": "Authentication & System"
+  },
+  {
+    "htmlFile": "reviews.html",
+    "baseName": "reviews",
+    "matchedRoute": "/reviews",
+    "category": "Application Pages"
+  },
+  {
+    "htmlFile": "roles-permissions.html",
+    "baseName": "roles-permissions",
+    "matchedRoute": "/roles-permissions",
+    "category": "User Management"
+  },
+  {
+    "htmlFile": "sales-dashboard.html",
+    "baseName": "sales-dashboard",
+    "matchedRoute": "/sales-dashboard",
+    "category": "Dashboards"
+  },
+  {
+    "htmlFile": "sales-report.html",
+    "baseName": "sales-report",
+    "matchedRoute": "/sales-report",
+    "category": "Sales Management"
+  },
+  {
+    "htmlFile": "sales-returns.html",
+    "baseName": "sales-returns",
+    "matchedRoute": "/sales-returns",
+    "category": "Sales Management"
+  },
+  {
+    "htmlFile": "sales-tax.html",
+    "baseName": "sales-tax",
+    "matchedRoute": "/sales-tax",
+    "category": "Sales Management"
+  },
+  {
+    "htmlFile": "search-list.html",
+    "baseName": "search-list",
+    "matchedRoute": "/search-list",
+    "category": "Application Pages"
+  },
+  {
+    "htmlFile": "security-settings.html",
+    "baseName": "security-settings",
+    "matchedRoute": "/security-settings",
+    "category": "Settings"
+  },
+  {
+    "htmlFile": "shift.html",
+    "baseName": "shift",
+    "matchedRoute": "/shift",
+    "category": "HRM"
+  },
+  {
+    "htmlFile": "signatures.html",
+    "baseName": "signatures",
+    "matchedRoute": "/signatures",
+    "category": "Application Pages"
+  },
+  {
+    "htmlFile": "signin-2.html",
+    "baseName": "signin-2",
+    "matchedRoute": "/signin-2",
+    "category": "Authentication & System"
+  },
+  {
+    "htmlFile": "signin-3.html",
+    "baseName": "signin-3",
+    "matchedRoute": "/signin-3",
+    "category": "Authentication & System"
+  },
+  {
+    "htmlFile": "signin.html",
+    "baseName": "signin",
+    "matchedRoute": "/signin",
+    "category": "Authentication & System"
+  },
+  {
+    "htmlFile": "sms-settings.html",
+    "baseName": "sms-settings",
+    "matchedRoute": "/sms-gateway",
+    "category": "Settings"
+  },
+  {
+    "htmlFile": "sms-templates.html",
+    "baseName": "sms-templates",
+    "matchedRoute": "/sms-templates",
+    "category": "Application Pages"
+  },
+  {
+    "htmlFile": "social-authentication.html",
+    "baseName": "social-authentication",
+    "matchedRoute": "/social-authentication",
+    "category": "Application Pages"
+  },
+  {
+    "htmlFile": "social-feed.html",
+    "baseName": "social-feed",
+    "matchedRoute": "/social-feed",
+    "category": "Application Pages"
+  },
+  {
+    "htmlFile": "sold-stock.html",
+    "baseName": "sold-stock",
+    "matchedRoute": "/sold-stock",
+    "category": "Stock Management"
+  },
+  {
+    "htmlFile": "states.html",
+    "baseName": "states",
+    "matchedRoute": "/states",
+    "category": "Content Management (CMS)"
+  },
+  {
+    "htmlFile": "stock-adjustment.html",
+    "baseName": "stock-adjustment",
+    "matchedRoute": "/stock-adjustment",
+    "category": "Stock Management"
+  },
+  {
+    "htmlFile": "stock-history.html",
+    "baseName": "stock-history",
+    "matchedRoute": "/stock-history",
+    "category": "Stock Management"
+  },
+  {
+    "htmlFile": "stock-transfer.html",
+    "baseName": "stock-transfer",
+    "matchedRoute": "/stock-transfer",
+    "category": "Stock Management"
+  },
+  {
+    "htmlFile": "storage-settings.html",
+    "baseName": "storage-settings",
+    "matchedRoute": "/storage-settings",
+    "category": "Settings"
+  },
+  {
+    "htmlFile": "store-list.html",
+    "baseName": "store-list",
+    "matchedRoute": "/store-list",
+    "category": "People Management"
+  },
+  {
+    "htmlFile": "sub-categories.html",
+    "baseName": "sub-categories",
+    "matchedRoute": "/sub-categories",
+    "category": "Application Pages"
+  },
+  {
+    "htmlFile": "subscription.html",
+    "baseName": "subscription",
+    "matchedRoute": "/subscription",
+    "category": "Super Admin"
+  },
+  {
+    "htmlFile": "success-2.html",
+    "baseName": "success-2",
+    "matchedRoute": "/success-2",
+    "category": "Authentication & System"
+  },
+  {
+    "htmlFile": "success-3.html",
+    "baseName": "success-3",
+    "matchedRoute": "/success-3",
+    "category": "Authentication & System"
+  },
+  {
+    "htmlFile": "success.html",
+    "baseName": "success",
+    "matchedRoute": "/success",
+    "category": "Authentication & System"
+  },
+  {
+    "htmlFile": "supplier-due-report.html",
+    "baseName": "supplier-due-report",
+    "matchedRoute": "/supplier-due-report",
+    "category": "People Management"
+  },
+  {
+    "htmlFile": "supplier-report.html",
+    "baseName": "supplier-report",
+    "matchedRoute": "/supplier-report",
+    "category": "People Management"
+  },
+  {
+    "htmlFile": "suppliers.html",
+    "baseName": "suppliers",
+    "matchedRoute": "/suppliers",
+    "category": "People Management"
+  },
+  {
+    "htmlFile": "system-settings.html",
+    "baseName": "system-settings",
+    "matchedRoute": "/system-settings",
+    "category": "Settings"
+  },
+  {
+    "htmlFile": "tables-basic.html",
+    "baseName": "tables-basic",
+    "matchedRoute": "/tables-basic",
+    "category": "UI Interface & Elements"
+  },
+  {
+    "htmlFile": "tax-rates.html",
+    "baseName": "tax-rates",
+    "matchedRoute": "/tax-rates",
+    "category": "Application Pages"
+  },
+  {
+    "htmlFile": "tax-reports.html",
+    "baseName": "tax-reports",
+    "matchedRoute": "/tax-reports",
+    "category": "Reports"
+  },
+  {
+    "htmlFile": "testimonials.html",
+    "baseName": "testimonials",
+    "matchedRoute": "/testimonials",
+    "category": "Content Management (CMS)"
+  },
+  {
+    "htmlFile": "todo-list.html",
+    "baseName": "todo-list",
+    "matchedRoute": "/todo-list",
+    "category": "Application Pages"
+  },
+  {
+    "htmlFile": "todo.html",
+    "baseName": "todo",
+    "matchedRoute": "/todo",
+    "category": "Application Pages"
+  },
+  {
+    "htmlFile": "trial-balance.html",
+    "baseName": "trial-balance",
+    "matchedRoute": "/trial-balance",
+    "category": "Finance & Accounts"
+  },
+  {
+    "htmlFile": "two-step-verification-2.html",
+    "baseName": "two-step-verification-2",
+    "matchedRoute": "/two-step-verification-2",
+    "category": "Authentication & System"
+  },
+  {
+    "htmlFile": "two-step-verification-3.html",
+    "baseName": "two-step-verification-3",
+    "matchedRoute": "/two-step-verification-3",
+    "category": "Authentication & System"
+  },
+  {
+    "htmlFile": "two-step-verification.html",
+    "baseName": "two-step-verification",
+    "matchedRoute": "/two-step-verification",
+    "category": "Authentication & System"
+  },
+  {
+    "htmlFile": "ui-accordion.html",
+    "baseName": "ui-accordion",
+    "matchedRoute": "/ui-accordion",
+    "category": "UI Interface & Elements"
+  },
+  {
+    "htmlFile": "ui-alerts.html",
+    "baseName": "ui-alerts",
+    "matchedRoute": "/ui-alerts",
+    "category": "UI Interface & Elements"
+  },
+  {
+    "htmlFile": "ui-avatar.html",
+    "baseName": "ui-avatar",
+    "matchedRoute": "/ui-avatar",
+    "category": "UI Interface & Elements"
+  },
+  {
+    "htmlFile": "ui-badges.html",
+    "baseName": "ui-badges",
+    "matchedRoute": "/ui-badges",
+    "category": "UI Interface & Elements"
+  },
+  {
+    "htmlFile": "ui-borders.html",
+    "baseName": "ui-borders",
+    "matchedRoute": "/ui-borders",
+    "category": "Sales Management"
+  },
+  {
+    "htmlFile": "ui-breadcrumb.html",
+    "baseName": "ui-breadcrumb",
+    "matchedRoute": "/ui-breadcrumb",
+    "category": "UI Interface & Elements"
+  },
+  {
+    "htmlFile": "ui-buttons-group.html",
+    "baseName": "ui-buttons-group",
+    "matchedRoute": "/ui-buttons-group",
+    "category": "UI Interface & Elements"
+  },
+  {
+    "htmlFile": "ui-buttons.html",
+    "baseName": "ui-buttons",
+    "matchedRoute": "ui-buttons",
+    "category": "UI Interface & Elements"
+  },
+  {
+    "htmlFile": "ui-cards.html",
+    "baseName": "ui-cards",
+    "matchedRoute": "/ui-cards",
+    "category": "UI Interface & Elements"
+  },
+  {
+    "htmlFile": "ui-carousel.html",
+    "baseName": "ui-carousel",
+    "matchedRoute": "/ui-carousel",
+    "category": "UI Interface & Elements"
+  },
+  {
+    "htmlFile": "ui-clipboard.html",
+    "baseName": "ui-clipboard",
+    "matchedRoute": "/ui-clipboard",
+    "category": "UI Interface & Elements"
+  },
+  {
+    "htmlFile": "ui-colors.html",
+    "baseName": "ui-colors",
+    "matchedRoute": "/ui-colors",
+    "category": "UI Interface & Elements"
+  },
+  {
+    "htmlFile": "ui-counter.html",
+    "baseName": "ui-counter",
+    "matchedRoute": "/ui-counter",
+    "category": "UI Interface & Elements"
+  },
+  {
+    "htmlFile": "ui-drag-drop.html",
+    "baseName": "ui-drag-drop",
+    "matchedRoute": "/ui-drag-drop",
+    "category": "UI Interface & Elements"
+  },
+  {
+    "htmlFile": "ui-dropdowns.html",
+    "baseName": "ui-dropdowns",
+    "matchedRoute": "/ui-dropdowns",
+    "category": "UI Interface & Elements"
+  },
+  {
+    "htmlFile": "ui-grid.html",
+    "baseName": "ui-grid",
+    "matchedRoute": "/ui-grid",
+    "category": "UI Interface & Elements"
+  },
+  {
+    "htmlFile": "ui-images.html",
+    "baseName": "ui-images",
+    "matchedRoute": "/ui-images",
+    "category": "UI Interface & Elements"
+  },
+  {
+    "htmlFile": "ui-lightbox.html",
+    "baseName": "ui-lightbox",
+    "matchedRoute": "/ui-lightbox",
+    "category": "UI Interface & Elements"
+  },
+  {
+    "htmlFile": "ui-media.html",
+    "baseName": "ui-media",
+    "matchedRoute": "/ui-media",
+    "category": "UI Interface & Elements"
+  },
+  {
+    "htmlFile": "ui-modals.html",
+    "baseName": "ui-modals",
+    "matchedRoute": "/ui-modals",
+    "category": "UI Interface & Elements"
+  },
+  {
+    "htmlFile": "ui-nav-tabs.html",
+    "baseName": "ui-nav-tabs",
+    "matchedRoute": "/ui-nav-tabs",
+    "category": "UI Interface & Elements"
+  },
+  {
+    "htmlFile": "ui-offcanvas.html",
+    "baseName": "ui-offcanvas",
+    "matchedRoute": "/ui-offcanvas",
+    "category": "UI Interface & Elements"
+  },
+  {
+    "htmlFile": "ui-pagination.html",
+    "baseName": "ui-pagination",
+    "matchedRoute": "/ui-pagination",
+    "category": "UI Interface & Elements"
+  },
+  {
+    "htmlFile": "ui-placeholders.html",
+    "baseName": "ui-placeholders",
+    "matchedRoute": "/ui-placeholders",
+    "category": "UI Interface & Elements"
+  },
+  {
+    "htmlFile": "ui-popovers.html",
+    "baseName": "ui-popovers",
+    "matchedRoute": "/ui-popovers",
+    "category": "UI Interface & Elements"
+  },
+  {
+    "htmlFile": "ui-progress.html",
+    "baseName": "ui-progress",
+    "matchedRoute": "/ui-progress",
+    "category": "UI Interface & Elements"
+  },
+  {
+    "htmlFile": "ui-rangeslider.html",
+    "baseName": "ui-rangeslider",
+    "matchedRoute": "/ui-rangeslider",
+    "category": "UI Interface & Elements"
+  },
+  {
+    "htmlFile": "ui-rating.html",
+    "baseName": "ui-rating",
+    "matchedRoute": "/ui-rating",
+    "category": "UI Interface & Elements"
+  },
+  {
+    "htmlFile": "ui-ribbon.html",
+    "baseName": "ui-ribbon",
+    "matchedRoute": "/ui-ribbon",
+    "category": "UI Interface & Elements"
+  },
+  {
+    "htmlFile": "ui-scrollbar.html",
+    "baseName": "ui-scrollbar",
+    "matchedRoute": "/ui-scrollbar",
+    "category": "UI Interface & Elements"
+  },
+  {
+    "htmlFile": "ui-sortable.html",
+    "baseName": "ui-sortable",
+    "matchedRoute": "/ui-sortable",
+    "category": "UI Interface & Elements"
+  },
+  {
+    "htmlFile": "ui-spinner.html",
+    "baseName": "ui-spinner",
+    "matchedRoute": "/ui-spinner",
+    "category": "UI Interface & Elements"
+  },
+  {
+    "htmlFile": "ui-stickynote.html",
+    "baseName": "ui-stickynote",
+    "matchedRoute": "/ui-stickynote",
+    "category": "UI Interface & Elements"
+  },
+  {
+    "htmlFile": "ui-sweetalerts.html",
+    "baseName": "ui-sweetalerts",
+    "matchedRoute": "/ui-sweetalerts",
+    "category": "UI Interface & Elements"
+  },
+  {
+    "htmlFile": "ui-swiperjs.html",
+    "baseName": "ui-swiperjs",
+    "matchedRoute": "/ui-swiperjs",
+    "category": "UI Interface & Elements"
+  },
+  {
+    "htmlFile": "ui-text-editor.html",
+    "baseName": "ui-text-editor",
+    "matchedRoute": "/ui-text-editor",
+    "category": "UI Interface & Elements"
+  },
+  {
+    "htmlFile": "ui-timeline.html",
+    "baseName": "ui-timeline",
+    "matchedRoute": "/ui-timeline",
+    "category": "UI Interface & Elements"
+  },
+  {
+    "htmlFile": "ui-toasts.html",
+    "baseName": "ui-toasts",
+    "matchedRoute": "/ui-toasts",
+    "category": "UI Interface & Elements"
+  },
+  {
+    "htmlFile": "ui-tooltips.html",
+    "baseName": "ui-tooltips",
+    "matchedRoute": "/ui-tooltips",
+    "category": "UI Interface & Elements"
+  },
+  {
+    "htmlFile": "ui-typography.html",
+    "baseName": "ui-typography",
+    "matchedRoute": "/ui-typography",
+    "category": "UI Interface & Elements"
+  },
+  {
+    "htmlFile": "ui-video.html",
+    "baseName": "ui-video",
+    "matchedRoute": "/ui-video",
+    "category": "UI Interface & Elements"
+  },
+  {
+    "htmlFile": "under-maintenance.html",
+    "baseName": "under-maintenance",
+    "matchedRoute": "/under-maintenance",
+    "category": "Authentication & System"
+  },
+  {
+    "htmlFile": "units.html",
+    "baseName": "units",
+    "matchedRoute": "/units",
+    "category": "Inventory Management"
+  },
+  {
+    "htmlFile": "users.html",
+    "baseName": "users",
+    "matchedRoute": "/users",
+    "category": "User Management"
+  },
+  {
+    "htmlFile": "varriant-attributes.html",
+    "baseName": "varriant-attributes",
+    "matchedRoute": "/varriant-attributes",
+    "category": "Inventory Management"
+  },
+  {
+    "htmlFile": "video-call.html",
+    "baseName": "video-call",
+    "matchedRoute": "/video-call",
+    "category": "Application Pages"
+  },
+  {
+    "htmlFile": "warehouse.html",
+    "baseName": "warehouse",
+    "matchedRoute": "/warehouse",
+    "category": "People Management"
+  },
+  {
+    "htmlFile": "warranty.html",
+    "baseName": "warranty",
+    "matchedRoute": "/warranty",
+    "category": "Inventory Management"
+  },
+  {
+    "htmlFile": "wishlist.html",
+    "baseName": "wishlist",
+    "matchedRoute": "/wishlist",
+    "category": "Application Pages"
+  }
+]

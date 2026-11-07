@@ -1,0 +1,50 @@
+export enum UserRole {
+  SUPER_ADMIN = "SUPER_ADMIN",
+  ADMIN = "ADMIN",
+  STORE_MANAGER = "STORE_MANAGER",
+  CASHIER = "CASHIER",
+  WAREHOUSE_STAFF = "WAREHOUSE_STAFF"
+}
+
+export enum PaymentMethod {
+  CASH = "CASH",
+  CARD = "CARD",
+  BANK_TRANSFER = "BANK_TRANSFER",
+  GIFT_CARD = "GIFT_CARD",
+  POINTS = "POINTS",
+  SPLIT = "SPLIT"
+}
+
+export enum SaleStatus {
+  COMPLETED = "COMPLETED",
+  PENDING = "PENDING",
+  CANCELLED = "CANCELLED"
+}
+
+export enum PaymentStatus {
+  PAID = "PAID",
+  PARTIAL = "PARTIAL",
+  DUE = "DUE"
+}
+
+export enum SalesChannel {
+  POS = "POS",
+  ONLINE = "ONLINE",
+  MANUAL = "MANUAL"
+}
+
+export enum StockMovementType {
+  PURCHASE = "PURCHASE",
+  SALE = "SALE",
+  SALE_RETURN = "SALE_RETURN",
+  PURCHASE_RETURN = "PURCHASE_RETURN",
+  TRANSFER_IN = "TRANSFER_IN",
+  TRANSFER_OUT = "TRANSFER_OUT",
+  ADJUSTMENT_ADD = "ADJUSTMENT_ADD",
+  ADJUSTMENT_SUB = "ADJUSTMENT_SUB"
+}
+
+export enum TaxType {
+  EXCLUSIVE = "EXCLUSIVE",
+  INCLUSIVE = "INCLUSIVE"
+}
