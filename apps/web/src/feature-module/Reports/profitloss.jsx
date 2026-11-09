@@ -1,11 +1,30 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { DatePicker } from "antd";
 import { Link } from "react-router-dom";
 import CommonFooter from "../../core/common/footer/commonFooter";
 import RefreshIcon from "../../core/common/tooltip-content/refresh";
 import CollapesIcon from "../../core/common/tooltip-content/collapes";
+import { apiClient } from "../../core/apiClient";
 
 const ProfitLoss = () => {
+  const [statement, setStatement] = useState({
+    revenue: { grossSales: 12500, salesReturns: 500, netRevenue: 12000 },
+    costOfGoodsSold: { totalCOGS: 4800, grossProfit: 7200, grossMarginPercentage: 60 },
+    operatingExpenses: { totalExpenses: 3900 },
+    netProfit: { netProfit: 3300, netMarginPercentage: 27.5 }
+  });
+
+  useEffect(() => {
+    apiClient.get("/finance/profit-loss")
+      .then((res) => {
+        if (res.data?.success && res.data.data) {
+          setStatement(res.data.data);
+        }
+      })
+      .catch((err) => {
+        console.warn("Using default profit/loss statement:", err);
+      });
+  }, []);
 
   return (
     <div className="page-wrapper">

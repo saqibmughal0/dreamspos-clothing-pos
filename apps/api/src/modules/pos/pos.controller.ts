@@ -16,7 +16,7 @@ export class PosController {
 
   async getReceiptData(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const saleId = req.params.saleId as string;
+      const saleId = String(req.params.saleId);
       const receipt = await posService.getReceiptData(saleId);
       if (!receipt) {
         res.status(404).json({ success: false, message: "Receipt not found" });

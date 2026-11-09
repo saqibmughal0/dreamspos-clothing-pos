@@ -50,29 +50,38 @@ async function main() {
 
   // 4. Create Roles
   const roles = [
-    { name: "SUPER_ADMIN", description: "Super Administrator" },
+    { name: "SUPER_ADMIN", description: "Super Administrator / Owner" },
     { name: "STORE_MANAGER", description: "Store Manager" },
-    { name: "CASHIER", description: "POS Cashier" }
+    { name: "CASHIER", description: "POS Cashier" },
+    { name: "INVENTORY_CLERK", description: "Inventory & Stock Clerk" }
   ];
 
   for (const r of roles) {
     await prisma.role.upsert({
       where: { name: r.name },
-      update: {},
+      update: { description: r.description },
       create: { name: r.name, description: r.description, isSystem: true }
     });
   }
 
   const superAdminRole = await prisma.role.findUnique({ where: { name: "SUPER_ADMIN" } });
+  const managerRole = await prisma.role.findUnique({ where: { name: "STORE_MANAGER" } });
   const cashierRole = await prisma.role.findUnique({ where: { name: "CASHIER" } });
+  const inventoryRole = await prisma.role.findUnique({ where: { name: "INVENTORY_CLERK" } });
 
-  // 5. Create Default Users
+  // 5. Create Default Users for all 4 RBAC tiers
   const passwordHash = await bcrypt.hash("Admin@12345", 10);
+  const managerHash = await bcrypt.hash("Manager@12345", 10);
   const cashierHash = await bcrypt.hash("Cashier@12345", 10);
+  const clerkHash = await bcrypt.hash("Clerk@12345", 10);
 
   await prisma.user.upsert({
     where: { email: "admin@dreamspos.com" },
-    update: {},
+    update: {
+      passwordHash: passwordHash,
+      isActive: true,
+      roleId: superAdminRole!.id
+    },
     create: {
       companyId: company.id,
       storeId: store.id,
@@ -84,8 +93,29 @@ async function main() {
   });
 
   await prisma.user.upsert({
+    where: { email: "manager@dreamspos.com" },
+    update: {
+      passwordHash: managerHash,
+      isActive: true,
+      roleId: managerRole!.id
+    },
+    create: {
+      companyId: company.id,
+      storeId: store.id,
+      roleId: managerRole!.id,
+      name: "Store Manager",
+      email: "manager@dreamspos.com",
+      passwordHash: managerHash
+    }
+  });
+
+  await prisma.user.upsert({
     where: { email: "cashier@dreamspos.com" },
-    update: {},
+    update: {
+      passwordHash: cashierHash,
+      isActive: true,
+      roleId: cashierRole!.id
+    },
     create: {
       companyId: company.id,
       storeId: store.id,
@@ -93,6 +123,23 @@ async function main() {
       name: "Floor Cashier",
       email: "cashier@dreamspos.com",
       passwordHash: cashierHash
+    }
+  });
+
+  await prisma.user.upsert({
+    where: { email: "clerk@dreamspos.com" },
+    update: {
+      passwordHash: clerkHash,
+      isActive: true,
+      roleId: inventoryRole!.id
+    },
+    create: {
+      companyId: company.id,
+      storeId: store.id,
+      roleId: inventoryRole!.id,
+      name: "Stock Clerk",
+      email: "clerk@dreamspos.com",
+      passwordHash: clerkHash
     }
   });
 
@@ -323,6 +370,65 @@ async function main() {
       address: "24 Park Avenue, Cityville"
     }
   });
+
+  // 10. Default Business Settings
+  const defaultSettings = [
+    { group: "BUSINESS", key: "shopName", value: "Dreams Apparel Flagship Store" },
+    { group: "BUSINESS", key: "brandName", value: "Dreams Apparel" },
+    { group: "BUSINESS", key: "email", value: "store@dreamsapparel.com" },
+    { group: "BUSINESS", key: "phone", value: "+1 800 555 0199" },
+    { group: "BUSINESS", key: "address", value: "100 Fashion Avenue, Suite 10, New York, NY 10001" },
+    { group: "BUSINESS", key: "website", value: "https://dreamsapparel.com" },
+    { group: "BUSINESS", key: "taxNumber", value: "US-TAX-8829104" },
+    {
+      group: "BUSINESS",
+      key: "receipt",
+      value: JSON.stringify({
+        headerMessage: "Welcome to Dreams Apparel — Contemporary Urban Wear",
+        footerMessage: "Thank you for shopping with us! Returns within 14 days, exchanges within 30 days.",
+        showBarcode: true,
+        showCashier: true,
+        showCustomer: true
+      })
+    },
+    {
+      group: "BUSINESS",
+      key: "printer",
+      value: JSON.stringify({
+        paperSize: "80mm",
+        autoCut: true,
+        openCashDrawer: true
+      })
+    },
+    {
+      group: "BUSINESS",
+      key: "policies",
+      value: JSON.stringify({
+        returnWindowDays: 14,
+        exchangeWindowDays: 30,
+        terms: "Garments eligible for return/exchange within 14 days of purchase with original receipt and hangtags intact."
+      })
+    }
+  ];
+
+  for (const s of defaultSettings) {
+    await prisma.setting.upsert({
+      where: {
+        companyId_group_key: {
+          companyId: company.id,
+          group: s.group,
+          key: s.key
+        }
+      },
+      update: { value: s.value },
+      create: {
+        companyId: company.id,
+        group: s.group,
+        key: s.key,
+        value: s.value
+      }
+    });
+  }
 
   console.log("Clothing retail database seeded successfully!");
 }

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import ImageWithBasePath from "../../core/img/imagewithbasebath";
 import Select from "react-select";
 import { Link } from "react-router-dom";
@@ -13,9 +13,34 @@ import { Download, MinusCircle, PlusCircle } from "feather-icons-react/build/Ico
 import { From, Status, To, WarehouseFrom, WarehouseTo } from "../../core/common/selectOption/selectOption";
 import DefaultEditor from "react-simple-wysiwyg";
 import CommonDeleteModal from "../../core/common/modal/commonDeleteModal";
+import { apiClient } from "../../core/apiClient";
 
 const StockTransfer = () => {
-  const dataSource = useSelector((state) => state.rootReducer.stocktransferdata);
+  const reduxDataSource = useSelector((state) => state.rootReducer.stocktransferdata);
+  const [dataSource, setDataSource] = useState(reduxDataSource);
+
+  useEffect(() => {
+    apiClient.get("/inventory/transfers")
+      .then((res) => {
+        if (res.data?.success && res.data.data?.items?.length > 0) {
+          const mapped = res.data.data.items.map((item, idx) => ({
+            key: item.id || idx,
+            fromWarehouse: item.fromWarehouseName || "Central Warehouse",
+            toWarehouse: item.toWarehouseName || "Downtown Store",
+            noOfProducts: item.itemCount || 1,
+            quantityTransferred: `${item.itemCount || 1} Pcs`,
+            Refrence: item.transferNumber,
+            Date: new Date(item.createdAt).toLocaleDateString(),
+            notes: item.notes || "Garment transfer",
+            status: item.status || "Completed"
+          }));
+          setDataSource(mapped);
+        }
+      })
+      .catch((err) => {
+        console.warn("Using default stock transfers:", err);
+      });
+  }, []);
 
   const columns = [
     {

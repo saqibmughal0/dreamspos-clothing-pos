@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Select from "react-select";
 import { expensereportdata } from "../../core/json/expensereportdata";
@@ -8,9 +8,32 @@ import RefreshIcon from "../../core/common/tooltip-content/refresh";
 import CollapesIcon from "../../core/common/tooltip-content/collapes";
 import { DatePicker } from "antd";
 import TooltipIcons from "../../core/common/tooltip-content/tooltipIcons";
+import { apiClient } from "../../core/apiClient";
 
 const ExpenseReport = () => {
-  const data = expensereportdata;
+  const [data, setData] = useState(expensereportdata);
+
+  useEffect(() => {
+    apiClient.get("/reports/expenses")
+      .then((res) => {
+        if (res.data?.success && res.data.data?.items?.length > 0) {
+          const mapped = res.data.data.items.map((e, idx) => ({
+            id: e.id,
+            key: e.id || idx,
+            expenseName: e.notes || e.categoryName,
+            categoryName: e.categoryName,
+            date: new Date(e.date).toLocaleDateString(),
+            paymentMethod: e.paymentMethod,
+            amount: `$${Number(e.amount).toFixed(2)}`,
+            status: "Approved"
+          }));
+          setData(mapped);
+        }
+      })
+      .catch((err) => {
+        console.warn("Using default expense report data:", err);
+      });
+  }, []);
 
   const ExpenseCategory = [
     { value: "All", label: "All" },

@@ -1,22 +1,26 @@
 // i18n.js
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
+import enTranslation from './style/i18n/en.json';
+import frTranslation from './style/i18n/fr.json';
+import esTranslation from './style/i18n/es.json';
+import deTranslation from './style/i18n/de.json';
 
 i18n
   .use(initReactI18next)
   .init({
     resources: {
       en: {
-        translation: require('../src/style/i18n/en.json')
+        translation: enTranslation
       },
       fr: {
-        translation: require('../src/style/i18n/fr.json')
+        translation: frTranslation
       },
-      es: { // Corrected language code for Spanish
-        translation: require('../src/style/i18n/es.json')
+      es: {
+        translation: esTranslation
       },
       de: {
-        translation: require('../src/style/i18n/de.json')
+        translation: deTranslation
       }
     },
     lng: 'en',
@@ -27,4 +31,3 @@ i18n
   });
 
 export default i18n;
-

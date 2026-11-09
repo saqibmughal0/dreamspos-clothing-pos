@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Table from "../../core/pagination/datatable";
 import CommonFooter from "../../core/common/footer/commonFooter";
@@ -9,9 +9,35 @@ import CollapesIcon from "../../core/common/tooltip-content/collapes";
 import { purchasesreturn } from "../../core/json/purchasereturn";
 import AddPurchaseReturn from "../../core/modals/purchases/addpurchasereturn";
 import EditPurchaseReturns from "../../core/modals/purchases/editpurchasereturns";
-const PurchaseReturns = () => {
+import { apiClient } from "../../core/apiClient";
 
-  const dataSource = purchasesreturn;
+const PurchaseReturns = () => {
+  const [dataSource, setDataSource] = useState(purchasesreturn);
+
+  useEffect(() => {
+    apiClient.get("/purchases/returns")
+      .then((res) => {
+        if (res.data?.success && res.data.data?.items?.length > 0) {
+          const mapped = res.data.data.items.map((r, idx) => ({
+            id: r.id,
+            key: r.id || idx,
+            img: "assets/img/products/pos-product-01.png",
+            date: new Date(r.createdAt).toLocaleDateString(),
+            supplier: r.supplierName,
+            reference: r.returnNumber,
+            status: r.status,
+            grandTotal: `$${Number(r.refundAmount).toFixed(2)}`,
+            paid: `$${Number(r.refundAmount).toFixed(2)}`,
+            due: "$0.00",
+            paymentStatus: "Refunded"
+          }));
+          setDataSource(mapped);
+        }
+      })
+      .catch((err) => {
+        console.warn("Using default purchase returns:", err);
+      });
+  }, []);
 
   const columns = [
     {

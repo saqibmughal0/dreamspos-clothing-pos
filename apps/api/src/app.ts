@@ -12,6 +12,11 @@ import { posRouter } from "./modules/pos/pos.routes";
 import { customerRouter } from "./modules/customers/customer.routes";
 import { supplierRouter } from "./modules/suppliers/supplier.routes";
 import { saleRouter } from "./modules/sales/sale.routes";
+import { inventoryRouter } from "./modules/inventory/inventory.routes";
+import { purchaseRouter } from "./modules/purchases/purchase.routes";
+import { financeRouter } from "./modules/finance/finance.routes";
+import { reportsRouter } from "./modules/reports/reports.routes";
+import { settingsRouter } from "./modules/settings/settings.routes";
 
 export const app = express();
 
@@ -40,6 +45,11 @@ app.use("/api/pos", posRouter);
 app.use("/api/customers", customerRouter);
 app.use("/api/suppliers", supplierRouter);
 app.use("/api/sales", saleRouter);
+app.use("/api/inventory", inventoryRouter);
+app.use("/api/purchases", purchaseRouter);
+app.use("/api/finance", financeRouter);
+app.use("/api/reports", reportsRouter);
+app.use("/api/settings", settingsRouter);
 
 // Centralized Error Handler
 app.use(errorHandler);

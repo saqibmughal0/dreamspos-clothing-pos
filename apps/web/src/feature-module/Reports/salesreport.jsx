@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import ImageWithBasePath from "../../core/img/imagewithbasebath";
 import { Link } from "react-router-dom";
 import Select from "react-select";
@@ -10,12 +10,49 @@ import CollapesIcon from "../../core/common/tooltip-content/collapes";
 import { ProductName, Store } from "../../core/common/selectOption/selectOption";
 import { DatePicker } from "antd";
 import CommonFooter from "../../core/common/footer/commonFooter";
+import { apiClient } from "../../core/apiClient";
 
 
 const SalesReport = () => {
+  const [data, setData] = useState(salesreportdata);
+  const [summary, setSummary] = useState({
+    totalSales: 456000,
+    totalPaid: 256420,
+    totalUnpaid: 15245,
+    overdue: 25612
+  });
 
+  useEffect(() => {
+    apiClient.get("/reports/sales")
+      .then((res) => {
+        if (res.data?.success && res.data.data?.items?.length > 0) {
+          const total = res.data.data.summary.totalSales || 0;
+          setSummary({
+            totalSales: total,
+            totalPaid: total,
+            totalUnpaid: 0,
+            overdue: 0
+          });
+          const mapped = res.data.data.items.map((s, idx) => ({
+            id: s.id,
+            key: s.id || idx,
+            img: "assets/img/products/pos-product-01.png",
+            productName: `Order ${s.invoiceNumber} (${s.itemsCount} items)`,
+            sku: s.invoiceNumber,
+            category: "Apparel",
+            brand: "Dreams Apparel",
+            soldQty: String(s.itemsCount),
+            soldAmount: `$${Number(s.totalAmount).toFixed(2)}`,
+            instockQty: "50"
+          }));
+          setData(mapped);
+        }
+      })
+      .catch((err) => {
+        console.warn("Using default sales report data:", err);
+      });
+  }, []);
 
-  const data = salesreportdata;
   const [searchText] = useState("");
 
   const filteredData = data.filter((entry) => {
@@ -102,7 +139,7 @@ const SalesReport = () => {
                 <div className="ms-2">
                   <p className="fw-medium mb-1">Total Amount</p>
                   <div>
-                    <h3>$4,56,000</h3>
+                    <h3>${Number(summary.totalSales).toLocaleString()}</h3>
                   </div>
                 </div>
               </div>
@@ -117,7 +154,7 @@ const SalesReport = () => {
                 <div className="ms-2">
                   <p className="fw-medium mb-1">Total Paid</p>
                   <div>
-                    <h3>$2,56,42</h3>
+                    <h3>${Number(summary.totalPaid).toLocaleString()}</h3>
                   </div>
                 </div>
               </div>

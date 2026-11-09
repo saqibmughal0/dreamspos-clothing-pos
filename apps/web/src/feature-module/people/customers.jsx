@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import ImageWithBasePath from "../../core/img/imagewithbasebath";
 import Select from "react-select";
@@ -9,9 +9,35 @@ import TooltipIcons from "../../core/common/tooltip-content/tooltipIcons";
 import RefreshIcon from "../../core/common/tooltip-content/refresh";
 import CollapesIcon from "../../core/common/tooltip-content/collapes";
 import CommonFooter from "../../core/common/footer/commonFooter";
+import { apiClient } from "../../core/apiClient";
 
 const Customers = () => {
-  const data = useSelector((state) => state.rootReducer.customerdata);
+  const reduxData = useSelector((state) => state.rootReducer.customerdata);
+  const [data, setData] = useState(reduxData);
+
+  useEffect(() => {
+    apiClient.get("/customers")
+      .then((res) => {
+        if (res.data?.success && res.data.data?.items?.length > 0) {
+          const mapped = res.data.data.items.map((c, idx) => ({
+            id: c.id,
+            key: c.id || idx,
+            Code: `CU00${idx + 1}`,
+            image: "user-33.png",
+            Customer: c.name,
+            CustomerName: c.name,
+            Email: c.email || "customer@example.com",
+            Phone: c.phone || "+1 555-0100",
+            Country: "United States",
+            status: "Active"
+          }));
+          setData(mapped);
+        }
+      })
+      .catch((err) => {
+        console.warn("Using default customers list:", err);
+      });
+  }, []);
 
 
 

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Select from "react-select";
 import { expenselist } from "../../core/json/expenselistdata";
@@ -9,10 +9,34 @@ import CollapesIcon from "../../core/common/tooltip-content/collapes";
 import { Calendar, PlusCircle } from "feather-icons-react/build/IconComponents";
 import { DatePicker } from "antd";
 import TextEditor from "../inventory/texteditor";
+import { apiClient } from "../../core/apiClient";
 
 
 const ExpensesList = () => {
-  const data = expenselist;
+  const [data, setData] = useState(expenselist);
+
+  useEffect(() => {
+    apiClient.get("/finance/expenses")
+      .then((res) => {
+        if (res.data?.success && res.data.data?.items?.length > 0) {
+          const mapped = res.data.data.items.map((e, idx) => ({
+            id: e.id,
+            key: e.id || idx,
+            reference: e.expenseNumber,
+            categoryName: e.categoryName,
+            description: e.notes || "Store operation expense",
+            date: new Date(e.date).toLocaleDateString(),
+            amount: `$${Number(e.amount).toFixed(2)}`,
+            status: "Approved",
+            action: ""
+          }));
+          setData(mapped);
+        }
+      })
+      .catch((err) => {
+        console.warn("Using default expenses list:", err);
+      });
+  }, []);
 
   const columns = [
     {

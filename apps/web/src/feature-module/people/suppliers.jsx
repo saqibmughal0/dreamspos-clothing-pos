@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Edit, Eye, Trash2 } from "react-feather";
 import ImageWithBasePath from "../../core/img/imagewithbasebath";
@@ -8,9 +8,33 @@ import SupplierModal from "../../core/modals/peoples/supplierModal";
 import TooltipIcons from "../../core/common/tooltip-content/tooltipIcons";
 import RefreshIcon from "../../core/common/tooltip-content/refresh";
 import CollapesIcon from "../../core/common/tooltip-content/collapes";
+import { apiClient } from "../../core/apiClient";
 
 const Suppliers = () => {
-  const data = useSelector((state) => state.rootReducer.supplierdata);
+  const reduxData = useSelector((state) => state.rootReducer.supplierdata);
+  const [data, setData] = useState(reduxData);
+
+  useEffect(() => {
+    apiClient.get("/suppliers")
+      .then((res) => {
+        if (res.data?.success && res.data.data?.items?.length > 0) {
+          const mapped = res.data.data.items.map((s, idx) => ({
+            id: s.id,
+            key: s.id || idx,
+            code: `SU00${idx + 1}`,
+            supplierName: s.name,
+            image: "assets/img/supplier/supplier-01.png",
+            email: s.email || "supplier@example.com",
+            phone: s.phone || "+1 555-0200",
+            country: "United States"
+          }));
+          setData(mapped);
+        }
+      })
+      .catch((err) => {
+        console.warn("Using default suppliers list:", err);
+      });
+  }, []);
 
 
   const columns = [

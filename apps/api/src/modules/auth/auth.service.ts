@@ -4,6 +4,13 @@ import { prisma } from "@dreamspos/database";
 import { config } from "../../config";
 import { LoginInput } from "@dreamspos/shared";
 import { UserRole } from "@dreamspos/shared";
+import { UnauthorizedError, BadRequestError } from "../../utils/errors";
+
+export interface RegisterInput {
+  name: string;
+  email: string;
+  password: string;
+}
 
 export class AuthService {
   async login(input: LoginInput) {
@@ -13,12 +20,12 @@ export class AuthService {
     });
 
     if (!user || !user.isActive) {
-      throw new Error("Invalid email or password");
+      throw new UnauthorizedError("Invalid email or password");
     }
 
     const isValidPassword = await bcrypt.compare(input.password, user.passwordHash);
     if (!isValidPassword) {
-      throw new Error("Invalid email or password");
+      throw new UnauthorizedError("Invalid email or password");
     }
 
     const roleName = user.role.name as UserRole;
@@ -80,8 +87,68 @@ export class AuthService {
 
       return { accessToken: newAccessToken };
     } catch {
-      throw new Error("Invalid or expired refresh token");
+      throw new UnauthorizedError("Invalid or expired refresh token");
     }
+  }
+
+  async register(input: RegisterInput) {
+    const existing = await prisma.user.findUnique({
+      where: { email: input.email }
+    });
+    if (existing) {
+      throw new BadRequestError("An account with this email already exists");
+    }
+
+    let company = await prisma.company.findFirst();
+    if (!company) {
+      company = await prisma.company.create({
+        data: {
+          name: "Dreams Retail",
+          code: "DREAMS-01",
+          email: "admin@dreamspos.com",
+          currency: "USD"
+        }
+      });
+    }
+
+    let store = await prisma.store.findFirst({ where: { companyId: company.id } });
+    if (!store) {
+      store = await prisma.store.create({
+        data: {
+          name: "Main Retail Store",
+          code: "STORE-01",
+          companyId: company.id
+        }
+      });
+    }
+
+    let role = await prisma.role.findFirst({
+      where: { name: { in: ["SUPER_ADMIN", "STORE_MANAGER", "CASHIER"] } }
+    });
+    if (!role) {
+      role = await prisma.role.create({
+        data: {
+          name: "SUPER_ADMIN",
+          description: "Super Administrator / Owner",
+          isSystem: true
+        }
+      });
+    }
+
+    const passwordHash = await bcrypt.hash(input.password, 10);
+    await prisma.user.create({
+      data: {
+        name: input.name,
+        email: input.email,
+        passwordHash,
+        companyId: company.id,
+        storeId: store.id,
+        roleId: role.id,
+        isActive: true
+      }
+    });
+
+    return this.login({ email: input.email, password: input.password });
   }
 }
 

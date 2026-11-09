@@ -7,4 +7,5 @@ export const dashboardRouter = Router();
 dashboardRouter.use(authenticate);
 
 dashboardRouter.get("/summary", dashboardController.getSummary);
-dashboardRouter.get("/recent-transactions", dashboardController.getRecentTransactions);
+dashboardRouter.get("/analytics", dashboardController.getClothingAnalytics);
+dashboardRouter.get("/transactions", dashboardController.getRecentTransactions);

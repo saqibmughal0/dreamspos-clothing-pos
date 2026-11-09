@@ -348,6 +348,7 @@ const PrintBarcode = () => {
                   <div className="d-flex justify-content-end">
                     <Link
                       to="#"
+                      onClick={(e) => { e.preventDefault(); window.print(); }}
                       className="btn btn-cancel close-btn btn-danger shadow-none"
                     >
                       <span>

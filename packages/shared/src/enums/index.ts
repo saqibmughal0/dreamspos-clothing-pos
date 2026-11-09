@@ -3,7 +3,8 @@ export enum UserRole {
   ADMIN = "ADMIN",
   STORE_MANAGER = "STORE_MANAGER",
   CASHIER = "CASHIER",
-  WAREHOUSE_STAFF = "WAREHOUSE_STAFF"
+  WAREHOUSE_STAFF = "WAREHOUSE_STAFF",
+  INVENTORY_CLERK = "INVENTORY_CLERK"
 }
 
 export enum PaymentMethod {
@@ -48,3 +49,56 @@ export enum TaxType {
   EXCLUSIVE = "EXCLUSIVE",
   INCLUSIVE = "INCLUSIVE"
 }
+
+export const RolePermissions: Record<UserRole, string[]> = {
+  [UserRole.SUPER_ADMIN]: ["*"],
+  [UserRole.ADMIN]: ["*"],
+  [UserRole.STORE_MANAGER]: [
+    "pos.access",
+    "pos.checkout",
+    "pos.returns",
+    "pos.exchange",
+    "products.view",
+    "products.edit",
+    "inventory.view",
+    "inventory.adjust",
+    "customers.manage",
+    "reports.store",
+    "cash_register.manage"
+  ],
+  [UserRole.CASHIER]: [
+    "pos.access",
+    "pos.checkout",
+    "pos.barcode_scan",
+    "pos.returns",
+    "pos.receipt",
+    "customers.view",
+    "cash_register.own_session"
+  ],
+  [UserRole.WAREHOUSE_STAFF]: [
+    "products.view",
+    "products.create",
+    "products.variants",
+    "inventory.view",
+    "inventory.adjust",
+    "inventory.transfer",
+    "purchases.receive",
+    "purchases.returns"
+  ],
+  [UserRole.INVENTORY_CLERK]: [
+    "products.view",
+    "products.create",
+    "products.variants",
+    "inventory.view",
+    "inventory.adjust",
+    "inventory.transfer",
+    "purchases.receive",
+    "purchases.returns"
+  ]
+};
+
+export const hasPermission = (role: UserRole, permission: string): boolean => {
+  const permissions = RolePermissions[role] || [];
+  if (permissions.includes("*")) return true;
+  return permissions.includes(permission);
+};

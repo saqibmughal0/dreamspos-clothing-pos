@@ -78,7 +78,6 @@
     "react-phone-number-input": "^3.4.11",
     "react-redux": "^9.2.0",
     "react-router-dom": "^6.23.0",
-    "react-scripts": "^5.0.1",
     "react-select": "^5.8.0",
     "react-simple-wysiwyg": "^3.2.0",
     "react-slick": "^0.30.2",

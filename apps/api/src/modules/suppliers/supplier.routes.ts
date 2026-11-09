@@ -7,4 +7,7 @@ export const supplierRouter = Router();
 supplierRouter.use(authenticate);
 
 supplierRouter.get("/", supplierController.list);
+supplierRouter.get("/:id", supplierController.getById);
 supplierRouter.post("/", supplierController.create);
+supplierRouter.put("/:id", supplierController.update);
+supplierRouter.delete("/:id", supplierController.delete);

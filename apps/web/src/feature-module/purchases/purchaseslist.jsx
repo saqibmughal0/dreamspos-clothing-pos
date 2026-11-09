@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import {
   Download,
@@ -12,10 +12,34 @@ import ImportPurchases from "../../core/modals/purchases/importpurchases";
 import EditPurchases from "../../core/modals/purchases/editpurchases";
 import { purchaseslist } from "../../core/json/purchaselistdata";
 import AddPurchases from "../../core/modals/purchases/addpurchases";
+import { apiClient } from "../../core/apiClient";
 
 const PurchasesList = () => {
+  const [dataSource, setDataSource] = useState(purchaseslist);
 
-  const dataSource = purchaseslist;
+  useEffect(() => {
+    apiClient.get("/purchases")
+      .then((res) => {
+        if (res.data?.success && res.data.data?.items?.length > 0) {
+          const mapped = res.data.data.items.map((p, idx) => ({
+            id: p.id,
+            key: p.id || idx,
+            supplierName: p.supplierName,
+            reference: p.purchaseNumber,
+            date: new Date(p.createdAt).toLocaleDateString(),
+            status: p.status === "RECEIVED" ? "Received" : p.status === "PARTIALLY_RECEIVED" ? "Partial" : "Pending",
+            grandTotal: `$${Number(p.totalAmount).toFixed(2)}`,
+            paid: `$${Number(p.paidAmount).toFixed(2)}`,
+            due: `$${Number(p.dueAmount).toFixed(2)}`,
+            createdBy: p.paymentStatus === "PAID" ? "Paid" : "Unpaid"
+          }));
+          setDataSource(mapped);
+        }
+      })
+      .catch((err) => {
+        console.warn("Using default purchase list:", err);
+      });
+  }, []);
 
   const columns = [
     {

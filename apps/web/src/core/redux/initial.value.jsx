@@ -29,8 +29,7 @@ import { lowstockdata } from "../json/lowstockdata";
 import { categorylist } from "../json/categorylistdata";
 import { subcateorydata } from "../json/subcategorydata";
 import { callhistorydata } from "../json/callhistorydata";
-
-const { productlistdata } = require("../json/productlistdata");
+import { productlistdata } from "../json/productlistdata";
 
 const initialState = {
   product_list: productlistdata,

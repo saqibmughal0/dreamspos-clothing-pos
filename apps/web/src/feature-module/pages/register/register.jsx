@@ -1,13 +1,21 @@
 import React, { useState } from "react";
 import ImageWithBasePath from "../../../core/img/imagewithbasebath";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { all_routes } from "../../../Router/all_routes";
+import { apiClient } from "../../../core/apiClient";
 
 const Register = () => {
   const [passwordVisibility, setPasswordVisibility] = useState({
     password: false,
     confirmPassword: false,
   });
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [errorMsg, setErrorMsg] = useState("");
+  const navigate = useNavigate();
 
   const togglePasswordVisibility = (field) => {
     setPasswordVisibility((prevState) => ({
@@ -17,6 +25,55 @@ const Register = () => {
   };
 
   const route = all_routes;
+
+  const handleSubmit = async (e) => {
+    if (e) e.preventDefault();
+    setErrorMsg("");
+
+    if (!name.trim()) {
+      setErrorMsg("Please enter your name");
+      return;
+    }
+    if (!email.trim()) {
+      setErrorMsg("Please enter your email address");
+      return;
+    }
+    if (!password) {
+      setErrorMsg("Please enter a password");
+      return;
+    }
+    if (password.length < 6) {
+      setErrorMsg("Password must be at least 6 characters");
+      return;
+    }
+    if (password !== confirmPassword) {
+      setErrorMsg("Passwords do not match");
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const res = await apiClient.post("/auth/register", {
+        name: name.trim(),
+        email: email.trim(),
+        password,
+      });
+
+      if (res.data?.success && res.data.data?.accessToken) {
+        localStorage.setItem("accessToken", res.data.data.accessToken);
+        localStorage.setItem("user", JSON.stringify(res.data.data.user));
+        navigate(route.newdashboard);
+      } else {
+        setErrorMsg(res.data?.message || "Registration failed");
+      }
+    } catch (err) {
+      const msg = err.response?.data?.message || "Registration failed. Please try again.";
+      setErrorMsg(msg);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <>
       {/* Main Wrapper */}
@@ -24,7 +81,7 @@ const Register = () => {
         <div className="account-content">
           <div className="login-wrapper register-wrap bg-img">
             <div className="login-content authent-content">
-              <form >
+              <form onSubmit={handleSubmit}>
                 <div className="login-userset">
                   <div className="login-logo logo-normal">
                     <ImageWithBasePath src="assets/img/logo.png" alt="img" />
@@ -36,6 +93,11 @@ const Register = () => {
                     <h3>Register</h3>
                     <h4>Create New Dreamspos Account</h4>
                   </div>
+                  {errorMsg && (
+                    <div className="alert alert-danger py-2 mb-3 fs-13">
+                      {errorMsg}
+                    </div>
+                  )}
                   <div className="mb-3">
                     <label className="form-label">
                       Name <span className="text-danger"> *</span>
@@ -43,8 +105,11 @@ const Register = () => {
                     <div className="input-group">
                       <input
                         type="text"
-                        defaultValue=""
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                        placeholder="John Doe"
                         className="form-control border-end-0"
+                        required
                       />
                       <span className="input-group-text border-start-0">
                         <i className="ti ti-user" />
@@ -57,9 +122,12 @@ const Register = () => {
                     </label>
                     <div className="input-group">
                       <input
-                        type="text"
-                        defaultValue=""
+                        type="email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        placeholder="user@dreamspos.com"
                         className="form-control border-end-0"
+                        required
                       />
                       <span className="input-group-text border-start-0">
                         <i className="ti ti-mail" />
@@ -72,13 +140,17 @@ const Register = () => {
                     </label>
                     <div className="pass-group">
                       <input
-                        type={passwordVisibility ? "text" : "password"}
+                        type={passwordVisibility.password ? "text" : "password"}
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        placeholder="******"
                         className="pass-input form-control"
+                        required
                       />
                       <span
-                        className={`ti toggle-password ${passwordVisibility ? "ti-eye" : "ti-eye-off"
+                        className={`ti toggle-password ${passwordVisibility.password ? "ti-eye" : "ti-eye-off"
                           }`}
-                        onClick={togglePasswordVisibility}
+                        onClick={() => togglePasswordVisibility("password")}
                       ></span>
                     </div>
                   </div>
@@ -91,12 +163,16 @@ const Register = () => {
                         type={
                           passwordVisibility.confirmPassword ? "text" : "password"
                         }
+                        value={confirmPassword}
+                        onChange={(e) => setConfirmPassword(e.target.value)}
+                        placeholder="******"
                         className="pass-input form-control"
+                        required
                       />
                       <span
                         className={`ti toggle-password ${passwordVisibility.confirmPassword
                           ? "ti-eye"
-                          : "ti-eye-slash"
+                          : "ti-eye-off"
                           }`}
                         onClick={() =>
                           togglePasswordVisibility("confirmPassword")
@@ -110,7 +186,7 @@ const Register = () => {
                         <div className="custom-control custom-checkbox justify-content-start">
                           <div className="custom-control custom-checkbox">
                             <label className="checkboxs ps-4 mb-0 pb-0 line-height-1">
-                              <input type="checkbox" />
+                              <input type="checkbox" defaultChecked />
                               <span className="checkmarks" />I agree to the{" "}
                               <Link to="#" className="text-primary">
                                 Terms &amp; Privacy
@@ -122,9 +198,13 @@ const Register = () => {
                     </div>
                   </div>
                   <div className="form-login">
-                    <Link to={route.signin} className="btn btn-login">
-                      Sign Up
-                    </Link>
+                    <button
+                      type="submit"
+                      disabled={loading}
+                      className="btn btn-primary w-100"
+                    >
+                      {loading ? "Creating Account..." : "Sign Up"}
+                    </button>
                   </div>
                   <div className="signinform">
                     <h4>
@@ -159,14 +239,14 @@ const Register = () => {
                           <ImageWithBasePath
                             className="img-fluid m-1"
                             src="assets/img/icons/google-logo.svg"
-                            alt="Facebook"
+                            alt="Google"
                           />
                         </Link>
                       </div>
                       <div className="text-center flex-fill">
                         <Link
                           to="#"
-                          className="bg-dark br-10 p-2 btn btn-dark d-flex align-items-center justify-content-center"
+                          className="br-10 p-2 btn btn-white border d-flex align-items-center justify-content-center"
                         >
                           <ImageWithBasePath
                             className="img-fluid m-1"
@@ -177,9 +257,6 @@ const Register = () => {
                       </div>
                     </div>
                   </div>
-                  <div className="my-4 d-flex justify-content-center align-items-center copyright-text">
-                    <p>Copyright © 2025 DreamsPOS</p>
-                  </div>
                 </div>
               </form>
             </div>
@@ -188,7 +265,6 @@ const Register = () => {
       </div>
       {/* /Main Wrapper */}
     </>
-
   );
 };
 

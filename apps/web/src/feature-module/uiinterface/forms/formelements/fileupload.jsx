@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 
 const FileUpload = () => {
   // const route = all_routes
-  const dynamicPath = "../../../../../public/assets/img/icons/download.svg"; // Replace with your dynamic path or variable
+  const dynamicPath = "/assets/img/icons/download.svg"; // Replace with your dynamic path or variable
 
   return (
     <div>
@@ -114,10 +114,7 @@ const FileUpload = () => {
                     <div
                       className="custom-file-container__image-preview"
                       style={{
-                        backgroundImage:
-                          "../../../../../public/assets/img/icons/download.svg(" +
-                          "../../../../../public/assets/img/icons/download.svg" +
-                          ")",
+                        backgroundImage: "url(/assets/img/icons/download.svg)",
                       }}
                     ></div>
                   </div>

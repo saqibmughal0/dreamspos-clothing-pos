@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import ImageWithBasePath from "../../core/img/imagewithbasebath";
 import { Link } from "react-router-dom";
 import Select from "react-select";
@@ -10,10 +10,32 @@ import TooltipIcons from "../../core/common/tooltip-content/tooltipIcons";
 import { ProductName, Store } from "../../core/common/selectOption/selectOption";
 import { DatePicker } from "antd";
 import CommonFooter from "../../core/common/footer/commonFooter";
+import { apiClient } from "../../core/apiClient";
 
 const PurchaseReport = () => {
 
-  const data = purchasereportdata;
+  const [data, setData] = useState(purchasereportdata);
+
+  useEffect(() => {
+    apiClient.get("/reports/purchases")
+      .then((res) => {
+        if (res.data?.success && res.data.data?.items?.length > 0) {
+          const mapped = res.data.data.items.map((p, idx) => ({
+            id: p.id,
+            key: p.id || idx,
+            img: "assets/img/products/pos-product-01.png",
+            productName: `PO ${p.purchaseNumber} (${p.supplierName})`,
+            productAmount: `$${Number(p.totalAmount).toFixed(2)}`,
+            purchasedQty: "50",
+            instockQty: "50"
+          }));
+          setData(mapped);
+        }
+      })
+      .catch((err) => {
+        console.warn("Using default purchase report data:", err);
+      });
+  }, []);
   const [searchText ] = useState("");
   const filteredData = data.filter((entry) => {
     return Object.keys(entry).some((key) => {

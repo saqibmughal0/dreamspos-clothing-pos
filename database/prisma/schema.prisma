@@ -17,17 +17,24 @@ model Company {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
-  stores       Store[]
-  warehouses   Warehouse[]
-  users        User[]
-  products     Product[]
-  customers    Customer[]
-  suppliers    Supplier[]
-  sales        Sale[]
-  salesReturns SalesReturn[]
-  purchases    Purchase[]
-  accounts     Account[]
-  settings     Setting[]
+  stores            Store[]
+  warehouses        Warehouse[]
+  users             User[]
+  products          Product[]
+  customers         Customer[]
+  suppliers         Supplier[]
+  sales             Sale[]
+  salesReturns      SalesReturn[]
+  purchases         Purchase[]
+  purchaseReturns   PurchaseReturn[]
+  supplierPayments  SupplierPayment[]
+  stockAdjustments  StockAdjustment[]
+  stockTransfers    StockTransfer[]
+  expenseCategories ExpenseCategory[]
+  expenses          Expense[]
+  accounts          Account[]
+  journalEntries    JournalEntry[]
+  settings          Setting[]
 
   @@map("companies")
 }
@@ -61,10 +68,14 @@ model Warehouse {
   address   String?  @db.Text
   createdAt DateTime @default(now()) @map("created_at")
 
-  company        Company          @relation(fields: [companyId], references: [id])
-  stockBalances  StockBalance[]
-  stockMovements StockMovement[]
-  purchases      Purchase[]
+  company          Company           @relation(fields: [companyId], references: [id])
+  stockBalances    StockBalance[]
+  stockMovements   StockMovement[]
+  purchases        Purchase[]
+  purchaseReturns  PurchaseReturn[]
+  stockAdjustments StockAdjustment[]
+  transfersFrom    StockTransfer[]   @relation("TransfersFrom")
+  transfersTo      StockTransfer[]   @relation("TransfersTo")
 
   @@map("warehouses")
 }
@@ -200,6 +211,10 @@ model Product {
   unitId        String   @map("unit_id")
   name          String
   sku           String   @unique
+  articleCode   String?  @map("article_code")
+  season        String?
+  fabric        String?
+  gender        String?
   barcode       String?  @unique
   costPrice     Decimal  @default(0.0000) @map("cost_price") @db.Decimal(14, 4)
   sellingPrice  Decimal  @default(0.0000) @map("selling_price") @db.Decimal(14, 4)
@@ -208,20 +223,24 @@ model Product {
   alertQuantity Int      @default(10) @map("alert_quantity")
   description   String?  @db.Text
   image         String?
+  images        String?  @db.Text
   isActive      Boolean  @default(true) @map("is_active")
   createdAt     DateTime @default(now()) @map("created_at")
   updatedAt     DateTime @updatedAt @map("updated_at")
 
-  company          Company           @relation(fields: [companyId], references: [id])
-  category         Category          @relation(fields: [categoryId], references: [id])
-  brand            Brand?            @relation(fields: [brandId], references: [id])
-  unit             Unit              @relation(fields: [unitId], references: [id])
-  variants         ProductVariant[]
-  stockBalances    StockBalance[]
-  stockMovements   StockMovement[]
-  saleItems        SaleItem[]
-  salesReturnItems SalesReturnItem[]
-  purchaseItems    PurchaseItem[]
+  company              Company               @relation(fields: [companyId], references: [id])
+  category             Category              @relation(fields: [categoryId], references: [id])
+  brand                Brand?                @relation(fields: [brandId], references: [id])
+  unit                 Unit                  @relation(fields: [unitId], references: [id])
+  variants             ProductVariant[]
+  stockBalances        StockBalance[]
+  stockMovements       StockMovement[]
+  saleItems            SaleItem[]
+  salesReturnItems     SalesReturnItem[]
+  purchaseItems        PurchaseItem[]
+  purchaseReturnItems  PurchaseReturnItem[]
+  stockAdjustmentItems StockAdjustmentItem[]
+  stockTransferItems   StockTransferItem[]
 
   @@map("products")
 }
@@ -233,14 +252,19 @@ model ProductVariant {
   color     String
   sku       String   @unique
   barcode   String?  @unique
+  costPrice Decimal  @default(0.0000) @map("cost_price") @db.Decimal(14, 4)
   priceDiff Decimal  @default(0.0000) @map("price_diff") @db.Decimal(14, 4)
   stockQty  Decimal  @default(0.0000) @map("stock_qty") @db.Decimal(14, 4)
   image     String?
   isActive  Boolean  @default(true) @map("is_active")
   createdAt DateTime @default(now()) @map("created_at")
 
-  product   Product    @relation(fields: [productId], references: [id], onDelete: Cascade)
-  saleItems SaleItem[]
+  product              Product               @relation(fields: [productId], references: [id], onDelete: Cascade)
+  saleItems            SaleItem[]
+  purchaseItems        PurchaseItem[]
+  purchaseReturnItems  PurchaseReturnItem[]
+  stockAdjustmentItems StockAdjustmentItem[]
+  stockTransferItems   StockTransferItem[]
 
   @@unique([productId, size, color])
   @@map("product_variants")
@@ -277,6 +301,77 @@ model StockMovement {
   @@map("stock_movements")
 }
 
+model StockAdjustment {
+  id               String   @id @default(uuid())
+  companyId        String   @map("company_id")
+  warehouseId      String   @map("warehouse_id")
+  adjustmentNumber String   @unique @map("adjustment_number")
+  referenceNo      String?  @map("reference_no")
+  type             String   @default("PHYSICAL_COUNT")
+  reason           String?  @db.Text
+  totalAmount      Decimal  @default(0.0000) @map("total_amount") @db.Decimal(14, 4)
+  status           String   @default("COMPLETED")
+  createdAt        DateTime @default(now()) @map("created_at")
+
+  company          Company               @relation(fields: [companyId], references: [id])
+  warehouse        Warehouse             @relation(fields: [warehouseId], references: [id])
+  items            StockAdjustmentItem[]
+
+  @@map("stock_adjustments")
+}
+
+model StockAdjustmentItem {
+  id           String  @id @default(uuid())
+  adjustmentId String  @map("adjustment_id")
+  productId    String  @map("product_id")
+  variantId    String? @map("variant_id")
+  type         String  @default("ADD")
+  quantity     Decimal @db.Decimal(14, 4)
+  unitCost     Decimal @default(0.0000) @map("unit_cost") @db.Decimal(14, 4)
+  subtotal     Decimal @default(0.0000) @db.Decimal(14, 4)
+
+  adjustment   StockAdjustment @relation(fields: [adjustmentId], references: [id], onDelete: Cascade)
+  product      Product         @relation(fields: [productId], references: [id])
+  variant      ProductVariant? @relation(fields: [variantId], references: [id])
+
+  @@map("stock_adjustment_items")
+}
+
+model StockTransfer {
+  id              String   @id @default(uuid())
+  companyId       String   @map("company_id")
+  fromWarehouseId String   @map("from_warehouse_id")
+  toWarehouseId   String   @map("to_warehouse_id")
+  transferNumber  String   @unique @map("transfer_number")
+  status          String   @default("COMPLETED")
+  shippingCharge  Decimal  @default(0.0000) @map("shipping_charge") @db.Decimal(14, 4)
+  notes           String?  @db.Text
+  createdAt       DateTime @default(now()) @map("created_at")
+
+  company         Company             @relation(fields: [companyId], references: [id])
+  fromWarehouse   Warehouse           @relation("TransfersFrom", fields: [fromWarehouseId], references: [id])
+  toWarehouse     Warehouse           @relation("TransfersTo", fields: [toWarehouseId], references: [id])
+  items           StockTransferItem[]
+
+  @@map("stock_transfers")
+}
+
+model StockTransferItem {
+  id         String  @id @default(uuid())
+  transferId String  @map("transfer_id")
+  productId  String  @map("product_id")
+  variantId  String? @map("variant_id")
+  quantity   Decimal @db.Decimal(14, 4)
+  unitCost   Decimal @default(0.0000) @map("unit_cost") @db.Decimal(14, 4)
+  subtotal   Decimal @default(0.0000) @db.Decimal(14, 4)
+
+  transfer   StockTransfer   @relation(fields: [transferId], references: [id], onDelete: Cascade)
+  product    Product         @relation(fields: [productId], references: [id])
+  variant    ProductVariant? @relation(fields: [variantId], references: [id])
+
+  @@map("stock_transfer_items")
+}
+
 model Customer {
   id             String   @id @default(uuid())
   companyId      String   @map("company_id")
@@ -284,6 +379,10 @@ model Customer {
   email          String?
   phone          String?
   address        String?  @db.Text
+  loyaltyPoints  Int      @default(0) @map("loyalty_points")
+  loyaltyTier    String   @default("BRONZE") @map("loyalty_tier")
+  creditLimit    Decimal  @default(0.0000) @map("credit_limit") @db.Decimal(14, 4)
+  taxNumber      String?  @map("tax_number")
   openingBalance Decimal  @default(0.0000) @map("opening_balance") @db.Decimal(14, 4)
   currentBalance Decimal  @default(0.0000) @map("current_balance") @db.Decimal(14, 4)
   createdAt      DateTime @default(now()) @map("created_at")
@@ -301,12 +400,15 @@ model Supplier {
   email          String?
   phone          String?
   address        String?  @db.Text
+  taxNumber      String?  @map("tax_number")
   openingBalance Decimal  @default(0.0000) @map("opening_balance") @db.Decimal(14, 4)
   currentBalance Decimal  @default(0.0000) @map("current_balance") @db.Decimal(14, 4)
   createdAt      DateTime @default(now()) @map("created_at")
 
-  company        Company    @relation(fields: [companyId], references: [id])
+  company        Company           @relation(fields: [companyId], references: [id])
   purchases      Purchase[]
+  returns        PurchaseReturn[]
+  payments       SupplierPayment[]
 
   @@map("suppliers")
 }
@@ -463,41 +565,169 @@ model Purchase {
   notes          String?  @db.Text
   createdAt      DateTime @default(now()) @map("created_at")
 
-  company        Company        @relation(fields: [companyId], references: [id])
-  warehouse      Warehouse      @relation(fields: [warehouseId], references: [id])
-  supplier       Supplier       @relation(fields: [supplierId], references: [id])
+  company        Company           @relation(fields: [companyId], references: [id])
+  warehouse      Warehouse         @relation(fields: [warehouseId], references: [id])
+  supplier       Supplier          @relation(fields: [supplierId], references: [id])
   items          PurchaseItem[]
+  returns        PurchaseReturn[]
+  payments       SupplierPayment[]
 
   @@map("purchases")
 }
 
 model PurchaseItem {
-  id         String  @id @default(uuid())
-  purchaseId String  @map("purchase_id")
-  productId  String  @map("product_id")
-  quantity   Decimal @db.Decimal(14, 4)
-  unitCost   Decimal @map("unit_cost") @db.Decimal(14, 4)
-  taxAmount  Decimal @default(0.0000) @map("tax_amount") @db.Decimal(14, 4)
-  totalCost  Decimal @map("total_cost") @db.Decimal(14, 4)
+  id          String   @id @default(uuid())
+  purchaseId  String   @map("purchase_id")
+  productId   String   @map("product_id")
+  variantId   String?  @map("variant_id")
+  quantity    Decimal  @db.Decimal(14, 4)
+  receivedQty Decimal  @default(0.0000) @map("received_qty") @db.Decimal(14, 4)
+  unitCost    Decimal  @map("unit_cost") @db.Decimal(14, 4)
+  taxAmount   Decimal  @default(0.0000) @map("tax_amount") @db.Decimal(14, 4)
+  totalCost   Decimal  @map("total_cost") @db.Decimal(14, 4)
 
-  purchase   Purchase @relation(fields: [purchaseId], references: [id], onDelete: Cascade)
-  product    Product  @relation(fields: [productId], references: [id])
+  purchase    Purchase             @relation(fields: [purchaseId], references: [id], onDelete: Cascade)
+  product     Product              @relation(fields: [productId], references: [id])
+  variant     ProductVariant?      @relation(fields: [variantId], references: [id])
+  returnItems PurchaseReturnItem[]
 
   @@map("purchase_items")
 }
 
+model PurchaseReturn {
+  id           String   @id @default(uuid())
+  companyId    String   @map("company_id")
+  warehouseId  String   @map("warehouse_id")
+  purchaseId   String?  @map("purchase_id")
+  supplierId   String   @map("supplier_id")
+  returnNumber String   @unique @map("return_number")
+  refundAmount Decimal  @default(0.0000) @map("refund_amount") @db.Decimal(14, 4)
+  status       String   @default("COMPLETED")
+  reason       String?  @db.Text
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  company      Company              @relation(fields: [companyId], references: [id])
+  warehouse    Warehouse            @relation(fields: [warehouseId], references: [id])
+  purchase     Purchase?            @relation(fields: [purchaseId], references: [id])
+  supplier     Supplier             @relation(fields: [supplierId], references: [id])
+  items        PurchaseReturnItem[]
+
+  @@map("purchase_returns")
+}
+
+model PurchaseReturnItem {
+  id               String  @id @default(uuid())
+  purchaseReturnId String  @map("purchase_return_id")
+  purchaseItemId   String? @map("purchase_item_id")
+  productId        String  @map("product_id")
+  variantId        String? @map("variant_id")
+  quantity         Decimal @db.Decimal(14, 4)
+  unitCost         Decimal @db.Decimal(14, 4)
+  totalAmount      Decimal @map("total_amount") @db.Decimal(14, 4)
+
+  purchaseReturn   PurchaseReturn  @relation(fields: [purchaseReturnId], references: [id], onDelete: Cascade)
+  purchaseItem     PurchaseItem?   @relation(fields: [purchaseItemId], references: [id])
+  product          Product         @relation(fields: [productId], references: [id])
+  variant          ProductVariant? @relation(fields: [variantId], references: [id])
+
+  @@map("purchase_return_items")
+}
+
+model SupplierPayment {
+  id              String   @id @default(uuid())
+  companyId       String   @map("company_id")
+  supplierId      String   @map("supplier_id")
+  purchaseId      String?  @map("purchase_id")
+  paymentNumber   String   @unique @map("payment_number")
+  amount          Decimal  @db.Decimal(14, 4)
+  paymentMethod   String   @map("payment_method")
+  referenceNumber String?  @map("reference_number")
+  notes           String?  @db.Text
+  createdAt       DateTime @default(now()) @map("created_at")
+
+  company         Company   @relation(fields: [companyId], references: [id])
+  supplier        Supplier  @relation(fields: [supplierId], references: [id])
+  purchase        Purchase? @relation(fields: [purchaseId], references: [id])
+
+  @@map("supplier_payments")
+}
+
+model ExpenseCategory {
+  id          String   @id @default(uuid())
+  companyId   String   @map("company_id")
+  name        String
+  code        String
+  description String?
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  company     Company   @relation(fields: [companyId], references: [id])
+  expenses    Expense[]
+
+  @@map("expense_categories")
+}
+
+model Expense {
+  id              String   @id @default(uuid())
+  companyId       String   @map("company_id")
+  categoryId      String   @map("category_id")
+  expenseNumber   String   @unique @map("expense_number")
+  amount          Decimal  @db.Decimal(14, 4)
+  taxAmount       Decimal  @default(0.0000) @map("tax_amount") @db.Decimal(14, 4)
+  paymentMethod   String   @map("payment_method")
+  referenceNumber String?  @map("reference_number")
+  date            DateTime @default(now())
+  notes           String?  @db.Text
+  createdAt       DateTime @default(now()) @map("created_at")
+
+  company         Company         @relation(fields: [companyId], references: [id])
+  category        ExpenseCategory @relation(fields: [categoryId], references: [id])
+
+  @@map("expenses")
+}
+
 model Account {
-  id            String   @id @default(uuid())
-  companyId     String   @map("company_id")
-  accountNumber String   @map("account_number")
+  id            String        @id @default(uuid())
+  companyId     String        @map("company_id")
+  accountNumber String        @map("account_number")
   name          String
   type          String
-  balance       Decimal  @default(0.0000) @db.Decimal(14, 4)
-  createdAt     DateTime @default(now()) @map("created_at")
+  balance       Decimal       @default(0.0000) @db.Decimal(14, 4)
+  createdAt     DateTime      @default(now()) @map("created_at")
 
-  company       Company  @relation(fields: [companyId], references: [id])
+  company       Company       @relation(fields: [companyId], references: [id])
+  journalLines  JournalLine[]
 
   @@map("accounts")
+}
+
+model JournalEntry {
+  id            String        @id @default(uuid())
+  companyId     String        @map("company_id")
+  entryNumber   String        @unique @map("entry_number")
+  referenceType String?       @map("reference_type")
+  referenceId   String?       @map("reference_id")
+  date          DateTime      @default(now())
+  description   String?       @db.Text
+  createdAt     DateTime      @default(now()) @map("created_at")
+
+  company       Company       @relation(fields: [companyId], references: [id])
+  lines         JournalLine[]
+
+  @@map("journal_entries")
+}
+
+model JournalLine {
+  id             String       @id @default(uuid())
+  journalEntryId String       @map("journal_entry_id")
+  accountId      String       @map("account_id")
+  type           String
+  amount         Decimal      @db.Decimal(14, 4)
+  description    String?
+
+  journalEntry   JournalEntry @relation(fields: [journalEntryId], references: [id], onDelete: Cascade)
+  account        Account      @relation(fields: [accountId], references: [id])
+
+  @@map("journal_lines")
 }
 
 model Setting {

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import CountUp from "react-countup";
 import {
   File,
@@ -10,9 +10,40 @@ import { Link } from "react-router-dom";
 import ImageWithBasePath from "../../core/img/imagewithbasebath";
 import { ArrowRight } from "react-feather";
 import { all_routes } from "../../Router/all_routes";
+import { apiClient } from "../../core/apiClient";
 
 const Dashboard = () => {
   const route = all_routes;
+  const [metrics, setMetrics] = useState({
+    totalSales: 385656.50,
+    totalPurchases: 4385.00,
+    totalExpenses: 400.00,
+    netProfit: 12500.00,
+    customersCount: 100,
+    productsCount: 110,
+    lowStockCount: 5
+  });
+
+  useEffect(() => {
+    apiClient.get("/dashboard/summary")
+      .then((res) => {
+        if (res.data?.success && res.data.data) {
+          setMetrics(prev => ({
+            ...prev,
+            totalSales: res.data.data.totalSales || prev.totalSales,
+            totalPurchases: res.data.data.totalPurchases || prev.totalPurchases,
+            totalExpenses: res.data.data.totalExpenses || prev.totalExpenses,
+            netProfit: res.data.data.netProfit || prev.netProfit,
+            customersCount: res.data.data.customersCount || prev.customersCount,
+            productsCount: res.data.data.productsCount || prev.productsCount,
+            lowStockCount: res.data.data.lowStockCount || prev.lowStockCount
+          }));
+        }
+      })
+      .catch((err) => {
+        console.warn("Using default dashboard metrics:", err);
+      });
+  }, []);
   const [chartOptions] = useState({
     series: [
       {
@@ -96,7 +127,7 @@ const Dashboard = () => {
                 <div className="dash-widgetcontent">
                   <h5>
                   
-                    <CountUp className="counters" start={0} end={307144} duration={3} prefix="$" />
+                    <CountUp className="counters" start={0} end={Number(metrics.totalPurchases)} duration={1.5} prefix="$" />
                   </h5>
                   <p className="mb-0">Total Purchase Due</p>
                 </div>
@@ -114,10 +145,10 @@ const Dashboard = () => {
                 <div className="dash-widgetcontent">
                   <h5>
                     <span className="counters" >
-                    <CountUp start={0} end={4385.0} duration={3} prefix="$" />
+                    <CountUp start={0} end={Number(metrics.netProfit)} duration={1.5} prefix="$" />
                     </span>
                   </h5>
-                  <p className="mb-0">Total Sales Due</p>
+                  <p className="mb-0">Estimated Net Profit</p>
                 </div>
               </div>
             </div>
@@ -133,7 +164,7 @@ const Dashboard = () => {
                 <div className="dash-widgetcontent">
                   <h5>
                     <span className="counters" >
-                      <CountUp start={0} end={385656.50} duration={3} prefix="$" />
+                      <CountUp start={0} end={Number(metrics.totalSales)} duration={1.5} prefix="$" />
                     </span>
                   </h5>
                   <p className="mb-0">Total Sale Amount</p>
@@ -152,7 +183,7 @@ const Dashboard = () => {
                 <div className="dash-widgetcontent">
                   <h5>
                     <span className="counters" >
-                      <CountUp start={0} end={400.00} duration={3} prefix="$" />
+                      <CountUp start={0} end={Number(metrics.totalExpenses)} duration={1.5} prefix="$" />
                     </span>
                   </h5>
                   <p className="mb-0">Total Expense Amount</p>
@@ -163,7 +194,7 @@ const Dashboard = () => {
           <div className="col-xl-3 col-sm-6 col-12 d-flex">
               <div className="dash-count">
                 <div className="dash-counts">
-                  <h4>100</h4>
+                  <h4>{metrics.customersCount}</h4>
                   <h5>Customers</h5>
                 </div>
                 <div className="dash-imgs">
@@ -174,8 +205,8 @@ const Dashboard = () => {
             <div className="col-xl-3 col-sm-6 col-12 d-flex">
               <div className="dash-count das1">
                 <div className="dash-counts">
-                  <h4>110</h4>
-                  <h5>Suppliers</h5>
+                  <h4>{metrics.productsCount}</h4>
+                  <h5>Products</h5>
                 </div>
                 <div className="dash-imgs">
                   <UserCheck />

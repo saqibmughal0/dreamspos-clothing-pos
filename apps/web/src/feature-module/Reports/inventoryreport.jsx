@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import ImageWithBasePath from "../../core/img/imagewithbasebath";
 import { Link } from "react-router-dom";
 import Select from "react-select";
@@ -10,12 +10,35 @@ import CollapesIcon from "../../core/common/tooltip-content/collapes";
 import { DatePicker } from "antd";
 import { Category, ProductName } from "../../core/common/selectOption/selectOption";
 import CommonFooter from "../../core/common/footer/commonFooter";
+import { apiClient } from "../../core/apiClient";
 
 const InventoryReport = () => {
 
   const route = all_routes;
 
-  const data = inventoryreportdata;
+  const [data, setData] = useState(inventoryreportdata);
+
+  useEffect(() => {
+    apiClient.get("/reports/inventory-aging")
+      .then((res) => {
+        if (res.data?.success && res.data.data?.items?.length > 0) {
+          const mapped = res.data.data.items.map((item, idx) => ({
+            id: item.id,
+            key: item.id || idx,
+            productName: item.name,
+            sku: item.articleCode,
+            category: item.category,
+            brand: "Dreams Apparel",
+            unit: "Pc",
+            instockQty: `${item.units} Pcs`
+          }));
+          setData(mapped);
+        }
+      })
+      .catch((err) => {
+        console.warn("Using default inventory report data:", err);
+      });
+  }, []);
   const [searchText] = useState("");
 
   const filteredData = data.filter((entry) => {

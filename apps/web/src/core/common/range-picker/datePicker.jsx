@@ -2,17 +2,21 @@ import React, { useState } from 'react';
 import { DateRangePicker } from 'react-bootstrap-daterangepicker';
 import moment from 'moment';
 import 'bootstrap-daterangepicker/daterangepicker.css';
+import ErrorBoundary from '../errorBoundary/ErrorBoundary';
 
-const PredefinedDateRanges = () => {
+const PredefinedDateRangesInner = ({ onDateRangeChange, initialStart, initialEnd }) => {
   const [state, setState] = useState({
-    start: moment().subtract(29, 'days'),
-    end: moment(),
+    start: initialStart ? moment(initialStart) : moment().subtract(29, 'days'),
+    end: initialEnd ? moment(initialEnd) : moment(),
   });
 
   const { start, end } = state;
 
-  const handleCallback = (start, end) => {
-    setState({ start, end });
+  const handleCallback = (newStart, newEnd) => {
+    setState({ start: newStart, end: newEnd });
+    if (typeof onDateRangeChange === 'function') {
+      onDateRangeChange(newStart, newEnd);
+    }
   };
 
   // Format to "MM/DD/YYYY"
@@ -50,13 +54,42 @@ const PredefinedDateRanges = () => {
           fontSize: '14px',
           color: '#202C4B',
           height: '38px',
+          display: 'flex',
+          alignItems: 'center',
+          userSelect: 'none',
         }}
       >
-        {/* <i className="ti ti-calendar"></i>&nbsp; */}
         <span>{label}</span>
       </div>
     </DateRangePicker>
   );
 };
+
+const PredefinedDateRanges = (props) => (
+  <ErrorBoundary
+    compact
+    widgetName="Date Range Filter"
+    fallback={
+      <div
+        id="reportrange"
+        style={{
+          background: '#fff',
+          padding: '0.5rem 0.625rem',
+          border: '1px solid #E9EDF4',
+          borderRadius: '5px',
+          fontSize: '14px',
+          color: '#202C4B',
+          height: '38px',
+          display: 'flex',
+          alignItems: 'center',
+        }}
+      >
+        <span>All Time</span>
+      </div>
+    }
+  >
+    <PredefinedDateRangesInner {...props} />
+  </ErrorBoundary>
+);
 
 export default PredefinedDateRanges;

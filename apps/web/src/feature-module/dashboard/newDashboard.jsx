@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import { Link } from 'react-router-dom';
 import "bootstrap-daterangepicker/daterangepicker.css";
 import Chart from "react-apexcharts";
@@ -8,6 +8,8 @@ import ApexCharts from 'react-apexcharts';
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, PointElement, LineElement, ArcElement, Title, Tooltip, Legend } from "chart.js";
 import { all_routes } from '../../Router/all_routes';
 import PredefinedDateRanges from '../../core/common/range-picker/datePicker';
+import { apiClient } from '../../core/apiClient';
+import ErrorBoundary from '../../core/common/errorBoundary/ErrorBoundary';
 
 // Register the necessary components for Chart.js
 ChartJS.register(
@@ -24,6 +26,47 @@ ChartJS.register(
 const NewDashboard = () => {
 
     const route = all_routes;
+    const [summary, setSummary] = useState(null);
+    const [clothingAnalytics, setClothingAnalytics] = useState(null);
+    const [recentTransactions, setRecentTransactions] = useState([]);
+    const [dateRange, setDateRange] = useState({ startDate: null, endDate: null });
+
+    const fetchDashboardData = useCallback(async (start, end) => {
+        try {
+            const params = {};
+            if (start) params.startDate = start;
+            if (end) params.endDate = end;
+
+            const [summaryRes, analyticsRes, transRes] = await Promise.all([
+                apiClient.get("/dashboard/summary", { params }).catch(() => null),
+                apiClient.get("/dashboard/analytics", { params }).catch(() => null),
+                apiClient.get("/dashboard/transactions").catch(() => null)
+            ]);
+
+            if (summaryRes?.data?.data) {
+                setSummary(summaryRes.data.data);
+            }
+            if (analyticsRes?.data?.data) {
+                setClothingAnalytics(analyticsRes.data.data);
+            }
+            if (transRes?.data?.data) {
+                setRecentTransactions(transRes.data.data);
+            }
+        } catch (err) {
+            console.warn("Dashboard data fetch:", err);
+        }
+    }, []);
+
+    useEffect(() => {
+        fetchDashboardData(dateRange.startDate, dateRange.endDate);
+    }, [dateRange, fetchDashboardData]);
+
+    const handleDateRangeChange = (start, end) => {
+        setDateRange({
+            startDate: start.toISOString(),
+            endDate: end.toISOString()
+        });
+    };
 
     const salesDayChart = {
         chart: {
@@ -434,7 +477,7 @@ const NewDashboard = () => {
                     <div className="mb-3">
                         <h1 className="mb-1">Welcome, Admin</h1>
                         <p className="fw-medium">
-                            You have <span className="text-primary fw-bold">200+</span> Orders,
+                            You have <span className="text-primary fw-bold">{summary?.todayOrders ?? 200}+</span> Orders,
                             Today
                         </p>
                     </div>
@@ -442,20 +485,18 @@ const NewDashboard = () => {
                         <span className="input-icon-addon fs-16 text-gray-9">
                             <i className="ti ti-calendar" />
                         </span>
-                        <PredefinedDateRanges />
+                        <PredefinedDateRanges onDateRangeChange={handleDateRangeChange} />
                     </div>
                 </div>
                 <div className="alert bg-orange-transparent alert-dismissible fade show mb-4">
                     <div>
-                        <span> <i className="ti ti-info-circle fs-14 text-orange me-2" />  Your Product </span>
-                        <span className="text-orange fw-semibold"> Apple Iphone 15 is running Low, </span> already below 5 Pcs.,
+                        <span> <i className="ti ti-info-circle fs-14 text-orange me-2" />  Your Inventory </span>
+                        <span className="text-orange fw-semibold"> {summary?.lowStockCount ?? 5} clothing items are running low, </span> stock alert below 5 Pcs.,
                         <Link
-                            to="#"
-                            className="link-orange text-decoration-underline fw-semibold"
-                            data-bs-toggle="modal"
-                            data-bs-target="#add-stock"
+                            to={route.productlist}
+                            className="link-orange text-decoration-underline fw-semibold ms-1"
                         >
-                            Add Stock
+                            View Inventory
                         </Link>
                     </div>
                     <button
@@ -477,7 +518,7 @@ const NewDashboard = () => {
                                 <div className="ms-2">
                                     <p className="text-white mb-1">Total Sales</p>
                                     <div className="d-inline-flex align-items-center flex-wrap gap-2">
-                                        <h4 className="text-white">$48,988,078</h4>
+                                        <h4 className="text-white">${summary ? Number(summary.totalSales).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 2 }) : '48,988,078'}</h4>
                                         <span className="badge badge-soft-primary">
                                             <i className="ti ti-arrow-up me-1" />
                                             +22%
@@ -496,7 +537,7 @@ const NewDashboard = () => {
                                 <div className="ms-2">
                                     <p className="text-white mb-1">Total Sales Return</p>
                                     <div className="d-inline-flex align-items-center flex-wrap gap-2">
-                                        <h4 className="text-white">$16,478,145</h4>
+                                        <h4 className="text-white">${summary ? Number(summary.totalRefunds).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 2 }) : '16,478,145'}</h4>
                                         <span className="badge badge-soft-danger">
                                             <i className="ti ti-arrow-down me-1" />
                                             -22%
@@ -515,7 +556,7 @@ const NewDashboard = () => {
                                 <div className="ms-2">
                                     <p className="text-white mb-1">Total Purchase</p>
                                     <div className="d-inline-flex align-items-center flex-wrap gap-2">
-                                        <h4 className="text-white">$24,145,789</h4>
+                                        <h4 className="text-white">${summary ? Number(summary.totalPurchases).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 2 }) : '24,145,789'}</h4>
                                         <span className="badge badge-soft-success">
                                             <i className="ti ti-arrow-up me-1" />
                                             +22%
@@ -532,9 +573,9 @@ const NewDashboard = () => {
                                     <i className="ti ti-brand-pocket fs-24" />
                                 </span>
                                 <div className="ms-2">
-                                    <p className="text-white mb-1">Total Purchase Return</p>
+                                    <p className="text-white mb-1">Total Expenses</p>
                                     <div className="d-inline-flex align-items-center flex-wrap gap-2">
-                                        <h4 className="text-white">$18,458,747</h4>
+                                        <h4 className="text-white">${summary ? Number(summary.totalExpenses).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 2 }) : '18,458,747'}</h4>
                                         <span className="badge badge-soft-success">
                                             <i className="ti ti-arrow-up me-1" />
                                             +22%

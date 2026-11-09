@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import ImageWithBasePath from "../../core/img/imagewithbasebath";
 import Select from "react-select";
 import { Link } from "react-router-dom";
@@ -11,9 +11,38 @@ import RefreshIcon from "../../core/common/tooltip-content/refresh";
 import CollapesIcon from "../../core/common/tooltip-content/collapes";
 import { FileText, MinusCircle, PlusCircle, Search } from "feather-icons-react/build/IconComponents";
 import { Addition, ResponsiblePerson, Store, WareHouse } from "../../core/common/selectOption/selectOption";
+import { apiClient } from "../../core/apiClient";
 
 const StockAdjustment = () => {
-  const dataSource = useSelector((state) => state.rootReducer.managestockdata);
+  const reduxDataSource = useSelector((state) => state.rootReducer.managestockdata);
+  const [dataSource, setDataSource] = useState(reduxDataSource);
+
+  useEffect(() => {
+    apiClient.get("/inventory/adjustments")
+      .then((res) => {
+        if (res.data?.success && res.data.data?.items?.length > 0) {
+          const mapped = res.data.data.items.map((item, idx) => ({
+            key: item.id || idx,
+            Warehouse: item.warehouseName || "Main Warehouse",
+            Shop: "Dreams Apparel Flagship",
+            Product: {
+              Name: item.items?.[0]?.productName || "Clothing Garment",
+              Image: "assets/img/products/pos-product-01.png"
+            },
+            Date: new Date(item.createdAt).toLocaleDateString(),
+            Person: {
+              Name: "Inventory Manager",
+              Image: "assets/img/users/user-08.jpg"
+            },
+            Quantity: `${item.items?.reduce((sum, i) => sum + i.quantity, 0) || 1} Pcs`
+          }));
+          setDataSource(mapped);
+        }
+      })
+      .catch((err) => {
+        console.warn("Using default stock adjustments:", err);
+      });
+  }, []);
 
 
   const columns = [

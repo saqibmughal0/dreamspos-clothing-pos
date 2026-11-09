@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 
 import { expensecategory } from "../../core/json/expensecategory";
@@ -8,10 +8,30 @@ import TooltipIcons from "../../core/common/tooltip-content/tooltipIcons";
 import RefreshIcon from "../../core/common/tooltip-content/refresh";
 import CollapesIcon from "../../core/common/tooltip-content/collapes";
 import { PlusCircle } from "feather-icons-react/build/IconComponents";
+import { apiClient } from "../../core/apiClient";
 
 const ExpenseCategory = () => {
+  const [data, setData] = useState(expensecategory);
 
-  const data = expensecategory;
+  useEffect(() => {
+    apiClient.get("/finance/expense-categories")
+      .then((res) => {
+        if (res.data?.success && res.data.data?.length > 0) {
+          const mapped = res.data.data.map((c, idx) => ({
+            id: c.id,
+            key: c.id || idx,
+            status: "Active",
+            categoryName: c.name,
+            description: c.description || c.code || "Clothing Retail Category",
+            isSelected: false
+          }));
+          setData(mapped);
+        }
+      })
+      .catch((err) => {
+        console.warn("Using default expense categories:", err);
+      });
+  }, []);
   const columns = [
     {
       title: "CategoryName",
