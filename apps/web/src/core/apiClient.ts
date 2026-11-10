@@ -1,7 +1,9 @@
 import axios from "axios";
 
+const apiBaseUrl = (import.meta.env.VITE_API_URL as string) || "/api";
+
 export const apiClient = axios.create({
-  baseURL: "/api",
+  baseURL: apiBaseUrl,
   withCredentials: true,
   headers: {
     "Content-Type": "application/json"
@@ -45,8 +47,11 @@ apiClient.interceptors.response.use(
       }
 
       try {
+        const refreshEndpoint = apiBaseUrl.endsWith("/")
+          ? `${apiBaseUrl}auth/refresh`
+          : `${apiBaseUrl}/auth/refresh`;
         const refreshResponse = await axios.post(
-          "/api/auth/refresh",
+          refreshEndpoint,
           {},
           { withCredentials: true }
         );
