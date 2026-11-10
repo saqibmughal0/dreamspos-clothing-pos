@@ -64,49 +64,7 @@ export default defineConfig({
   },
   build: {
     outDir: "dist",
-    chunkSizeWarningLimit: 5000,
-    rollupOptions: {
-      output: {
-        manualChunks(id) {
-          if (id.includes("node_modules")) {
-            if (id.includes("apexcharts") || id.includes("chart.js") || id.includes("chartjs")) {
-              return "vendor-charts";
-            }
-            if (id.includes("@fullcalendar")) {
-              return "vendor-calendar";
-            }
-            if (id.includes("@ckeditor") || id.includes("quill") || id.includes("wysiwyg")) {
-              return "vendor-editors";
-            }
-            if (id.includes("leaflet") || id.includes("jvectormap") || id.includes("svg-worldmap")) {
-              return "vendor-maps";
-            }
-            if (
-              id.includes("@fortawesome") ||
-              id.includes("boxicons") ||
-              id.includes("feather-icons") ||
-              id.includes("weather-icons") ||
-              id.includes("react-feather") ||
-              id.includes("react-icons")
-            ) {
-              return "vendor-icons";
-            }
-            if (
-              id.includes("antd") ||
-              id.includes("@ant-design") ||
-              id.includes("rc-") ||
-              id.includes("moment") ||
-              id.includes("dayjs") ||
-              id.includes("bootstrap-daterangepicker") ||
-              id.includes("react-bootstrap-daterangepicker") ||
-              id.includes("datepicker")
-            ) {
-              return "vendor-ui";
-            }
-          }
-        }
-      }
-    }
+    chunkSizeWarningLimit: 12000
   },
   css: {
     preprocessorOptions: {
