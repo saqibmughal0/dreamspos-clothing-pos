@@ -1,0 +1,124 @@
+import { defineConfig, Plugin } from "vite";
+import react from "@vitejs/plugin-react";
+import path from "path";
+import fs from "fs";
+
+function daterangepickerMomentPlugin(): Plugin {
+  return {
+    name: "vite-plugin-daterangepicker-moment-interop",
+    transform(code, id) {
+      if (id.includes("bootstrap-daterangepicker") && id.endsWith(".js")) {
+        return code.replace(
+          "}(this, function(moment, $) {",
+          "}(this, function(moment, $) {\n    if (typeof moment !== 'function' && moment && moment.default) moment = moment.default;"
+        );
+      }
+    }
+  };
+}
+
+const esbuildDaterangepickerPlugin = {
+  name: "esbuild-daterangepicker-moment-interop",
+  setup(build: any) {
+    build.onLoad({ filter: /bootstrap-daterangepicker.*\.js$/ }, async (args: any) => {
+      let text = await fs.promises.readFile(args.path, "utf8");
+      text = text.replace(
+        "}(this, function(moment, $) {",
+        "}(this, function(moment, $) {\n    if (typeof moment !== 'function' && moment && moment.default) moment = moment.default;"
+      );
+      return { contents: text, loader: "js" };
+    });
+  }
+};
+
+export default defineConfig({
+  plugins: [react(), daterangepickerMomentPlugin()],
+  define: {
+    global: "globalThis"
+  },
+  optimizeDeps: {
+    esbuildOptions: {
+      define: {
+        global: "globalThis"
+      },
+      plugins: [esbuildDaterangepickerPlugin]
+    }
+  },
+  resolve: {
+    alias: {
+      "@": path.resolve(__dirname, "./src"),
+      "~bootstrap": path.resolve(__dirname, "node_modules/bootstrap"),
+      "@dreamspos/shared": path.resolve(__dirname, "../../packages/shared/src")
+    }
+  },
+  server: {
+    port: 3000,
+    proxy: {
+      "/api": {
+        target: "http://127.0.0.1:5000",
+        changeOrigin: true,
+        secure: false,
+        ws: true
+      }
+    }
+  },
+  build: {
+    outDir: "dist",
+    chunkSizeWarningLimit: 5000,
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          if (id.includes("node_modules")) {
+            if (id.includes("apexcharts") || id.includes("chart.js") || id.includes("chartjs")) {
+              return "vendor-charts";
+            }
+            if (id.includes("@fullcalendar")) {
+              return "vendor-calendar";
+            }
+            if (id.includes("@ckeditor") || id.includes("quill") || id.includes("wysiwyg")) {
+              return "vendor-editors";
+            }
+            if (id.includes("leaflet") || id.includes("jvectormap") || id.includes("svg-worldmap")) {
+              return "vendor-maps";
+            }
+            if (
+              id.includes("@fortawesome") ||
+              id.includes("boxicons") ||
+              id.includes("feather-icons") ||
+              id.includes("weather-icons") ||
+              id.includes("react-feather") ||
+              id.includes("react-icons")
+            ) {
+              return "vendor-icons";
+            }
+            if (
+              id.includes("antd") ||
+              id.includes("@ant-design") ||
+              id.includes("rc-") ||
+              id.includes("moment") ||
+              id.includes("dayjs") ||
+              id.includes("bootstrap-daterangepicker") ||
+              id.includes("react-bootstrap-daterangepicker") ||
+              id.includes("datepicker")
+            ) {
+              return "vendor-ui";
+            }
+          }
+        }
+      }
+    }
+  },
+  css: {
+    preprocessorOptions: {
+      scss: {
+        api: "modern-compiler",
+        silenceDeprecations: [
+          "legacy-js-api",
+          "import",
+          "global-builtin",
+          "color-functions"
+        ]
+      }
+    }
+  }
+});

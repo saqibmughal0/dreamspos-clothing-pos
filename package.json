@@ -1,0 +1,29 @@
+{
+  "name": "dreamspos-monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*",
+    "database"
+  ],
+  "scripts": {
+    "dev": "concurrently -n \"API,WEB\" -c \"blue,green\" \"npm run dev:api\" \"npm run dev:web\"",
+    "dev:web": "npm run dev --workspace=apps/web",
+    "dev:api": "npm run dev --workspace=apps/api",
+    "build": "npm run build --workspaces --if-present",
+    "build:shared": "npm run build --workspace=packages/shared",
+    "build:web": "npm run build:shared && npm run build --workspace=apps/web",
+    "build:api": "npm run build --workspace=apps/api",
+    "db:generate": "npm run prisma:generate --workspace=database",
+    "db:migrate": "npm run prisma:migrate --workspace=database",
+    "db:seed": "npm run prisma:seed --workspace=database",
+    "test": "npm run test --workspaces --if-present",
+    "test:api": "npm run test --workspace=apps/api",
+    "test:web": "npm run test --workspace=apps/web"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2",
+    "typescript": "^5.7.3"
+  }
+}

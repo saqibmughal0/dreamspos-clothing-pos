@@ -1,0 +1,41 @@
+# Environment files (NEVER commit secrets)
+.env
+.env.*
+!.env.example
+*.env.local
+
+# Dependencies
+node_modules/
+**/node_modules/
+.pnpm-store/
+
+# Build and distribution artifacts
+dist/
+build/
+coverage/
+.cache/
+.turbo/
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+*.log
+
+# Security, keys, certificates and database dumps
+*.pem
+*.key
+*.sql
+*.sqlite
+*.sqlite3
+
+# Operating System & Editor artifacts
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Template raw archives
+template-extract/*.zip
+template-extract/*.rar
