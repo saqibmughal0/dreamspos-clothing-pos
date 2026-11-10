@@ -25,5 +25,13 @@
   "devDependencies": {
     "concurrently": "^9.1.2",
     "typescript": "^5.7.3"
+  },
+  "engines": {
+    "node": "22.x",
+    "npm": ">=10.0.0"
+  },
+  "optionalDependencies": {
+    "@rollup/rollup-linux-x64-gnu": "4.68.0",
+    "@rollup/rollup-linux-x64-musl": "4.68.0"
   }
 }
