@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "main": "dist/server.js",
   "scripts": {
-    "build": "tsc",
+    "build": "npm --prefix ../../packages/shared run build && npm --prefix ../../database run build && tsc",
+    "build:web": "npm run build",
     "start": "node dist/server.js",
     "dev": "ts-node src/server.ts",
     "test": "vitest run"

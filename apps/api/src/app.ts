@@ -20,11 +20,34 @@ import { settingsRouter } from "./modules/settings/settings.routes";
 
 export const app = express();
 
+const allowedOrigins = [
+  config.frontendUrl,
+  config.frontendUrl?.replace(/\/$/, ""),
+  "https://dreamspos-clothing-pos.vercel.app",
+  "http://localhost:3000",
+  "http://localhost:5173",
+  "http://127.0.0.1:3000",
+  "http://127.0.0.1:5173"
+].filter(Boolean) as string[];
+
 app.use(helmet());
 app.use(
   cors({
-    origin: config.frontendUrl,
-    credentials: true
+    origin: (origin, callback) => {
+      if (!origin) return callback(null, true);
+      const cleanOrigin = origin.replace(/\/$/, "");
+      if (
+        allowedOrigins.includes(origin) ||
+        allowedOrigins.includes(cleanOrigin) ||
+        origin.endsWith(".vercel.app")
+      ) {
+        return callback(null, true);
+      }
+      return callback(null, true);
+    },
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"]
   })
 );
 app.use(express.json());
@@ -32,9 +55,23 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(morgan("dev"));
 
+// Root Welcome Endpoint
+app.get("/", (req, res) => {
+  res.status(200).json({
+    status: "healthy",
+    service: "DreamsPOS API",
+    version: "1.0.0",
+    health: "/api/health"
+  });
+});
+
 // Health Check
-app.get("/api/health", (req, res) => {
-  res.status(200).json({ status: "healthy", timestamp: new Date().toISOString() });
+app.get(["/api/health", "/health"], (req, res) => {
+  res.status(200).json({
+    status: "healthy",
+    timestamp: new Date().toISOString(),
+    env: config.env
+  });
 });
 
 // Mount Module Routes
@@ -53,3 +90,5 @@ app.use("/api/settings", settingsRouter);
 
 // Centralized Error Handler
 app.use(errorHandler);
+
+export default app;
