@@ -17,6 +17,7 @@
     "build:api": "npm run build --workspace=apps/api",
     "start": "node apps/api/dist/server.js",
     "start:api": "node apps/api/dist/server.js",
+    "start:prod": "npm run db:deploy && node apps/api/dist/server.js",
     "db:generate": "npm run prisma:generate --workspace=database",
     "db:migrate": "npm run prisma:migrate --workspace=database",
     "db:deploy": "npm run prisma:deploy --workspace=database",
@@ -24,6 +25,9 @@
     "test": "npm run test --workspaces --if-present",
     "test:api": "npm run test --workspace=apps/api",
     "test:web": "npm run test --workspace=apps/web"
+  },
+  "dependencies": {
+    "prisma": "^6.3.1"
   },
   "devDependencies": {
     "concurrently": "^9.1.2",
