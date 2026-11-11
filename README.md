@@ -192,3 +192,4 @@ npm run build:web
 ## License & Attribution
 
 The DreamsPOS interface, styles, fonts, and assets are licensed materials. Source distribution is intended solely for private repository use and deployment of the single authorized retail POS application.
+>>>>>>> master
