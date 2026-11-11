@@ -3,6 +3,7 @@ import cors from "cors";
 import helmet from "helmet";
 import morgan from "morgan";
 import cookieParser from "cookie-parser";
+import { prisma } from "@dreamspos/database";
 import { config } from "./config";
 import { errorHandler } from "./middleware/errorHandler";
 import { authRouter } from "./modules/auth/auth.routes";
@@ -66,11 +67,21 @@ app.get("/", (req, res) => {
 });
 
 // Health Check
-app.get(["/api/health", "/health"], (req, res) => {
+app.get(["/api/health", "/health"], async (req, res) => {
+  let dbStatus = "unknown";
+  try {
+    await prisma.$queryRaw`SELECT 1`;
+    dbStatus = "connected";
+  } catch (err: any) {
+    dbStatus = `disconnected: ${err?.message || "connection error"}`;
+  }
+
   res.status(200).json({
     status: "healthy",
     timestamp: new Date().toISOString(),
-    env: config.env
+    env: config.env,
+    database: dbStatus,
+    version: "1.0.1"
   });
 });
 
