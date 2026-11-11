@@ -16,7 +16,7 @@
     "build:shared": "npm run build --workspace=packages/shared",
     "build:web": "npm run build:shared && npm run build --workspace=apps/web",
     "build:api": "npm run build --workspace=apps/api",
-    "start": "npm run db:deploy && node apps/api/dist/server.js",
+    "start": "node apps/api/dist/server.js",
     "start:api": "node apps/api/dist/server.js",
     "start:prod": "npm run db:deploy && node apps/api/dist/server.js",
     "db:generate": "npm run prisma:generate --workspace=database",
