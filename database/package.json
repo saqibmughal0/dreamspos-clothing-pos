@@ -7,16 +7,16 @@
     "build": "prisma generate && tsc",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
-    "prisma:deploy": "prisma migrate deploy",
+    "prisma:deploy": "prisma migrate deploy --schema=prisma/schema.prisma",
     "prisma:seed": "ts-node seed/seed.ts"
   },
   "dependencies": {
     "@prisma/client": "^6.3.1",
-    "bcrypt": "^5.1.1"
+    "bcrypt": "^5.1.1",
+    "prisma": "^6.3.1"
   },
   "devDependencies": {
     "@types/bcrypt": "^5.0.2",
-    "prisma": "^6.3.1",
     "ts-node": "^10.9.2",
     "typescript": "^5.7.3"
   }
