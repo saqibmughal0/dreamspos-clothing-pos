@@ -30,7 +30,7 @@ const allowedOrigins = [
   "http://127.0.0.1:5173"
 ].filter(Boolean) as string[];
 
-app.use(helmet());
+app.use(helmet({ crossOriginResourcePolicy: { policy: "cross-origin" } }));
 app.use(
   cors({
     origin: (origin, callback) => {
