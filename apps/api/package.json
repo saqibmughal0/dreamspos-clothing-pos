@@ -4,8 +4,10 @@
   "main": "dist/server.js",
   "scripts": {
     "build": "npm --prefix ../../packages/shared run build && npm --prefix ../../database run build && tsc",
+    "build:api": "npm run build",
     "build:web": "npm run build",
     "start": "node dist/server.js",
+    "db:deploy": "npm --prefix ../../database run prisma:deploy",
     "dev": "ts-node src/server.ts",
     "test": "vitest run"
   },
