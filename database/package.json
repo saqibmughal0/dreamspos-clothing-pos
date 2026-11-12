@@ -7,7 +7,7 @@
     "build": "npm run prisma:generate && tsc",
     "prisma:generate": "node -e \"process.env.PRISMA_GENERATE_SKIP_AUTOINSTALL='true'; require('child_process').execSync('prisma generate', {stdio: 'inherit', env: process.env})\"",
     "prisma:migrate": "prisma migrate dev",
-    "prisma:deploy": "prisma migrate deploy --schema=prisma/schema.prisma",
+    "prisma:deploy": "node scripts/verify-migrations.js && prisma migrate deploy --schema=prisma/schema.prisma",
     "prisma:seed": "ts-node seed/seed.ts"
   },
   "dependencies": {

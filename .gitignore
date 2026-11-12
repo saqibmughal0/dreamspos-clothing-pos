@@ -27,6 +27,7 @@ pnpm-debug.log*
 *.pem
 *.key
 *.sql
+!**/prisma/migrations/**/*.sql
 *.sqlite
 *.sqlite3
 
