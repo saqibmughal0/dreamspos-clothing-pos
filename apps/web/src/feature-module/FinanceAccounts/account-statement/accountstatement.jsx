@@ -145,7 +145,7 @@ const Accountstatement = () => {
                             <Table columns={columns} dataSource={dataSource} footer={() => <>
                                 <div className='d-flex align-items-center justify-content-between'>
                                     <h5>Total</h5>
-                                    <h5>$33268.53</h5>
+                                    <h5>Rs 33268.53</h5>
                                 </div>
                             </>} />
                         </div>

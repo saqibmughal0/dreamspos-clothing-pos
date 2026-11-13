@@ -247,7 +247,7 @@ const IncomeList = () => {
                         <input
                           type="text"
                           className="form-control"
-                          defaultValue="$200"
+                          defaultValue="Rs 200"
                         />
                       </div>
                       <div className="col-lg-6 mb-3">
@@ -353,7 +353,7 @@ const IncomeList = () => {
                         <input
                           type="text"
                           className="form-control"
-                          defaultValue="$200"
+                          defaultValue="Rs 200"
                         />
                       </div>
                       <div className="col-lg-6 mb-3">

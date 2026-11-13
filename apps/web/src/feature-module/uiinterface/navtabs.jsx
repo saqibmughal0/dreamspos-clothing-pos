@@ -2313,7 +2313,7 @@ const NavTabs = () => {
                                                             </th>
                                                             <td>Wrist Watch</td>
                                                             <td>Watch</td>
-                                                            <td>$1,299.00</td>
+                                                            <td>Rs 1,299.00</td>
                                                         </tr>
                                                         <tr>
                                                             <th scope="row">
@@ -2326,7 +2326,7 @@ const NavTabs = () => {
                                                             </th>
                                                             <td>Camera</td>
                                                             <td>Gadgets</td>
-                                                            <td>$7,249.29</td>
+                                                            <td>Rs 7,249.29</td>
                                                         </tr>
                                                         <tr>
                                                             <th scope="row">
@@ -2339,7 +2339,7 @@ const NavTabs = () => {
                                                             </th>
                                                             <td>Shoes</td>
                                                             <td>Footwear</td>
-                                                            <td>$799.00</td>
+                                                            <td>Rs 799.00</td>
                                                         </tr>
                                                     </tbody>
                                                 </table>
@@ -2451,41 +2451,31 @@ const NavTabs = () => {
                                                 <li className="mb-3">
                                                     <div className="d-flex justify-content-between">
                                                         <div>Clothing</div>
-                                                        <div className="fs-14 fw-semibold text-danger">
-                                                            -$31,134
-                                                        </div>
+                                                        <div className="fs-14 fw-semibold text-danger">-Rs 31,134</div>
                                                     </div>
                                                 </li>
                                                 <li className="mb-3">
                                                     <div className="d-flex justify-content-between">
                                                         <div>electronics</div>
-                                                        <div className="fs-14 fw-semibold text-danger">
-                                                            -$15,256
-                                                        </div>
+                                                        <div className="fs-14 fw-semibold text-danger">-Rs 15,256</div>
                                                     </div>
                                                 </li>
                                                 <li className="mb-3">
                                                     <div className="d-flex justify-content-between">
                                                         <div>Furniture</div>
-                                                        <div className="fs-14 fw-semibold text-danger">
-                                                            -$24,156
-                                                        </div>
+                                                        <div className="fs-14 fw-semibold text-danger">-Rs 24,156</div>
                                                     </div>
                                                 </li>
                                                 <li className="mb-3">
                                                     <div className="d-flex justify-content-between">
                                                         <div>Home Appliances</div>
-                                                        <div className="fs-14 fw-semibold text-danger">
-                                                            -$18,245
-                                                        </div>
+                                                        <div className="fs-14 fw-semibold text-danger">-Rs 18,245</div>
                                                     </div>
                                                 </li>
                                                 <li className="mb-0">
                                                     <div className="d-flex justify-content-between">
                                                         <div>food Products</div>
-                                                        <div className="fs-14 fw-semibold text-danger">
-                                                            -$18,478
-                                                        </div>
+                                                        <div className="fs-14 fw-semibold text-danger">-Rs 18,478</div>
                                                     </div>
                                                 </li>
                                             </ul>

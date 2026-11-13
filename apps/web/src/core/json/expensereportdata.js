@@ -5,7 +5,7 @@ export const expensereportdata = [
     Category: "Utilities",
     Description: "Electricity Bill",
     Date: "24 Dec 2024",
-    Amount: "$200",
+    Amount: "Rs 200",
     Status: "Approved",
   },
   {
@@ -14,7 +14,7 @@ export const expensereportdata = [
     Category: "Office Supplies",
     Description: "Stationery items for office",
     Date: "10 Dec 2024",
-    Amount: "$50",
+    Amount: "Rs 50",
     Status: "Pending",
   },
   {
@@ -23,7 +23,7 @@ export const expensereportdata = [
     Category: "Repairs & Maintenance",
     Description: "AC Repair for Office",
     Date: "27 Nov 2024",
-    Amount: "$800",
+    Amount: "Rs 800",
     Status: "Approved",
   },
   {
@@ -32,7 +32,7 @@ export const expensereportdata = [
     Category: "Marketing",
     Description: "Social Media Ads Campaign",
     Date: "18 Nov 2024",
-    Amount: "$100",
+    Amount: "Rs 100",
     Status: "Approved",
   },
   {
@@ -41,7 +41,7 @@ export const expensereportdata = [
     Category: "Travel Expenses",
     Description: "Travel fare for client meeting",
     Date: "06 Nov 2024",
-    Amount: "$700",
+    Amount: "Rs 700",
     Status: "Approved",
   },
   {
@@ -50,7 +50,7 @@ export const expensereportdata = [
     Category: "Employee Benefits",
     Description: "Team Lunch at Restaurant",
     Date: "25 Oct 2024",
-    Amount: "$1000",
+    Amount: "Rs 1000",
     Status: "Pending",
   },
   {
@@ -59,7 +59,7 @@ export const expensereportdata = [
     Category: "Travel Expenses",
     Description: "Flight tickets for meetings",
     Date: "14 Oct 2024",
-    Amount: "$1200",
+    Amount: "Rs 1200",
     Status: "Approved",
   },
   {
@@ -68,7 +68,7 @@ export const expensereportdata = [
     Category: "Office Supplies",
     Description: "Ergonomic chairs for staff",
     Date: "03 Oct 2024",
-    Amount: "$750",
+    Amount: "Rs 750",
     Status: "Approved",
   },
   {
@@ -77,7 +77,7 @@ export const expensereportdata = [
     Category: "Repairs & Maintenance",
     Description: "Plumbing repairs in office",
     Date: "20 Sep 2024",
-    Amount: "$450",
+    Amount: "Rs 450",
     Status: "Approved",
   },
   {
@@ -86,7 +86,7 @@ export const expensereportdata = [
     Category: "Utilities",
     Description: "Monthly internet subscription",
     Date: "10 Sep 2024",
-    Amount: "$300",
+    Amount: "Rs 300",
     Status: "Pending",
   },
 ];

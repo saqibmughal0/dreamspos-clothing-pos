@@ -69,7 +69,7 @@ const SalesReturn = () => {
       sorter: (a, b) => a.status.length - b.status.length,
     },
     {
-      title: "Grand Total ($)",
+      title: "Grand Total (Rs)",
       dataIndex: "grandtotal",
       sorter: (a, b) => a.grandtotal.length - b.grandtotal.length,
     },
@@ -79,7 +79,7 @@ const SalesReturn = () => {
       sorter: (a, b) => a.paid.length - b.paid.length,
     },
     {
-      title: "Due ($)",
+      title: "Due (Rs)",
       dataIndex: "due",
       sorter: (a, b) => a.due.length - b.due.length,
     },

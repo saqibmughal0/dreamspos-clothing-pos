@@ -1425,7 +1425,7 @@ const TablesBasic = () => {
                               ></div>
                             </div>
                           </td>
-                          <td>$10,984.29</td>
+                          <td>Rs 10,984.29</td>
                           <td>
                             <div className="hstack gap-2 fs-15">
                               <Link
@@ -1508,7 +1508,7 @@ const TablesBasic = () => {
                               ></div>
                             </div>
                           </td>
-                          <td>$1.4billion</td>
+                          <td>Rs 1.4billion</td>
                           <td>
                             <div className="hstack gap-2 fs-15">
                               <Link
@@ -1579,7 +1579,7 @@ const TablesBasic = () => {
                               ></div>
                             </div>
                           </td>
-                          <td>$7,123.21</td>
+                          <td>Rs 7,123.21</td>
                           <td>
                             <div className="hstack gap-2 fs-15">
                               <Link
@@ -1656,7 +1656,7 @@ const TablesBasic = () => {
                               ></div>
                             </div>
                           </td>
-                          <td>$2,325.45</td>
+                          <td>Rs 2,325.45</td>
                           <td>
                             <div className="hstack gap-2 fs-15">
                               <Link

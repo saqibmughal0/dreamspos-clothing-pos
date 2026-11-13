@@ -193,7 +193,7 @@ const SalesDashbaord = () => {
                                     Lenovo 3rd Generation
                                   </Link>
                                 </h6>
-                                <p>$4420</p>
+                                <p>Rs 4420</p>
                               </div>
                             </div>
                           </td>
@@ -218,7 +218,7 @@ const SalesDashbaord = () => {
                                 <h6 className="fw-medium">
                                   <Link to={route.productlist} className="fw-bold">Bold V3.2</Link>
                                 </h6>
-                                <p>$1474</p>
+                                <p>Rs 1474</p>
                               </div>
                             </div>
                           </td>
@@ -243,7 +243,7 @@ const SalesDashbaord = () => {
                                 <h6 className="fw-medium">
                                   <Link to={route.productlist} className="fw-bold">Nike Jordan</Link>
                                 </h6>
-                                <p>$8784</p>
+                                <p>Rs 8784</p>
                               </div>
                             </div>
                           </td>
@@ -268,7 +268,7 @@ const SalesDashbaord = () => {
                                 <h6 className="fw-medium">
                                   <Link to={route.productlist} className="fw-bold">Apple Series 5 Watch</Link>
                                 </h6>
-                                <p>$3240</p>
+                                <p>Rs 3240</p>
                               </div>
                             </div>
                           </td>
@@ -293,7 +293,7 @@ const SalesDashbaord = () => {
                                 <h6 className="fw-medium">
                                   <Link to={route.productlist} className="fw-bold">Amazon Echo Dot</Link>
                                 </h6>
-                                <p>$597</p>
+                                <p>Rs 597</p>
                               </div>
                             </div>
                           </td>
@@ -366,7 +366,7 @@ const SalesDashbaord = () => {
                               Success
                             </span>
                           </td>
-                          <td className="fs-16 fw-bold text-gray-9">$1,099.00</td>
+                          <td className="fs-16 fw-bold text-gray-9">Rs 1,099.00</td>
                         </tr>
                         <tr>
                           <td>2</td>
@@ -402,7 +402,7 @@ const SalesDashbaord = () => {
                               Cancelled
                             </span>
                           </td>
-                          <td className="fs-16 fw-bold text-gray-9">$600.55</td>
+                          <td className="fs-16 fw-bold text-gray-9">Rs 600.55</td>
                         </tr>
                         <tr>
                           <td>3</td>
@@ -438,7 +438,7 @@ const SalesDashbaord = () => {
                               Completed
                             </span>
                           </td>
-                          <td className="fs-16 fw-bold text-gray-9">$1,099.00</td>
+                          <td className="fs-16 fw-bold text-gray-9">Rs 1,099.00</td>
                         </tr>
                         <tr>
                           <td>4</td>
@@ -474,7 +474,7 @@ const SalesDashbaord = () => {
                               Success
                             </span>
                           </td>
-                          <td className="fs-16 fw-bold text-gray-9">$1,569.00</td>
+                          <td className="fs-16 fw-bold text-gray-9">Rs 1,569.00</td>
                         </tr>
                         <tr>
                           <td>5</td>
@@ -510,7 +510,7 @@ const SalesDashbaord = () => {
                               Success
                             </span>
                           </td>
-                          <td className="fs-16 fw-bold text-gray-9">$1,478.00</td>
+                          <td className="fs-16 fw-bold text-gray-9">Rs 1,478.00</td>
                         </tr>
                       </tbody>
                     </table>

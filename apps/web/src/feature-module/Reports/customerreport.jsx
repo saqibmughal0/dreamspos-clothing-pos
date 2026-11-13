@@ -223,7 +223,7 @@ const CustomerReport = () => {
                           <Table.Summary.Cell ></Table.Summary.Cell>
                           <Table.Summary.Cell ></Table.Summary.Cell>
                           <Table.Summary.Cell ></Table.Summary.Cell>
-                          <Table.Summary.Cell ><h6>$33268.53</h6></Table.Summary.Cell>
+                          <Table.Summary.Cell ><h6>Rs 33268.53</h6></Table.Summary.Cell>
                           <Table.Summary.Cell ></Table.Summary.Cell>
                           <Table.Summary.Cell ></Table.Summary.Cell>
                         </Table.Summary.Row>

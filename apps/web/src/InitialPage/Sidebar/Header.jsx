@@ -158,13 +158,13 @@ const Header = () => {
             onMouseLeave={expandMenu}
             onMouseOver={expandMenuOpen}
           >
-            <Link to="/dashboard" className="logo logo-normal">
+            <Link to="/index" className="logo logo-normal">
               <ImageWithBasePath src="assets/img/logo.png" alt="img" />
             </Link>
-            <Link to="/dashboard" className="logo logo-white">
+            <Link to="/index" className="logo logo-white">
               <ImageWithBasePath src="assets/img/logo-white.png" alt="img" />
             </Link>
-            <Link to="/dashboard" className="logo-small">
+            <Link to="/index" className="logo-small">
               <ImageWithBasePath src="assets/img/logo-small.png" alt="img" />
             </Link>
             <Link
@@ -602,7 +602,7 @@ const Header = () => {
                           </span>
                           <div className="flex-grow-1">
                             <p className="noti-details">
-                              Payment of $50 received for Order #67890 from{" "}
+                              Payment of Rs 50 received for Order #67890 from{" "}
                               <span className="noti-title">Antonio Engle</span>
                             </p>
                             <p className="noti-time">05 mins ago</p>

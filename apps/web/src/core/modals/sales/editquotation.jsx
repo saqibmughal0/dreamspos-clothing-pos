@@ -109,11 +109,11 @@ const EditQuotation = () => {
                           <tr>
                             <th>Product</th>
                             <th>Qty</th>
-                            <th>Purchase Price($)</th>
-                            <th>Discount($)</th>
+                            <th>Purchase Price(Rs)</th>
+                            <th>Discount(Rs)</th>
                             <th>Tax(%)</th>
-                            <th>Tax Amount($)</th>
-                            <th>Unit Cost($)</th>
+                            <th>Tax Amount(Rs)</th>
+                            <th>Unit Cost(Rs)</th>
                             <th>Total Cost(%)</th>
                           </tr>
                         </thead>
@@ -259,19 +259,19 @@ const EditQuotation = () => {
                           <ul className="rounded-1 border-1">
                             <li className="border-0 border-bottom">
                               <h4 className="border-end">Order Tax</h4>
-                              <h5>$ 0.00</h5>
+                              <h5>Rs 0.00</h5>
                             </li>
                             <li className="border-0 border-bottom">
                               <h4 className="border-end">Discount</h4>
-                              <h5>$ 0.00</h5>
+                              <h5>Rs 0.00</h5>
                             </li>
                             <li className="border-0 border-bottom">
                               <h4 className="border-end">Shipping</h4>
-                              <h5>$ 0.00</h5>
+                              <h5>Rs 0.00</h5>
                             </li>
                             <li className="border-0 border-bottom">
                               <h4 className="border-end">Grand Total</h4>
-                              <h5>$5200.00</h5>
+                              <h5>Rs 5200.00</h5>
                             </li>
                           </ul>
                         </div>

@@ -123,9 +123,9 @@ const AddPurchaseReturn = () => {
                               <th>Supplier</th>
                               <th>Reference</th>
                               <th>Status</th>
-                              <th>Grand Total ($)</th>
-                              <th>Paid ($)</th>
-                              <th>Due ($)</th>
+                              <th>Grand Total (Rs)</th>
+                              <th>Paid (Rs)</th>
+                              <th>Due (Rs)</th>
                               <th>Payment Status</th>
                             </tr>
                           </thead>
@@ -155,9 +155,9 @@ const AddPurchaseReturn = () => {
                                   <th>Supplier</th>
                                   <th>Reference</th>
                                   <th>Status</th>
-                                  <th>Total ($)</th>
-                                  <th>Paid ($)</th>
-                                  <th>Due ($)</th>
+                                  <th>Total (Rs)</th>
+                                  <th>Paid (Rs)</th>
+                                  <th>Due (Rs)</th>
                                   <th>Payment Status</th>
                                 </tr>
                               </thead>

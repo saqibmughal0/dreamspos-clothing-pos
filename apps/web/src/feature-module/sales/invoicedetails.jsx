@@ -137,36 +137,36 @@ const Invoicedetails = () => {
                                                     <h6>UX Strategy</h6>
                                                 </td>
                                                 <td className="text-gray-9 fw-medium text-end">1</td>
-                                                <td className="text-gray-9 fw-medium text-end">$500</td>
-                                                <td className="text-gray-9 fw-medium text-end">$100</td>
-                                                <td className="text-gray-9 fw-medium text-end">$500</td>
+                                                <td className="text-gray-9 fw-medium text-end">Rs 500</td>
+                                                <td className="text-gray-9 fw-medium text-end">Rs 100</td>
+                                                <td className="text-gray-9 fw-medium text-end">Rs 500</td>
                                             </tr>
                                             <tr>
                                                 <td>
                                                     <h6>Design System</h6>
                                                 </td>
                                                 <td className="text-gray-9 fw-medium text-end">1</td>
-                                                <td className="text-gray-9 fw-medium text-end">$5000</td>
-                                                <td className="text-gray-9 fw-medium text-end">$100</td>
-                                                <td className="text-gray-9 fw-medium text-end">$5000</td>
+                                                <td className="text-gray-9 fw-medium text-end">Rs 5000</td>
+                                                <td className="text-gray-9 fw-medium text-end">Rs 100</td>
+                                                <td className="text-gray-9 fw-medium text-end">Rs 5000</td>
                                             </tr>
                                             <tr>
                                                 <td>
                                                     <h6>Brand Guidellines</h6>
                                                 </td>
                                                 <td className="text-gray-9 fw-medium text-end">1</td>
-                                                <td className="text-gray-9 fw-medium text-end">$5000</td>
-                                                <td className="text-gray-9 fw-medium text-end">$100</td>
-                                                <td className="text-gray-9 fw-medium text-end">$5000</td>
+                                                <td className="text-gray-9 fw-medium text-end">Rs 5000</td>
+                                                <td className="text-gray-9 fw-medium text-end">Rs 100</td>
+                                                <td className="text-gray-9 fw-medium text-end">Rs 5000</td>
                                             </tr>
                                             <tr>
                                                 <td>
                                                     <h6>Social Media Template</h6>
                                                 </td>
                                                 <td className="text-gray-9 fw-medium text-end">1</td>
-                                                <td className="text-gray-9 fw-medium text-end">$5000</td>
-                                                <td className="text-gray-9 fw-medium text-end">$100</td>
-                                                <td className="text-gray-9 fw-medium text-end">$5000</td>
+                                                <td className="text-gray-9 fw-medium text-end">Rs 5000</td>
+                                                <td className="text-gray-9 fw-medium text-end">Rs 100</td>
+                                                <td className="text-gray-9 fw-medium text-end">Rs 5000</td>
                                             </tr>
                                         </tbody>
                                     </table>
@@ -176,19 +176,19 @@ const Invoicedetails = () => {
                                 <div className="col-md-5 ms-auto mb-3">
                                     <div className="d-flex justify-content-between align-items-center border-bottom mb-2 pe-3">
                                         <p className="mb-0">Sub Total</p>
-                                        <p className="text-dark fw-medium mb-2">$5500</p>
+                                        <p className="text-dark fw-medium mb-2">Rs 5500</p>
                                     </div>
                                     <div className="d-flex justify-content-between align-items-center border-bottom mb-2 pe-3">
                                         <p className="mb-0">Discount(0%)</p>
-                                        <p className="text-dark fw-medium mb-2">$400</p>
+                                        <p className="text-dark fw-medium mb-2">Rs 400</p>
                                     </div>
                                     <div className="d-flex justify-content-between align-items-center mb-2 pe-3">
                                         <p className="mb-0">VAT(5%)</p>
-                                        <p className="text-dark fw-medium mb-2">$54</p>
+                                        <p className="text-dark fw-medium mb-2">Rs 54</p>
                                     </div>
                                     <div className="d-flex justify-content-between align-items-center mb-2 pe-3">
                                         <h5>Total Amount</h5>
-                                        <h5>$5775</h5>
+                                        <h5>Rs 5775</h5>
                                     </div>
                                     <p className="fs-12">
                                         Amount in Words : Dollar Five thousand Seven Seventy Five

@@ -26,9 +26,9 @@ const PurchaseReturns = () => {
             supplier: r.supplierName,
             reference: r.returnNumber,
             status: r.status,
-            grandTotal: `$${Number(r.refundAmount).toFixed(2)}`,
-            paid: `$${Number(r.refundAmount).toFixed(2)}`,
-            due: "$0.00",
+            grandTotal: `Rs ${Number(r.refundAmount).toFixed(2)}`,
+            paid: `Rs ${Number(r.refundAmount).toFixed(2)}`,
+            due: "Rs 0.00",
             paymentStatus: "Refunded"
           }));
           setDataSource(mapped);

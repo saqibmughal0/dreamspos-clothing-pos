@@ -81,52 +81,52 @@ const ProfitLoss = () => {
               </tr>
               <tr>
                 <td className="border-end">Sales</td>
-                <td>$50,000</td>
-                <td>$50,000</td>
-                <td>$50,000</td>
-                <td>$50,000</td>
-                <td>$50,000</td>
-                <td>$50,000</td>
+                <td>Rs 50,000</td>
+                <td>Rs 50,000</td>
+                <td>Rs 50,000</td>
+                <td>Rs 50,000</td>
+                <td>Rs 50,000</td>
+                <td>Rs 50,000</td>
               </tr>
               <tr>
                 <td className="border-end">Service</td>
-                <td>$30,000</td>
-                <td>$30,000</td>
-                <td>$30,000</td>
-                <td>$30,000</td>
-                <td>$30,000</td>
-                <td>$30,000</td>
+                <td>Rs 30,000</td>
+                <td>Rs 30,000</td>
+                <td>Rs 30,000</td>
+                <td>Rs 30,000</td>
+                <td>Rs 30,000</td>
+                <td>Rs 30,000</td>
               </tr>
               <tr>
                 <td className="border-end">Purchase Return</td>
-                <td>$7,000</td>
-                <td>$7,000</td>
-                <td>$7,000</td>
-                <td>$7,000</td>
-                <td>$7,000</td>
-                <td>$7,000</td>
+                <td>Rs 7,000</td>
+                <td>Rs 7,000</td>
+                <td>Rs 7,000</td>
+                <td>Rs 7,000</td>
+                <td>Rs 7,000</td>
+                <td>Rs 7,000</td>
               </tr>
               <tr>
                 <td className="border-end">
                   <h6 className="fw0bold">Gross Profit</h6>
                 </td>
                 <td>
-                  <h6 className="fw0bold">$8,000</h6>
+                  <h6 className="fw0bold">Rs 8,000</h6>
                 </td>
                 <td>
-                  <h6 className="fw0bold">$8,000</h6>
+                  <h6 className="fw0bold">Rs 8,000</h6>
                 </td>
                 <td>
-                  <h6 className="fw0bold">$8,000</h6>
+                  <h6 className="fw0bold">Rs 8,000</h6>
                 </td>
                 <td>
-                  <h6 className="fw0bold">$8,000</h6>
+                  <h6 className="fw0bold">Rs 8,000</h6>
                 </td>
                 <td>
-                  <h6 className="fw0bold">$8,000</h6>
+                  <h6 className="fw0bold">Rs 8,000</h6>
                 </td>
                 <td>
-                  <h6 className="fw0bold">$8,000</h6>
+                  <h6 className="fw0bold">Rs 8,000</h6>
                 </td>
               </tr>
               <tr>
@@ -137,54 +137,54 @@ const ProfitLoss = () => {
               </tr>
               <tr>
                 <td className="border-end">Sales</td>
-                <td>$50,000</td>
-                <td>$50,000</td>
-                <td>$50,000</td>
-                <td>$50,000</td>
-                <td>$50,000</td>
-                <td>$50,000</td>
+                <td>Rs 50,000</td>
+                <td>Rs 50,000</td>
+                <td>Rs 50,000</td>
+                <td>Rs 50,000</td>
+                <td>Rs 50,000</td>
+                <td>Rs 50,000</td>
               </tr>
               <tr>
                 <td className="border-end">Purrchase</td>
-                <td>$30,000</td>
-                <td>$30,000</td>
-                <td>$30,000</td>
-                <td>$30,000</td>
-                <td>$30,000</td>
-                <td>$30,000</td>
+                <td>Rs 30,000</td>
+                <td>Rs 30,000</td>
+                <td>Rs 30,000</td>
+                <td>Rs 30,000</td>
+                <td>Rs 30,000</td>
+                <td>Rs 30,000</td>
               </tr>
               <tr>
                 <td className="border-end">
                   <h6 className="fw-bold">Sales Return</h6>
                 </td>
-                <td>$7,000</td>
-                <td>$7,000</td>
-                <td>$7,000</td>
-                <td>$7,000</td>
-                <td>$7,000</td>
-                <td>$7,000</td>
+                <td>Rs 7,000</td>
+                <td>Rs 7,000</td>
+                <td>Rs 7,000</td>
+                <td>Rs 7,000</td>
+                <td>Rs 7,000</td>
+                <td>Rs 7,000</td>
               </tr>
               <tr>
                 <td className="border-end">
                   <h6 className="fw-bold">Total Expense</h6>
                 </td>
-                <td>$8,000</td>
-                <td>$8,000</td>
-                <td>$8,000</td>
-                <td>$8,000</td>
-                <td>$8,000</td>
-                <td>$8,000</td>
+                <td>Rs 8,000</td>
+                <td>Rs 8,000</td>
+                <td>Rs 8,000</td>
+                <td>Rs 8,000</td>
+                <td>Rs 8,000</td>
+                <td>Rs 8,000</td>
               </tr>
               <tr>
                 <td className="border-end">
                   <h6 className="fw-bold">Net Profit</h6>
                 </td>
-                <td>$8,000</td>
-                <td>$8,000</td>
-                <td>$8,000</td>
-                <td>$8,000</td>
-                <td>$8,000</td>
-                <td>$8,000</td>
+                <td>Rs 8,000</td>
+                <td>Rs 8,000</td>
+                <td>Rs 8,000</td>
+                <td>Rs 8,000</td>
+                <td>Rs 8,000</td>
+                <td>Rs 8,000</td>
               </tr>
             </tbody>
           </table>

@@ -173,22 +173,13 @@ const CollapsedSidebar = () => {
           </aside>
           <div className="tab-content tab-content-four pt-2">
             <ul className="tab-pane" id="home" aria-labelledby="home-tab">
-              <li className="submenu">
+              <li>
                 <Link
-                  to="#"
-                  onClick={handleSelectClick}
-                  className={isActive ? "subdrop" : ""}
+                  to="/index"
+                  className={Location.pathname === "/index" || Location.pathname === "/" ? "active" : ""}
                 >
-                  <span>Dashboard</span> <span className="menu-arrow" />
+                  <span>Dashboard</span>
                 </Link>
-                <ul style={{ display: isActive ? "block" : "none" }}>
-                  <li>
-                    <Link to="/admin-dashboard">Admin Dashboard</Link>
-                  </li>
-                  <li>
-                    <Link to="sales-dashboard">Sales Dashboard</Link>
-                  </li>
-                </ul>
               </li>
               <li className="submenu">
                 <Link

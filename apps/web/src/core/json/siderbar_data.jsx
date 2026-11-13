@@ -12,30 +12,10 @@ export const SidebarData = [
     submenuItems: [
       {
         label: "Dashboard",
+        link: "/index",
         icon: 'layout-grid',
-        submenu: true,
         showSubRoute: false,
-
-        submenuItems: [
-          { label: "Admin Dashboard", link: "/index" },
-          { label: "Admin Dashboard 2", link: "/admin-dashboard" },
-          { label: "Sales Dashboard", link: "/sales-dashboard" },
-        ],
-      },
-      {
-        label: "Super Admin",
-        icon: 'user-edit',
-        submenu: true,
-        showSubRoute: false,
-
-        submenuItems: [
-          { label: "Dashboard", link: "/dashboard" },
-          { label: "Companies", link: "/companies" },
-          { label: "Subscriptions", link: "/subscription" },
-          { label: "Packages", link: "/packages" },
-          { label: "Domain", link: "/domain" },
-          { label: "Purchase Transaction", link: route.purchasetransaction },
-        ],
+        submenu: false,
       },
       {
         label: "Application",

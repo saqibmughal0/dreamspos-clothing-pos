@@ -6,7 +6,7 @@ export const incomelists = [
     Store: "Distribution center",
     Category: "Foreign investment",
     Notes: "Categorize income derived",
-    Amount: "$200",
+    Amount: "Rs 200",
   },
   {
     key: 2,
@@ -15,7 +15,7 @@ export const incomelists = [
     Store: "Intelligent warehouse",
     Category: "Product Export",
     Notes: "Services that have been verified",
-    Amount: "$50",
+    Amount: "Rs 50",
   },
   {
     key: 3,
@@ -24,7 +24,7 @@ export const incomelists = [
     Store: "Mahin Logistics",
     Category: "Installation",
     Notes: "POS Installation for Store",
-    Amount: "$800",
+    Amount: "Rs 800",
   },
   {
     key: 4,
@@ -33,7 +33,7 @@ export const incomelists = [
     Store: "Bonded warehouse",
     Category: "Local Sale",
     Notes: "Travel fare for client meeting",
-    Amount: "$700",
+    Amount: "Rs 700",
   },
   {
     key: 5,
@@ -42,7 +42,7 @@ export const incomelists = [
     Store: "Budget warehouse",
     Category: "Service Fees",
     Notes: "Services that have been verified",
-    Amount: "$1000",
+    Amount: "Rs 1000",
   },
   {
     key: 6,
@@ -51,7 +51,7 @@ export const incomelists = [
     Store: "Gati Limited",
     Category: "Return/Refund Income",
     Notes: "Flight tickets for meetings",
-    Amount: "$1200",
+    Amount: "Rs 1200",
   },
   {
     key: 7,
@@ -60,7 +60,7 @@ export const incomelists = [
     Store: "Storeroom Halls",
     Category: "Foreign investment",
     Notes: "Services that have been verified",
-    Amount: "$750",
+    Amount: "Rs 750",
   },
   {
     key: 8,
@@ -69,7 +69,7 @@ export const incomelists = [
     Store: "Strongbox",
     Category: "Product Export",
     Notes: "Categorize income derived in office",
-    Amount: "$450",
+    Amount: "Rs 450",
   },
   {
     key: 9,
@@ -78,6 +78,6 @@ export const incomelists = [
     Store: "Total Quality Logistics",
     Category: "Return/Refund Income",
     Notes: "Services that have been verified",
-    Amount: "$300",
+    Amount: "Rs 300",
   },
 ];

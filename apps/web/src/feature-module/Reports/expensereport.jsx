@@ -24,7 +24,7 @@ const ExpenseReport = () => {
             categoryName: e.categoryName,
             date: new Date(e.date).toLocaleDateString(),
             paymentMethod: e.paymentMethod,
-            amount: `$${Number(e.amount).toFixed(2)}`,
+            amount: `Rs ${Number(e.amount).toFixed(2)}`,
             status: "Approved"
           }));
           setData(mapped);

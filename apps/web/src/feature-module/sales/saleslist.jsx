@@ -533,11 +533,11 @@ const SalesList = () => {
                               <tr>
                                 <th>Product</th>
                                 <th>Qty</th>
-                                <th>Purchase Price($)</th>
-                                <th>Discount($)</th>
+                                <th>Purchase Price(Rs)</th>
+                                <th>Discount(Rs)</th>
                                 <th>Tax(%)</th>
-                                <th>Tax Amount($)</th>
-                                <th>Unit Cost($)</th>
+                                <th>Tax Amount(Rs)</th>
+                                <th>Unit Cost(Rs)</th>
                                 <th>Total Cost(%)</th>
                               </tr>
                             </thead>
@@ -561,19 +561,19 @@ const SalesList = () => {
                               <ul>
                                 <li>
                                   <h4>Order Tax</h4>
-                                  <h5>$ 0.00</h5>
+                                  <h5>Rs 0.00</h5>
                                 </li>
                                 <li>
                                   <h4>Discount</h4>
-                                  <h5>$ 0.00</h5>
+                                  <h5>Rs 0.00</h5>
                                 </li>
                                 <li>
                                   <h4>Shipping</h4>
-                                  <h5>$ 0.00</h5>
+                                  <h5>Rs 0.00</h5>
                                 </li>
                                 <li>
                                   <h4>Grand Total</h4>
-                                  <h5>$ 0.00</h5>
+                                  <h5>Rs 0.00</h5>
                                 </li>
                               </ul>
                             </div>
@@ -777,11 +777,11 @@ const SalesList = () => {
                                 <tr>
                                   <th>Product</th>
                                   <th>Qty</th>
-                                  <th>Purchase Price($)</th>
-                                  <th>Discount($)</th>
+                                  <th>Purchase Price(Rs)</th>
+                                  <th>Discount(Rs)</th>
                                   <th>Tax(%)</th>
-                                  <th>Tax Amount($)</th>
-                                  <th>Unit Cost($)</th>
+                                  <th>Tax Amount(Rs)</th>
+                                  <th>Unit Cost(Rs)</th>
                                   <th>Total Cost(%)</th>
                                 </tr>
                               </thead>
@@ -915,23 +915,23 @@ const SalesList = () => {
                                 <ul>
                                   <li>
                                     <h4>Order Tax</h4>
-                                    <h5>$ 0.00</h5>
+                                    <h5>Rs 0.00</h5>
                                   </li>
                                   <li>
                                     <h4>Discount</h4>
-                                    <h5>$ 0.00</h5>
+                                    <h5>Rs 0.00</h5>
                                   </li>
                                   <li>
                                     <h4>Grand Total</h4>
-                                    <h5>$ 5200.00</h5>
+                                    <h5>Rs 5200.00</h5>
                                   </li>
                                   <li>
                                     <h4>Paid</h4>
-                                    <h5>$ 5200.00</h5>
+                                    <h5>Rs 5200.00</h5>
                                   </li>
                                   <li>
                                     <h4>Due</h4>
-                                    <h5>$ 0.00</h5>
+                                    <h5>Rs 0.00</h5>
                                   </li>
                                 </ul>
                               </div>
@@ -1043,11 +1043,11 @@ const SalesList = () => {
                               <tr>
                                 <th>Product</th>
                                 <th>Qty</th>
-                                <th>Purchase Price($)</th>
-                                <th>Discount($)</th>
+                                <th>Purchase Price(Rs)</th>
+                                <th>Discount(Rs)</th>
                                 <th>Tax(%)</th>
-                                <th>Tax Amount($)</th>
-                                <th>Unit Cost($)</th>
+                                <th>Tax Amount(Rs)</th>
+                                <th>Unit Cost(Rs)</th>
                                 <th>Total Cost(%)</th>
                               </tr>
                             </thead>
@@ -1175,19 +1175,19 @@ const SalesList = () => {
                               <ul>
                                 <li>
                                   <h4>Order Tax</h4>
-                                  <h5>$ 0.00</h5>
+                                  <h5>Rs 0.00</h5>
                                 </li>
                                 <li>
                                   <h4>Discount</h4>
-                                  <h5>$ 0.00</h5>
+                                  <h5>Rs 0.00</h5>
                                 </li>
                                 <li>
                                   <h4>Shipping</h4>
-                                  <h5>$ 0.00</h5>
+                                  <h5>Rs 0.00</h5>
                                 </li>
                                 <li>
                                   <h4>Grand Total</h4>
-                                  <h5>$5200.00</h5>
+                                  <h5>Rs 5200.00</h5>
                                 </li>
                               </ul>
                             </div>
@@ -1303,7 +1303,7 @@ const SalesList = () => {
                                 <tr>
                                   <td>19 Jan 2023</td>
                                   <td>INV/SL0101</td>
-                                  <td>$1500</td>
+                                  <td>Rs 1500</td>
                                   <td>Cash</td>
                                   <td className="action-table-data">
                                     <div className="edit-delete-action">

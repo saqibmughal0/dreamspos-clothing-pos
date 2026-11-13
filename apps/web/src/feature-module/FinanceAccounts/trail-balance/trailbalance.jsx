@@ -96,29 +96,29 @@ const Trailbalance = () => {
                                         </tr>
                                         <tr>
                                             <td className="p-2 border-1">Cash in register</td>
-                                            <td className="p-2 border-1">$5,000</td>
+                                            <td className="p-2 border-1">Rs 5,000</td>
                                             <td className="p-2 border-1" />
                                         </tr>
                                         <tr>
                                             <td className="p-2 border-1">Bank Accounts</td>
-                                            <td className="p-2 border-1">$12,000</td>
+                                            <td className="p-2 border-1">Rs 12,000</td>
                                             <td className="p-2 border-1" />
                                         </tr>
                                         <tr>
                                             <td className="p-2 border-1">Accounts Receivable</td>
-                                            <td className="p-2 border-1">$3,000</td>
+                                            <td className="p-2 border-1">Rs 3,000</td>
                                             <td className="p-2 border-1" />
                                         </tr>
                                         <tr>
                                             <td className="p-2 border-1">Inventory (POS stock)</td>
-                                            <td className="p-2 border-1">$10,000</td>
+                                            <td className="p-2 border-1">Rs 10,000</td>
                                             <td className="p-2 border-1" />
                                         </tr>
                                         <tr className="border-bottom">
                                             <td className="p-2 border-1 fw-bold text-gray-9">
                                                 Total Assets
                                             </td>
-                                            <td className="p-2 border-1 fw-bold text-gray-9">$37,000</td>
+                                            <td className="p-2 border-1 fw-bold text-gray-9">Rs 37,000</td>
                                             <td className="p-2 border-1" />
                                         </tr>
                                         <tr>
@@ -131,40 +131,36 @@ const Trailbalance = () => {
                                         <tr>
                                             <td className="p-2 border-1">Accounts Payable</td>
                                             <td className="p-2 border-1" />
-                                            <td className="p-2 border-1">$2,000</td>
+                                            <td className="p-2 border-1">Rs 2,000</td>
                                         </tr>
                                         <tr>
                                             <td className="p-2 border-1">Short-term Loans</td>
                                             <td className="p-2 border-1" />
-                                            <td className="p-2 border-1">$4,000</td>
+                                            <td className="p-2 border-1">Rs 4,000</td>
                                         </tr>
                                         <tr>
                                             <td className="p-2 border-1">Sales Tax Payable</td>
                                             <td className="p-2 border-1" />
-                                            <td className="p-2 border-1">$500</td>
+                                            <td className="p-2 border-1">Rs 500</td>
                                         </tr>
                                         <tr>
                                             <td className="p-2 border-1">Wages Payable</td>
                                             <td className="p-2 border-1" />
-                                            <td className="p-2 border-1">$1,200</td>
+                                            <td className="p-2 border-1">Rs 1,200</td>
                                         </tr>
                                         <tr>
                                             <td className="p-2 border-1 fw-bold text-gray-9">
                                                 Total Assets
                                             </td>
                                             <td className="p-2 border-1" />
-                                            <td className="p-2 border-1 fw-bold text-gray-9">$20,700</td>
+                                            <td className="p-2 border-1 fw-bold text-gray-9">Rs 20,700</td>
                                         </tr>
                                         <tr>
                                             <td className="bg-secondary-transparent text-gray-9 fw-bold p-3">
                                                 Total
                                             </td>
-                                            <td className="bg-secondary-transparent text-gray-9 fw-bold p-3">
-                                                $37,000
-                                            </td>
-                                            <td className="bg-secondary-transparent text-gray-9 fw-bold p-3">
-                                                $37,000
-                                            </td>
+                                            <td className="bg-secondary-transparent text-gray-9 fw-bold p-3">Rs 37,000</td>
+                                            <td className="bg-secondary-transparent text-gray-9 fw-bold p-3">Rs 37,000</td>
                                         </tr>
                                     </tbody>
                                 </table>

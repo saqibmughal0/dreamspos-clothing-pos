@@ -100,7 +100,7 @@ const SaleReport = () => {
                 <div className="ms-2">
                   <p className="fw-medium mb-1">Total Amount</p>
                   <div>
-                    <h3>$4,56,000</h3>
+                    <h3>Rs 4,56,000</h3>
                   </div>
                 </div>
               </div>
@@ -115,7 +115,7 @@ const SaleReport = () => {
                 <div className="ms-2">
                   <p className="fw-medium mb-1">Total Paid</p>
                   <div>
-                    <h3>$2,56,42</h3>
+                    <h3>Rs 2,56,42</h3>
                   </div>
                 </div>
               </div>
@@ -130,7 +130,7 @@ const SaleReport = () => {
                 <div className="ms-2">
                   <p className="fw-medium mb-1">Total Unpaid</p>
                   <div>
-                    <h3>$1,52,45</h3>
+                    <h3>Rs 1,52,45</h3>
                   </div>
                 </div>
               </div>
@@ -145,7 +145,7 @@ const SaleReport = () => {
                 <div className="ms-2">
                   <p className="fw-medium mb-1">Overdue</p>
                   <div>
-                    <h3>$2,56,12</h3>
+                    <h3>Rs 2,56,12</h3>
                   </div>
                 </div>
               </div>

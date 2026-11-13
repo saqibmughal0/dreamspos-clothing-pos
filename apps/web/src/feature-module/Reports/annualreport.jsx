@@ -80,94 +80,94 @@ const Annualreport = () => {
                 <tbody>
                   <tr>
                     <td>January</td>
-                    <td>$50,000</td>
-                    <td>$50,000</td>
-                    <td>$50,000</td>
-                    <td>$50,000</td>
+                    <td>Rs 50,000</td>
+                    <td>Rs 50,000</td>
+                    <td>Rs 50,000</td>
+                    <td>Rs 50,000</td>
                   </tr>
                   <tr>
                     <td>Febuary</td>
-                    <td>$30,000</td>
-                    <td>$50,000</td>
-                    <td>$50,000</td>
-                    <td>$50,000</td>
+                    <td>Rs 30,000</td>
+                    <td>Rs 50,000</td>
+                    <td>Rs 50,000</td>
+                    <td>Rs 50,000</td>
                   </tr>
                   <tr>
                     <td>March</td>
-                    <td>$7,000</td>
-                    <td>$50,000</td>
-                    <td>$50,000</td>
-                    <td>$50,000</td>
+                    <td>Rs 7,000</td>
+                    <td>Rs 50,000</td>
+                    <td>Rs 50,000</td>
+                    <td>Rs 50,000</td>
                   </tr>
                   <tr>
                     <td>April</td>
-                    <td>$7,000</td>
-                    <td>$50,000</td>
-                    <td>$50,000</td>
-                    <td>$50,000</td>
+                    <td>Rs 7,000</td>
+                    <td>Rs 50,000</td>
+                    <td>Rs 50,000</td>
+                    <td>Rs 50,000</td>
                   </tr>
                   <tr>
                     <td>May</td>
-                    <td>$7,000</td>
-                    <td>$50,000</td>
-                    <td>$50,000</td>
-                    <td>$50,000</td>
+                    <td>Rs 7,000</td>
+                    <td>Rs 50,000</td>
+                    <td>Rs 50,000</td>
+                    <td>Rs 50,000</td>
                   </tr>
                   <tr>
                     <td>June</td>
-                    <td>$7,000</td>
-                    <td>$30,000</td>
-                    <td>$30,000</td>
-                    <td>$30,000</td>
+                    <td>Rs 7,000</td>
+                    <td>Rs 30,000</td>
+                    <td>Rs 30,000</td>
+                    <td>Rs 30,000</td>
                   </tr>
                   <tr>
                     <td>July</td>
-                    <td>$7,000</td>
-                    <td>$30,000</td>
-                    <td>$30,000</td>
-                    <td>$30,000</td>
+                    <td>Rs 7,000</td>
+                    <td>Rs 30,000</td>
+                    <td>Rs 30,000</td>
+                    <td>Rs 30,000</td>
                   </tr>
                   <tr>
                     <td>August</td>
-                    <td>$7,000</td>
-                    <td>$30,000</td>
-                    <td>$30,000</td>
-                    <td>$30,000</td>
+                    <td>Rs 7,000</td>
+                    <td>Rs 30,000</td>
+                    <td>Rs 30,000</td>
+                    <td>Rs 30,000</td>
                   </tr>
                   <tr>
                     <td>September</td>
-                    <td>$7,000</td>
-                    <td>$7,000</td>
-                    <td>$7,000</td>
-                    <td>$7,000</td>
+                    <td>Rs 7,000</td>
+                    <td>Rs 7,000</td>
+                    <td>Rs 7,000</td>
+                    <td>Rs 7,000</td>
                   </tr>
                   <tr>
                     <td>October</td>
-                    <td>$7,000</td>
-                    <td>$7,000</td>
-                    <td>$7,000</td>
-                    <td>$7,000</td>
+                    <td>Rs 7,000</td>
+                    <td>Rs 7,000</td>
+                    <td>Rs 7,000</td>
+                    <td>Rs 7,000</td>
                   </tr>
                   <tr>
                     <td>November</td>
-                    <td>$7,000</td>
-                    <td>$7,000</td>
-                    <td>$7,000</td>
-                    <td>$7,000</td>
+                    <td>Rs 7,000</td>
+                    <td>Rs 7,000</td>
+                    <td>Rs 7,000</td>
+                    <td>Rs 7,000</td>
                   </tr>
                   <tr>
                     <td>December</td>
-                    <td>$7,000</td>
-                    <td>$7,000</td>
-                    <td>$7,000</td>
-                    <td>$7,000</td>
+                    <td>Rs 7,000</td>
+                    <td>Rs 7,000</td>
+                    <td>Rs 7,000</td>
+                    <td>Rs 7,000</td>
                   </tr>
                   <tr className="custom-table">
                     <td className="bg-light fw-bold p-3 fs-16">Total</td>
-                    <td className="bg-light fw-bold p-3 fs-16">$8,000</td>
-                    <td className="bg-light fw-bold p-3 fs-16">$8,000</td>
-                    <td className="bg-light fw-bold p-3 fs-16">$8,000</td>
-                    <td className="bg-light fw-bold p-3 fs-16">$8,000</td>
+                    <td className="bg-light fw-bold p-3 fs-16">Rs 8,000</td>
+                    <td className="bg-light fw-bold p-3 fs-16">Rs 8,000</td>
+                    <td className="bg-light fw-bold p-3 fs-16">Rs 8,000</td>
+                    <td className="bg-light fw-bold p-3 fs-16">Rs 8,000</td>
                   </tr>
                 </tbody>
               </table>

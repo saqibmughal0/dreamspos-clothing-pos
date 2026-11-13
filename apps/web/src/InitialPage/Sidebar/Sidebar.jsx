@@ -183,21 +183,24 @@ const Sidebar = () => {
                           return link_array;
                         });
                         title.links = link_array;
+                        const isStandaloneActive = !title?.submenu && (
+                          Location.pathname === title?.link ||
+                          (title?.link === "/index" && (Location.pathname === "/" || Location.pathname === "/index"))
+                        );
                         return (
                           <React.Fragment key={i}>
                             {" "}
                             <li
-                              className={`submenu ${!title?.submenu &&
-                                Location.pathname === title?.link
+                              className={`submenu ${isStandaloneActive
                                 ? "custom-active-hassubroute-false"
                                 : ""
                                 }`}
                             >
                               <Link
                                 to={title?.link}
-                                onClick={() => toggleSidebar(title?.label)}
-                                className={`${subOpen === title?.label ? "subdrop" : ""
-                                  } ${title?.links?.includes(Location.pathname)
+                                onClick={() => title?.submenu && toggleSidebar(title?.label)}
+                                className={`${title?.submenu && subOpen === title?.label ? "subdrop" : ""
+                                  } ${isStandaloneActive || title?.links?.includes(Location.pathname)
                                     ? "active"
                                     : ""
                                   }`}
@@ -210,6 +213,7 @@ const Sidebar = () => {
                                   <span className="menu-arrow" />
                                 )}
                               </Link>
+                              {title?.submenu && (
                               <ul
                                 style={{
                                   display:
@@ -280,6 +284,7 @@ const Sidebar = () => {
                                   )
                                 )}
                               </ul>
+                              )}
                             </li>
                           </React.Fragment>
                         );

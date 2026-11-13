@@ -68,7 +68,7 @@ const AccountListModal = () => {
                                                     <input
                                                         type="text"
                                                         className="form-control"
-                                                        defaultValue="$200"
+                                                        defaultValue="Rs 200"
                                                     />
                                                 </div>
                                             </div>
@@ -178,7 +178,7 @@ const AccountListModal = () => {
                                                     <input
                                                         type="text"
                                                         className="form-control"
-                                                        defaultValue="$200"
+                                                        defaultValue="Rs 200"
                                                     />
                                                 </div>
                                             </div>

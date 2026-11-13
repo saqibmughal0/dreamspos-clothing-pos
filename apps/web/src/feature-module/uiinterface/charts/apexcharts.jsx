@@ -147,7 +147,7 @@ const Apexchart = () => {
     },
     yaxis: {
       title: {
-        text: "$ (thousands)",
+        text: "Rs (thousands)",
       },
     },
     fill: {
@@ -156,7 +156,7 @@ const Apexchart = () => {
     tooltip: {
       y: {
         formatter: function (val) {
-          return "$ " + val + " thousands";
+          return "Rs " + val + " thousands";
         },
       },
     },

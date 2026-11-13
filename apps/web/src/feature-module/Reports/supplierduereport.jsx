@@ -222,8 +222,8 @@ const SupplierDueReport = () => {
                           <Table.Summary.Cell ></Table.Summary.Cell>
                           <Table.Summary.Cell ></Table.Summary.Cell>
                           <Table.Summary.Cell ><h6>33268</h6></Table.Summary.Cell>
-                          <Table.Summary.Cell ><h6>$33268.53</h6></Table.Summary.Cell>
-                          <Table.Summary.Cell ><h6>$0.0</h6></Table.Summary.Cell>
+                          <Table.Summary.Cell ><h6>Rs 33268.53</h6></Table.Summary.Cell>
+                          <Table.Summary.Cell ><h6>Rs 0.0</h6></Table.Summary.Cell>
                           <Table.Summary.Cell ></Table.Summary.Cell>
                         </Table.Summary.Row>
                       </>

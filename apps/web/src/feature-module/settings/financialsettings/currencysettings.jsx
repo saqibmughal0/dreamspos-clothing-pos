@@ -159,8 +159,8 @@ const CurrencySettings = () => {
                                   </tr>
                                   <tr>
                                     <td>US Dollar</td>
-                                    <td>USD</td>
-                                    <td>$</td>
+                                    <td>PKR</td>
+                                    <td>Rs</td>
                                     <td>Default</td>
                                     <td>10 Jan 2025</td>
                                     <td className="action-table-data justify-content-end">

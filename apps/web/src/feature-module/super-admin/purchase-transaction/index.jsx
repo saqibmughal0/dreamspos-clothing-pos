@@ -327,7 +327,7 @@ const PurchaseTransaction = () => {
                         <td className="text-end">30 Days</td>
                         <td className="text-end">12 Sep 2024</td>
                         <td className="text-end">12 Oct 2024</td>
-                        <td className="text-end">$200</td>
+                        <td className="text-end">Rs 200</td>
                       </tr>
                     </tbody>
                   </table>
@@ -340,22 +340,22 @@ const PurchaseTransaction = () => {
                     <p className="mb-0">Credit Card - 123***********789</p>
                     <div className="d-flex justify-content-between align-items-center mb-2 pe-3">
                       <p className="mb-0">Amount</p>
-                      <p className="text-dark fw-medium mb-2">$200.00</p>
+                      <p className="text-dark fw-medium mb-2">Rs 200.00</p>
                     </div>
                   </div>
                 </div>
                 <div className="col-md-4">
                   <div className="d-flex justify-content-between align-items-center pe-3">
                     <p className="text-dark fw-medium mb-0">Sub Total</p>
-                    <p className="mb-2">$200.00</p>
+                    <p className="mb-2">Rs 200.00</p>
                   </div>
                   <div className="d-flex justify-content-between align-items-center pe-3">
                     <p className="text-dark fw-medium mb-0">Tax </p>
-                    <p className="mb-2">$0.00</p>
+                    <p className="mb-2">Rs 0.00</p>
                   </div>
                   <div className="d-flex justify-content-between align-items-center pe-3">
                     <p className="text-dark fw-medium mb-0">Total</p>
-                    <p className="text-dark fw-medium mb-2">$200.00</p>
+                    <p className="text-dark fw-medium mb-2">Rs 200.00</p>
                   </div>
                 </div>
               </div>

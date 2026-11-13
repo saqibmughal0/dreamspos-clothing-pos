@@ -127,7 +127,7 @@ const Dashboard = () => {
                 <div className="dash-widgetcontent">
                   <h5>
                   
-                    <CountUp className="counters" start={0} end={Number(metrics.totalPurchases)} duration={1.5} prefix="$" />
+                    <CountUp className="counters" start={0} end={Number(metrics.totalPurchases)} duration={1.5} prefix="Rs " />
                   </h5>
                   <p className="mb-0">Total Purchase Due</p>
                 </div>
@@ -145,7 +145,7 @@ const Dashboard = () => {
                 <div className="dash-widgetcontent">
                   <h5>
                     <span className="counters" >
-                    <CountUp start={0} end={Number(metrics.netProfit)} duration={1.5} prefix="$" />
+                    <CountUp start={0} end={Number(metrics.netProfit)} duration={1.5} prefix="Rs " />
                     </span>
                   </h5>
                   <p className="mb-0">Estimated Net Profit</p>
@@ -164,7 +164,7 @@ const Dashboard = () => {
                 <div className="dash-widgetcontent">
                   <h5>
                     <span className="counters" >
-                      <CountUp start={0} end={Number(metrics.totalSales)} duration={1.5} prefix="$" />
+                      <CountUp start={0} end={Number(metrics.totalSales)} duration={1.5} prefix="Rs " />
                     </span>
                   </h5>
                   <p className="mb-0">Total Sale Amount</p>
@@ -183,7 +183,7 @@ const Dashboard = () => {
                 <div className="dash-widgetcontent">
                   <h5>
                     <span className="counters" >
-                      <CountUp start={0} end={Number(metrics.totalExpenses)} duration={1.5} prefix="$" />
+                      <CountUp start={0} end={Number(metrics.totalExpenses)} duration={1.5} prefix="Rs " />
                     </span>
                   </h5>
                   <p className="mb-0">Total Expense Amount</p>
@@ -340,7 +340,7 @@ const Dashboard = () => {
                               Lenevo 3rd Generation
                             </Link>
                           </td>
-                          <td>$12500</td>
+                          <td>Rs 12500</td>
                         </tr>
                         <tr>
                           <td>2</td>
@@ -356,7 +356,7 @@ const Dashboard = () => {
                             </Link>
                             <Link to={route.productlist} className="fw-bold">Bold V3.2</Link>
                           </td>
-                          <td>$1600</td>
+                          <td>Rs 1600</td>
                         </tr>
                         <tr>
                           <td>3</td>
@@ -372,7 +372,7 @@ const Dashboard = () => {
                             </Link>
                             <Link to={route.productlist} className="fw-bold">Nike Jordan</Link>
                           </td>
-                          <td>$2000</td>
+                          <td>Rs 2000</td>
                         </tr>
                         <tr>
                           <td>4</td>
@@ -390,7 +390,7 @@ const Dashboard = () => {
                               Apple Series 5 Watch
                             </Link>
                           </td>
-                          <td>$800</td>
+                          <td>Rs 800</td>
                         </tr>
                       </tbody>
                     </table>

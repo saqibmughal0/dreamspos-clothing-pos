@@ -208,7 +208,7 @@ useEffect(() => {
                           <h6>
                             <Link to="#">Red Nike Laser</Link>
                           </h6>
-                          <p className="fw-bold text-teal">$2000</p>
+                          <p className="fw-bold text-teal">Rs 2000</p>
                         </div>
                       </div>
                       <div className="qty-item text-center">
@@ -250,7 +250,7 @@ useEffect(() => {
                           <h6>
                             <Link to="#">Iphone 14</Link>
                           </h6>
-                          <p className="fw-bold text-teal">$3000</p>
+                          <p className="fw-bold text-teal">Rs 3000</p>
                         </div>
                       </div>
                       <div className="qty-item text-center">
@@ -292,7 +292,7 @@ useEffect(() => {
                           <h6>
                             <Link to="#">Timex Black Silver</Link>
                           </h6>
-                          <p className="fw-bold text-teal">$1457</p>
+                          <p className="fw-bold text-teal">Rs 1457</p>
                         </div>
                       </div>
                       <div className="qty-item text-center">
@@ -334,7 +334,7 @@ useEffect(() => {
                           <h6>
                             <Link to="#">SWAGME</Link>
                           </h6>
-                          <p className="fw-bold text-teal">$6587</p>
+                          <p className="fw-bold text-teal">Rs 6587</p>
                         </div>
                       </div>
                       <div className="qty-item text-center">
@@ -404,27 +404,27 @@ useEffect(() => {
                       <tbody>
                         <tr>
                           <td>Sub Total</td>
-                          <td className="text-end">$60,454</td>
+                          <td className="text-end">Rs 60,454</td>
                         </tr>
                         <tr>
                           <td>Tax (GST 5%)</td>
-                          <td className="text-end">$40.21</td>
+                          <td className="text-end">Rs 40.21</td>
                         </tr>
                         <tr>
                           <td>Shipping</td>
-                          <td className="text-end">$40.21</td>
+                          <td className="text-end">Rs 40.21</td>
                         </tr>
                         <tr>
                           <td>Sub Total</td>
-                          <td className="text-end">$60,454</td>
+                          <td className="text-end">Rs 60,454</td>
                         </tr>
                         <tr>
                           <td className="text-danger">Discount (10%)</td>
-                          <td className="text-danger text-end">$15.21</td>
+                          <td className="text-danger text-end">Rs 15.21</td>
                         </tr>
                         <tr>
                           <td>Total</td>
-                          <td className="text-end">$64,024.5</td>
+                          <td className="text-end">Rs 64,024.5</td>
                         </tr>
                       </tbody>
                     </table>
@@ -473,7 +473,7 @@ useEffect(() => {
                     className="btn btn-secondary w-100"
                     to="#"
                   >
-                    Grand Total : $64,024.5
+                    Grand Total : Rs 64,024.5
                   </Link>
                 </div>
                 <div className="btn-row d-sm-flex align-items-center justify-content-between">
@@ -655,7 +655,7 @@ useEffect(() => {
                             </h6>
                             <div className="d-flex align-items-center justify-content-between price">
                               <span>30 Pcs</span>
-                              <p>$15800</p>
+                              <p>Rs 15800</p>
                             </div>
                           </div>
                         </div>
@@ -678,7 +678,7 @@ useEffect(() => {
                             </h6>
                             <div className="d-flex align-items-center justify-content-between price">
                               <span>140 Pcs</span>
-                              <p>$1000</p>
+                              <p>Rs 1000</p>
                             </div>
                           </div>
                         </div>
@@ -701,7 +701,7 @@ useEffect(() => {
                             </h6>
                             <div className="d-flex align-items-center justify-content-between price">
                               <span>220 Pcs</span>
-                              <p>$6800</p>
+                              <p>Rs 6800</p>
                             </div>
                           </div>
                         </div>
@@ -724,7 +724,7 @@ useEffect(() => {
                             </h6>
                             <div className="d-flex align-items-center justify-content-between price">
                               <span>78 Pcs</span>
-                              <p>$7800</p>
+                              <p>Rs 7800</p>
                             </div>
                           </div>
                         </div>
@@ -747,7 +747,7 @@ useEffect(() => {
                             </h6>
                             <div className="d-flex align-items-center justify-content-between price">
                               <span>47 Pcs</span>
-                              <p>$5478</p>
+                              <p>Rs 5478</p>
                             </div>
                           </div>
                         </div>
@@ -770,7 +770,7 @@ useEffect(() => {
                             </h6>
                             <div className="d-flex align-items-center justify-content-between price">
                               <span>54 Pcs</span>
-                              <p>$987</p>
+                              <p>Rs 987</p>
                             </div>
                           </div>
                         </div>
@@ -795,7 +795,7 @@ useEffect(() => {
                             </h6>
                             <div className="d-flex align-items-center justify-content-between price">
                               <span>74 Pcs</span>
-                              <p>$1454</p>
+                              <p>Rs 1454</p>
                             </div>
                           </div>
                         </div>
@@ -818,7 +818,7 @@ useEffect(() => {
                             </h6>
                             <div className="d-flex align-items-center justify-content-between price">
                               <span>14 Pcs</span>
-                              <p>$6587</p>
+                              <p>Rs 6587</p>
                             </div>
                           </div>
                         </div>
@@ -843,7 +843,7 @@ useEffect(() => {
                             </h6>
                             <div className="d-flex align-items-center justify-content-between price">
                               <span>24 Pcs</span>
-                              <p>$1457</p>
+                              <p>Rs 1457</p>
                             </div>
                           </div>
                         </div>
@@ -866,7 +866,7 @@ useEffect(() => {
                             </h6>
                             <div className="d-flex align-items-center justify-content-between price">
                               <span>14 Pcs</span>
-                              <p>$4744</p>
+                              <p>Rs 4744</p>
                             </div>
                           </div>
                         </div>
@@ -891,7 +891,7 @@ useEffect(() => {
                             </h6>
                             <div className="d-flex align-items-center justify-content-between price">
                               <span>40 Pcs</span>
-                              <p>$789</p>
+                              <p>Rs 789</p>
                             </div>
                           </div>
                         </div>
@@ -914,7 +914,7 @@ useEffect(() => {
                             </h6>
                             <div className="d-flex align-items-center justify-content-between price">
                               <span>78 Pcs</span>
-                              <p>$7847</p>
+                              <p>Rs 7847</p>
                             </div>
                           </div>
                         </div>
@@ -941,7 +941,7 @@ useEffect(() => {
                             </h6>
                             <div className="d-flex align-items-center justify-content-between price">
                               <span>47 Pcs</span>
-                              <p>$5478</p>
+                              <p>Rs 5478</p>
                             </div>
                           </div>
                         </div>
@@ -964,7 +964,7 @@ useEffect(() => {
                             </h6>
                             <div className="d-flex align-items-center justify-content-between price">
                               <span>14 Pcs</span>
-                              <p>$6587</p>
+                              <p>Rs 6587</p>
                             </div>
                           </div>
                         </div>
@@ -991,7 +991,7 @@ useEffect(() => {
                             </h6>
                             <div className="d-flex align-items-center justify-content-between price">
                               <span>78 Pcs</span>
-                              <p>$7800</p>
+                              <p>Rs 7800</p>
                             </div>
                           </div>
                         </div>
@@ -1014,7 +1014,7 @@ useEffect(() => {
                             </h6>
                             <div className="d-flex align-items-center justify-content-between price">
                               <span>54 Pcs</span>
-                              <p>$987</p>
+                              <p>Rs 987</p>
                             </div>
                           </div>
                         </div>
@@ -1037,7 +1037,7 @@ useEffect(() => {
                             </h6>
                             <div className="d-flex align-items-center justify-content-between price">
                               <span>78 Pcs</span>
-                              <p>$7847</p>
+                              <p>Rs 7847</p>
                             </div>
                           </div>
                         </div>
@@ -1064,7 +1064,7 @@ useEffect(() => {
                             </h6>
                             <div className="d-flex align-items-center justify-content-between price">
                               <span>30 Pcs</span>
-                              <p>$15800</p>
+                              <p>Rs 15800</p>
                             </div>
                           </div>
                         </div>
@@ -1087,7 +1087,7 @@ useEffect(() => {
                             </h6>
                             <div className="d-flex align-items-center justify-content-between price">
                               <span>14 Pcs</span>
-                              <p>$3654</p>
+                              <p>Rs 3654</p>
                             </div>
                           </div>
                         </div>
@@ -1114,7 +1114,7 @@ useEffect(() => {
                             </h6>
                             <div className="d-flex align-items-center justify-content-between price">
                               <span>220 Pcs</span>
-                              <p>$6800</p>
+                              <p>Rs 6800</p>
                             </div>
                           </div>
                         </div>
@@ -1139,7 +1139,7 @@ useEffect(() => {
                             </h6>
                             <div className="d-flex align-items-center justify-content-between price">
                               <span>24 Pcs</span>
-                              <p>$1457</p>
+                              <p>Rs 1457</p>
                             </div>
                           </div>
                         </div>
@@ -1164,7 +1164,7 @@ useEffect(() => {
                             </h6>
                             <div className="d-flex align-items-center justify-content-between price">
                               <span>40 Pcs</span>
-                              <p>$789</p>
+                              <p>Rs 789</p>
                             </div>
                           </div>
                         </div>
@@ -1191,7 +1191,7 @@ useEffect(() => {
                             </h6>
                             <div className="d-flex align-items-center justify-content-between price">
                               <span>140 Pcs</span>
-                              <p>$1000</p>
+                              <p>Rs 1000</p>
                             </div>
                           </div>
                         </div>
@@ -1216,7 +1216,7 @@ useEffect(() => {
                             </h6>
                             <div className="d-flex align-items-center justify-content-between price">
                               <span>74 Pcs</span>
-                              <p>$1454</p>
+                              <p>Rs 1454</p>
                             </div>
                           </div>
                         </div>
@@ -1239,7 +1239,7 @@ useEffect(() => {
                             </h6>
                             <div className="d-flex align-items-center justify-content-between price">
                               <span>14 Pcs</span>
-                              <p>$4744</p>
+                              <p>Rs 4744</p>
                             </div>
                           </div>
                         </div>
@@ -1262,7 +1262,7 @@ useEffect(() => {
                             </h6>
                             <div className="d-flex align-items-center justify-content-between price">
                               <span>65 Pcs</span>
-                              <p>$4784</p>
+                              <p>Rs 4784</p>
                             </div>
                           </div>
                         </div>
@@ -1285,7 +1285,7 @@ useEffect(() => {
                             </h6>
                             <div className="d-flex align-items-center justify-content-between price">
                               <span>47 Pcs</span>
-                              <p>$1245</p>
+                              <p>Rs 1245</p>
                             </div>
                           </div>
                         </div>

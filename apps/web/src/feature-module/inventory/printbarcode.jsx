@@ -365,7 +365,7 @@ const PrintBarcode = () => {
                       <div className="barcode-scanner-link text-center">
                         <h6>Grocery Alpha</h6>
                         <p>Nike Jordan</p>
-                        <p>Price: $400</p>
+                        <p>Price : Rs 400</p>
                         <div className="barscaner-img">
                           <ImageWithBasePath
                             src="./assets/img/barcode/barcode-01.png"
@@ -379,7 +379,7 @@ const PrintBarcode = () => {
                       <div className="barcode-scanner-link text-center">
                         <h6>Grocery Alpha</h6>
                         <p>Nike Jordan</p>
-                        <p>Price: $400</p>
+                        <p>Price : Rs 400</p>
                         <div className="barscaner-img">
                           <ImageWithBasePath
                             src="./assets/img/barcode/barcode-01.png"
@@ -393,7 +393,7 @@ const PrintBarcode = () => {
                       <div className="barcode-scanner-link text-center">
                         <h6>Grocery Alpha</h6>
                         <p>Nike Jordan</p>
-                        <p>Price: $400</p>
+                        <p>Price : Rs 400</p>
                         <div className="barscaner-img">
                           <ImageWithBasePath
                             src="./assets/img/barcode/barcode-01.png"
@@ -412,7 +412,7 @@ const PrintBarcode = () => {
                       <div className="barcode-scanner-link text-center">
                         <h6>Grocery Alpha</h6>
                         <p>Apple Series 5 Watch</p>
-                        <p>Price: $300</p>
+                        <p>Price : Rs 300</p>
                         <div className="barscaner-img">
                           <ImageWithBasePath
                             src="./assets/img/barcode/barcode-02.png"

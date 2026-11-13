@@ -7,7 +7,7 @@ export const salesreportdata = [
 		"category": "Computers",
 		"brand": "N/D",
 		"soldQty": "20",
-		"soldAmount": "$1000",
+		"soldAmount": "Rs 1000",
 		"instockQty": "100"
 	},
 	{
@@ -18,7 +18,7 @@ export const salesreportdata = [
 		"category": "Accessories",
 		"brand": "N/D",
 		"soldQty": "15",
-		"soldAmount": "$1200",
+		"soldAmount": "Rs 1200",
 		"instockQty": "150"
 	},
 	{
@@ -29,7 +29,7 @@ export const salesreportdata = [
 		"category": "Shoe",
 		"brand": "N/D",
 		"soldQty": "18",
-		"soldAmount": "$2000",
+		"soldAmount": "Rs 2000",
 		"instockQty": "170"
 	},
 	{
@@ -40,7 +40,7 @@ export const salesreportdata = [
 		"category": "Accessories",
 		"brand": "N/D",
 		"soldQty": "25",
-		"soldAmount": "$300",
+		"soldAmount": "Rs 300",
 		"instockQty": "120"
 	},
 	{
@@ -51,7 +51,7 @@ export const salesreportdata = [
 		"category": "Accessories",
 		"brand": "N/D",
 		"soldQty": "10",
-		"soldAmount": "$500",
+		"soldAmount": "Rs 500",
 		"instockQty": "80"
 	},
 	{
@@ -62,7 +62,7 @@ export const salesreportdata = [
 		"category": "Furnitures",
 		"brand": "N/D",
 		"soldQty": "28",
-		"soldAmount": "$200",
+		"soldAmount": "Rs 200",
 		"instockQty": "200"
 	},
 	{
@@ -73,7 +73,7 @@ export const salesreportdata = [
 		"category": "Accessories",
 		"brand": "N/D",
 		"soldQty": "30",
-		"soldAmount": "$120",
+		"soldAmount": "Rs 120",
 		"instockQty": "230"
 	},
 	{
@@ -84,7 +84,7 @@ export const salesreportdata = [
 		"category": "Phone",
 		"brand": "N/D",
 		"soldQty": "35",
-		"soldAmount": "$2300",
+		"soldAmount": "Rs 2300",
 		"instockQty": "370"
 	},
 	{
@@ -95,7 +95,7 @@ export const salesreportdata = [
 		"category": "Furnitures",
 		"brand": "N/D",
 		"soldQty": "12",
-		"soldAmount": "$400",
+		"soldAmount": "Rs 400",
 		"instockQty": "260"
 	},
 	{
@@ -106,7 +106,7 @@ export const salesreportdata = [
 		"category": "Bags",
 		"brand": "N/D",
 		"soldQty": "38",
-		"soldAmount": "$230",
+		"soldAmount": "Rs 230",
 		"instockQty": "340"
 	}
 ]

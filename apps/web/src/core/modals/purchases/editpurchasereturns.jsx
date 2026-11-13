@@ -121,9 +121,9 @@ const EditPurchaseReturns = () => {
                                                                 <th>Supplier</th>
                                                                 <th>Reference</th>
                                                                 <th>Status</th>
-                                                                <th>Total ($)</th>
-                                                                <th>Paid ($)</th>
-                                                                <th>Due ($)</th>
+                                                                <th>Total (Rs)</th>
+                                                                <th>Paid (Rs)</th>
+                                                                <th>Due (Rs)</th>
                                                                 <th>Payment Status</th>
                                                             </tr>
                                                         </thead>
@@ -142,9 +142,9 @@ const EditPurchaseReturns = () => {
                                                                         Received
                                                                     </span>
                                                                 </td>
-                                                                <td>$1000</td>
-                                                                <td>$1000</td>
-                                                                <td>$600</td>
+                                                                <td>Rs 1000</td>
+                                                                <td>Rs 1000</td>
+                                                                <td>Rs 600</td>
                                                                 <td>
                                                                     <span className="p-1 pe-2 rounded-1 text-success bg-success-transparent fs-10">
                                                                         <i className="ti ti-point-filled me-1 fs-11" />
@@ -162,19 +162,19 @@ const EditPurchaseReturns = () => {
                                                         <ul className="border-1 rounded-1">
                                                             <li className="border-0 border-bottom">
                                                                 <h4 className="border-0 text-gray-9">Order Tax</h4>
-                                                                <h5 className="text-gray-9">$ 0.00</h5>
+                                                                <h5 className="text-gray-9">Rs 0.00</h5>
                                                             </li>
                                                             <li className="border-0 border-bottom">
                                                                 <h4 className="border-0 text-gray-9">Discount</h4>
-                                                                <h5 className="text-gray-9">$ 0.00</h5>
+                                                                <h5 className="text-gray-9">Rs 0.00</h5>
                                                             </li>
                                                             <li className="border-0 border-bottom">
                                                                 <h4 className="border-0 text-gray-9">Shipping</h4>
-                                                                <h5 className="text-gray-9">$ 0.00</h5>
+                                                                <h5 className="text-gray-9">Rs 0.00</h5>
                                                             </li>
                                                             <li className="total border-0 border-bottom">
                                                                 <h4 className="border-0 text-gray-9">Grand Total</h4>
-                                                                <h5 className="text-gray-9">$ 0.00</h5>
+                                                                <h5 className="text-gray-9">Rs 0.00</h5>
                                                             </li>
                                                         </ul>
                                                     </div>

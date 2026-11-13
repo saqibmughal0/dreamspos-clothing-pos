@@ -26,7 +26,7 @@ const ExpensesList = () => {
             categoryName: e.categoryName,
             description: e.notes || "Store operation expense",
             date: new Date(e.date).toLocaleDateString(),
-            amount: `$${Number(e.amount).toFixed(2)}`,
+            amount: `Rs ${Number(e.amount).toFixed(2)}`,
             status: "Approved",
             action: ""
           }));
@@ -440,7 +440,7 @@ const ExpensesList = () => {
                     <input
                       type="text"
                       className="form-control"
-                      defaultValue="$200"
+                      defaultValue="Rs 200"
                     />
                   </div>
                 </div>

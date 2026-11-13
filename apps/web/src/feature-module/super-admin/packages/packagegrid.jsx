@@ -17,7 +17,7 @@ const PackagesGrid = () => {
     { value: "Yearly", label: "Yearly" },
   ];
   const currency = [
-    { value: "USD", label: "USD" },
+    { value: 'PKR', label: 'PKR' },
     { value: "Euro", label: "Euro" },
   ];
   const planPosition = [
@@ -332,9 +332,7 @@ const PackagesGrid = () => {
                         <div className="card">
                           <div className="card-body">
                             <h4>Basic</h4>
-                            <h1>
-                              $50
-                              <span className="fs-14 fw-normal text-gray">
+                            <h1>Rs 50<span className="fs-14 fw-normal text-gray">
                                 /monthly
                               </span>
                             </h1>
@@ -385,9 +383,7 @@ const PackagesGrid = () => {
                         <div className="card">
                           <div className="card-body">
                             <h4>Advanced</h4>
-                            <h1>
-                              $200
-                              <span className="fs-14 fw-normal text-gray">
+                            <h1>Rs 200<span className="fs-14 fw-normal text-gray">
                                 /monthly
                               </span>
                             </h1>
@@ -438,9 +434,7 @@ const PackagesGrid = () => {
                         <div className="card">
                           <div className="card-body">
                             <h4>Premium</h4>
-                            <h1>
-                              $300
-                              <span className="fs-14 fw-normal text-gray">
+                            <h1>Rs 300<span className="fs-14 fw-normal text-gray">
                                 /monthly
                               </span>
                             </h1>
@@ -491,9 +485,7 @@ const PackagesGrid = () => {
                         <div className="card">
                           <div className="card-body">
                             <h4>Enterprise</h4>
-                            <h1>
-                              $400
-                              <span className="fs-14 fw-normal text-gray">
+                            <h1>Rs 400<span className="fs-14 fw-normal text-gray">
                                 /monthly
                               </span>
                             </h1>

@@ -6,7 +6,7 @@ export const quotationlistdata = [
     Custmer_Image: "assets/img/users/user-27.jpg",
     Custmer_Name: "Carl Evans",
     Status: "Sent",
-    Total: "$550",
+    Total: "Rs 550",
   },
   {
     id: "2",
@@ -15,7 +15,7 @@ export const quotationlistdata = [
     Custmer_Image: "assets/img/users/user-02.jpg",
     Custmer_Name: "Minerva Rameriz",
     Status: "Sent",
-    Total: "$430",
+    Total: "Rs 430",
   },
   {
     id: "3",
@@ -24,7 +24,7 @@ export const quotationlistdata = [
     Custmer_Image: "assets/img/users/user-05.jpg",
     Custmer_Name: "Robert Lamon",
     Status: "Ordered",
-    Total: "$260",
+    Total: "Rs 260",
   },
   {
     id: "4",
@@ -33,7 +33,7 @@ export const quotationlistdata = [
     Custmer_Image: "assets/img/users/user-03.jpg",
     Custmer_Name: "Mark Joslyn",
     Status: "sent",
-    Total: "$470",
+    Total: "Rs 470",
   },
   {
     id: "5",
@@ -42,7 +42,7 @@ export const quotationlistdata = [
     Custmer_Image: "assets/img/users/user-22.jpg",
     Custmer_Name: "Patricia Lewis",
     Status: "Pending",
-    Total: "$380",
+    Total: "Rs 380",
   },
   {
     id: "6",
@@ -51,7 +51,7 @@ export const quotationlistdata = [
     Custmer_Image: "assets/img/users/user-12.jpg",
     Custmer_Name: "Marsha Betts",
     Status: "Sent",
-    Total: "$190",
+    Total: "Rs 190",
   },
   {
     id: "7",
@@ -60,7 +60,7 @@ export const quotationlistdata = [
     Custmer_Image: "assets/img/users/user-06.jpg",
     Custmer_Name: "Daniel Jude",
     Status: "Pending",
-    Total: "$540",
+    Total: "Rs 540",
   },
   {
     id: "8",
@@ -69,7 +69,7 @@ export const quotationlistdata = [
     Custmer_Image: "assets/img/users/user-21.jpg",
     Custmer_Name: "Emma Bates",
     Status: "Ordered",
-    Total: "$610",
+    Total: "Rs 610",
   },
   {
     id: "9",
@@ -78,7 +78,7 @@ export const quotationlistdata = [
     Custmer_Image: "assets/img/users/user-16.jpg",
     Custmer_Name: "Richard Fralick",
     Status: "Pending",
-    Total: "$220",
+    Total: "Rs 220",
   },
   {
     id: "10",
@@ -87,7 +87,7 @@ export const quotationlistdata = [
     Custmer_Image: "assets/img/users/user-26.jpg",
     Custmer_Name: "Michelle Robison",
     Status: "Sent",
-    Total: "$460",
+    Total: "Rs 460",
   },
   {
     id: "11",
@@ -96,7 +96,7 @@ export const quotationlistdata = [
     Custmer_Image: "assets/img/users/user-03.jpg",
     Custmer_Name: "Mark Joslyn",
     Status: "Pending",
-    Total: "$250",
+    Total: "Rs 250",
   },
   {
     id: "12",
@@ -105,6 +105,6 @@ export const quotationlistdata = [
     Custmer_Image: "assets/img/users/user-05.jpg",
     Custmer_Name: "Robert Lamon",
     Status: "Sent",
-    Total: "$550",
+    Total: "Rs 550",
   },
 ];
