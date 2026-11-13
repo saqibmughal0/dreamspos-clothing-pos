@@ -35,13 +35,13 @@ const LocalizationSettings = () => {
 
     ];
     const symbols = [
-        { value: '$', label: '$' },
+        { value: 'Rs', label: 'Rs' },
         { value: '€', label: '€' },
         { value: '€', label: '€' },
     ];
     const symbolsandvalue = [
-        { value: '$100', label: '$100' },
-        { value: '$400', label: '$400' },
+        { value: 'Rs 100', label: 'Rs 100' },
+        { value: 'Rs 400', label: 'Rs 400' },
     ];
     const dot = [
         { value: '.', label: '.' },

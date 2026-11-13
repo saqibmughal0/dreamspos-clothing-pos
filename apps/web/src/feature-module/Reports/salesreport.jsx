@@ -42,7 +42,7 @@ const SalesReport = () => {
             category: "Apparel",
             brand: "Dreams Apparel",
             soldQty: String(s.itemsCount),
-            soldAmount: `$${Number(s.totalAmount).toFixed(2)}`,
+            soldAmount: `Rs ${Number(s.totalAmount).toFixed(2)}`,
             instockQty: "50"
           }));
           setData(mapped);
@@ -169,7 +169,7 @@ const SalesReport = () => {
                 <div className="ms-2">
                   <p className="fw-medium mb-1">Total Unpaid</p>
                   <div>
-                    <h3>$1,52,45</h3>
+                    <h3>Rs 1,52,45</h3>
                   </div>
                 </div>
               </div>
@@ -184,7 +184,7 @@ const SalesReport = () => {
                 <div className="ms-2">
                   <p className="fw-medium mb-1">Overdue</p>
                   <div>
-                    <h3>$2,56,12</h3>
+                    <h3>Rs 2,56,12</h3>
                   </div>
                 </div>
               </div>

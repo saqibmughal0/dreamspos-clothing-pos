@@ -72,7 +72,7 @@ const EditCoupons = () => {
                       <div className="col-lg-6">
                         <div className="input-blocks">
                           <label>Discount<span className="text-danger ms-1">*</span></label>
-                          <input type="text" defaultValue="$20" />
+                          <input type="text" defaultValue="Rs 20" />
                         </div>
                       </div>
                       <div className="col-lg-12">

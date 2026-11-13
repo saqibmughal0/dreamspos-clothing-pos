@@ -646,7 +646,7 @@ const SuperAdminDashboard = () => {
                 </div>
                 <div className="d-flex align-items-center justify-content-between">
                   <div>
-                    <h2 className="mb-1">$89,878,58</h2>
+                    <h2 className="mb-1">Rs 89,878,58</h2>
                     <p className="fs-13">Total Earnings</p>
                   </div>
                   <ReactApexChart
@@ -765,7 +765,7 @@ const SuperAdminDashboard = () => {
               <div className="card-body pb-0">
                 <div className="d-flex align-items-center justify-content-between flex-wrap">
                   <div className="mb-1">
-                    <h5 className="mb-1">$45787</h5>
+                    <h5 className="mb-1">Rs 45787</h5>
                     <p>
                       <span className="text-success fw-bold">+40%</span> increased
                       from last year

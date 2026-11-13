@@ -6,7 +6,7 @@ export const incomedata = [
     Store: "Electro Mart",
     Category: "Foreign investment",
     Notes: "Categorize income derived",
-    Amount: "$200",
+    Amount: "Rs 200",
     Payment_Method: "Stripe",
   },
   {
@@ -16,7 +16,7 @@ export const incomedata = [
     Store: "Quantum Gadgets",
     Category: "Product Export",
     Notes: "Services that have been verified",
-    Amount: "$50",
+    Amount: "Rs 50",
     Payment_Method: "Paypal",
   },
   {
@@ -26,7 +26,7 @@ export const incomedata = [
     Store: "Prime Bazaar",
     Category: "Installation",
     Notes: "POS Installation for Store",
-    Amount: "$800",
+    Amount: "Rs 800",
     Payment_Method: "Cash",
   },
   {
@@ -36,7 +36,7 @@ export const incomedata = [
     Store: "Gadget World",
     Category: "Product Sales",
     Notes: "Services that have been verified",
-    Amount: "$100",
+    Amount: "Rs 100",
     Payment_Method: "Paypal",
   },
   {
@@ -46,7 +46,7 @@ export const incomedata = [
     Store: "Volt Vault",
     Category: "Local Sale",
     Notes: "Travel fare for client meeting",
-    Amount: "$700",
+    Amount: "Rs 700",
     Payment_Method: "Cash",
   },
   {
@@ -56,7 +56,7 @@ export const incomedata = [
     Store: "Elite Retail",
     Category: "Service Fees",
     Notes: "Services that have been verified",
-    Amount: "$1000",
+    Amount: "Rs 1000",
     Payment_Method: "Cash",
   },
   {
@@ -66,7 +66,7 @@ export const incomedata = [
     Store: "Prime Mart",
     Category: "Return/Refund Income",
     Notes: "Flight tickets for meetings",
-    Amount: "$1200",
+    Amount: "Rs 1200",
     Payment_Method: "Paypal",
   },
   {
@@ -76,7 +76,7 @@ export const incomedata = [
     Store: "NeoTech Store",
     Category: "Foreign investment",
     Notes: "Services that have been verified",
-    Amount: "$750",
+    Amount: "Rs 750",
     Payment_Method: "Stripe",
   },
   {
@@ -86,7 +86,7 @@ export const incomedata = [
     Store: "Urban Mart",
     Category: "Product Export",
     Notes: "Categorize income derived in office",
-    Amount: "$450",
+    Amount: "Rs 450",
     Payment_Method: "Stripe",
   },
   {
@@ -96,7 +96,7 @@ export const incomedata = [
     Store: "Travel Mart",
     Category: "Return/Refund Income",
     Notes: "Services that have been verified",
-    Amount: "$530",
+    Amount: "Rs 530",
     Payment_Method: "Cash",
   },
 ];

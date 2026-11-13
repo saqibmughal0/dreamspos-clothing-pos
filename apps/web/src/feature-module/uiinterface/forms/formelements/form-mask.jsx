@@ -92,9 +92,7 @@ const FormMask = () => {
                         className="form-control"
                         mask="999,999,999.99"
                       ></InputMask>
-                      <span className="form-text text-muted">
-                        $ 999,999,999.99
-                      </span>
+                      <span className="form-text text-muted">Rs 999,999,999.99</span>
                     </div>
                     <div className="input-block mb-3">
                       <label className="col-form-label">Eye Script</label>

@@ -6,7 +6,7 @@ export const pageDataTablesData = [
     office: "Edinburgh",
     age: 61,
     startDate: "2011/04/25",
-    salary: "$320,800",
+    salary: "Rs 320,800",
   },
   {
     id: "2",
@@ -15,7 +15,7 @@ export const pageDataTablesData = [
     office: "Tokyo",
     age: 63,
     startDate: "2011/07/25",
-    salary: "$170,750",
+    salary: "Rs 170,750",
   },
   {
     id: "3",
@@ -24,7 +24,7 @@ export const pageDataTablesData = [
     office: "San Francisco",
     age: 66,
     startDate: "2009/01/12",
-    salary: "$86,000",
+    salary: "Rs 86,000",
   },
   {
     id: "4",
@@ -33,7 +33,7 @@ export const pageDataTablesData = [
     office: "Edinburgh",
     age: 22,
     startDate: "2012/03/29",
-    salary: "$433,060",
+    salary: "Rs 433,060",
   },
   {
     id: "5",
@@ -42,7 +42,7 @@ export const pageDataTablesData = [
     office: "Tokyo",
     age: 33,
     startDate: "2008/11/28",
-    salary: "$162,700",
+    salary: "Rs 162,700",
   },
   {
     id: "6",
@@ -51,7 +51,7 @@ export const pageDataTablesData = [
     office: "New York",
     age: 61,
     startDate: "2012/12/02",
-    salary: "$372,000",
+    salary: "Rs 372,000",
   },
   {
     id: "7",
@@ -60,7 +60,7 @@ export const pageDataTablesData = [
     office: "San Francisco",
     age: 59,
     startDate: "2012/08/06",
-    salary: "$137,500",
+    salary: "Rs 137,500",
   },
   {
     id: "8",
@@ -69,7 +69,7 @@ export const pageDataTablesData = [
     office: "Tokyo",
     age: 55,
     startDate: "2010/10/14",
-    salary: "$327,900",
+    salary: "Rs 327,900",
   },
   {
     id: "9",
@@ -78,7 +78,7 @@ export const pageDataTablesData = [
     office: "San Francisco",
     age: 39,
     startDate: "2009/09/15",
-    salary: "$205,500",
+    salary: "Rs 205,500",
   },
   {
     id: "10",
@@ -87,7 +87,7 @@ export const pageDataTablesData = [
     office: "Edinburgh",
     age: 23,
     startDate: "2008/12/13",
-    salary: "$103,600",
+    salary: "Rs 103,600",
   },
   {
     id: "11",
@@ -96,7 +96,7 @@ export const pageDataTablesData = [
     office: "London",
     age: 30,
     startDate: "2008/12/19",
-    salary: "$90,560",
+    salary: "Rs 90,560",
   },
   {
     id: "12",
@@ -105,7 +105,7 @@ export const pageDataTablesData = [
     office: "Edinburgh",
     age: 22,
     startDate: "2013/03/03",
-    salary: "$342,000",
+    salary: "Rs 342,000",
   },
   {
     id: "13",
@@ -114,7 +114,7 @@ export const pageDataTablesData = [
     office: "San Francisco",
     age: 36,
     startDate: "2008/10/16",
-    salary: "$470,600",
+    salary: "Rs 470,600",
   },
   {
     id: "14",
@@ -123,7 +123,7 @@ export const pageDataTablesData = [
     office: "London",
     age: 43,
     startDate: "2012/12/18",
-    salary: "$313,500",
+    salary: "Rs 313,500",
   },
   {
     id: "15",
@@ -132,7 +132,7 @@ export const pageDataTablesData = [
     office: "London",
     age: 19,
     startDate: "2010/03/17",
-    salary: "$385,750",
+    salary: "Rs 385,750",
   },
   {
     id: "16",
@@ -141,7 +141,7 @@ export const pageDataTablesData = [
     office: "London",
     age: 66,
     startDate: "2012/11/27",
-    salary: "$198,500",
+    salary: "Rs 198,500",
   },
   {
     id: "17",
@@ -150,7 +150,7 @@ export const pageDataTablesData = [
     office: "New York",
     age: 64,
     startDate: "2010/06/09",
-    salary: "$725,000",
+    salary: "Rs 725,000",
   },
   {
     id: "18",
@@ -159,7 +159,7 @@ export const pageDataTablesData = [
     office: "New York",
     age: 59,
     startDate: "2009/04/10",
-    salary: "$237,500",
+    salary: "Rs 237,500",
   },
   {
     id: "19",
@@ -168,7 +168,7 @@ export const pageDataTablesData = [
     office: "London",
     age: 41,
     startDate: "2012/10/13",
-    salary: "$132,000",
+    salary: "Rs 132,000",
   },
   {
     id: "20",
@@ -177,7 +177,7 @@ export const pageDataTablesData = [
     office: "Edinburgh",
     age: 35,
     startDate: "2012/09/26",
-    salary: "$217,500",
+    salary: "Rs 217,500",
   },
   {
     id: "21",
@@ -186,7 +186,7 @@ export const pageDataTablesData = [
     office: "New York",
     age: 30,
     startDate: "2011/09/03",
-    salary: "$345,000",
+    salary: "Rs 345,000",
   },
   {
     id: "22",
@@ -195,7 +195,7 @@ export const pageDataTablesData = [
     office: "New York",
     age: 40,
     startDate: "2009/06/25",
-    salary: "$675,000",
+    salary: "Rs 675,000",
   },
   {
     id: "23",
@@ -204,7 +204,7 @@ export const pageDataTablesData = [
     office: "New York",
     age: 21,
     startDate: "2011/12/12",
-    salary: "$106,450",
+    salary: "Rs 106,450",
   },
   {
     id: "24",
@@ -213,7 +213,7 @@ export const pageDataTablesData = [
     office: "Sidney",
     age: 23,
     startDate: "2010/09/20",
-    salary: "$85,600",
+    salary: "Rs 85,600",
   },
   {
     id: "25",
@@ -222,7 +222,7 @@ export const pageDataTablesData = [
     office: "London",
     age: 47,
     startDate: "2009/10/09",
-    salary: "$1,200,000",
+    salary: "Rs 1,200,000",
   },
   {
     id: "26",
@@ -231,7 +231,7 @@ export const pageDataTablesData = [
     office: "Edinburgh",
     age: 42,
     startDate: "2010/12/22",
-    salary: "$92,575",
+    salary: "Rs 92,575",
   },
   {
     id: "27",
@@ -240,7 +240,7 @@ export const pageDataTablesData = [
     office: "Singapore",
     age: 28,
     startDate: "2010/11/14",
-    salary: "$357,650",
+    salary: "Rs 357,650",
   },
   {
     id: "28",
@@ -249,7 +249,7 @@ export const pageDataTablesData = [
     office: "San Francisco",
     age: 28,
     startDate: "2011/06/07",
-    salary: "$206,850",
+    salary: "Rs 206,850",
   },
   {
     id: "29",
@@ -258,7 +258,7 @@ export const pageDataTablesData = [
     office: "San Francisco",
     age: 48,
     startDate: "2010/03/11",
-    salary: "$850,000",
+    salary: "Rs 850,000",
   },
   {
     id: "30",
@@ -267,6 +267,6 @@ export const pageDataTablesData = [
     office: "Tokyo",
     age: 20,
     startDate: "2011/08/14",
-    salary: "$163,000",
+    salary: "Rs 163,000",
   },
 ];

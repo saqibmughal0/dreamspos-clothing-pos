@@ -449,7 +449,7 @@ const Subscription = () => {
                           <span className="fs-14 fw-normal text-truncate mb-1">
                             Total Transaction
                           </span>
-                          <h5>$5,340</h5>
+                          <h5>Rs 5,340</h5>
                         </div>
                       </div>
                       <div className="col-5">
@@ -794,7 +794,7 @@ const Subscription = () => {
                         <td>30 Days</td>
                         <td>12 Sep 2024</td>
                         <td>12 Oct 2024</td>
-                        <td>$200</td>
+                        <td>Rs 200</td>
                       </tr>
                     </tbody>
                   </table>
@@ -807,22 +807,22 @@ const Subscription = () => {
                     <p className="mb-0">Credit Card - 123***********789</p>
                     <div className="d-flex justify-content-between align-items-center mb-2 pe-3">
                       <p className="mb-0">Amount</p>
-                      <p className="text-dark fw-medium mb-2">$200.00</p>
+                      <p className="text-dark fw-medium mb-2">Rs 200.00</p>
                     </div>
                   </div>
                 </div>
                 <div className="col-md-4">
                   <div className="d-flex justify-content-between align-items-center pe-3">
                     <p className="text-dark fw-medium mb-0">Sub Total</p>
-                    <p className="mb-2">$200.00</p>
+                    <p className="mb-2">Rs 200.00</p>
                   </div>
                   <div className="d-flex justify-content-between align-items-center pe-3">
                     <p className="text-dark fw-medium mb-0">Tax </p>
-                    <p className="mb-2">$0.00</p>
+                    <p className="mb-2">Rs 0.00</p>
                   </div>
                   <div className="d-flex justify-content-between align-items-center pe-3">
                     <p className="text-dark fw-medium mb-0">Total</p>
-                    <p className="text-dark fw-medium mb-2">$200.00</p>
+                    <p className="text-dark fw-medium mb-2">Rs 200.00</p>
                   </div>
                 </div>
               </div>

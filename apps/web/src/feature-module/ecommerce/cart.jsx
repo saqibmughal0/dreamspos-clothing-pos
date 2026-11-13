@@ -61,13 +61,13 @@ const Cart = () => {
                                         <Link to="#">Lenovo IdeaPad 3</Link>
                                     </div>
                                 </td>
-                                <td>$600</td>
+                                <td>Rs 600</td>
                                 <td>
                                     <div className="product-quantity border-0 bg-secondary-transparent">
                                         <CounterThree />
                                     </div>
                                 </td>
-                                <td>$160</td>
+                                <td>Rs 160</td>
                                 <td>
                                     <div className="edit-delete-action d-flex align-items-center">
                                         <Link
@@ -96,13 +96,13 @@ const Cart = () => {
                                         <Link to="#">Beats Pro</Link>
                                     </div>
                                 </td>
-                                <td>$160</td>
+                                <td>Rs 160</td>
                                 <td>
                                     <div className="product-quantity border-0 bg-secondary-transparent">
                                     <CounterThree />
                                     </div>
                                 </td>
-                                <td>$1200</td>
+                                <td>Rs 1200</td>
                                 <td>
                                     <div className="edit-delete-action d-flex align-items-center">
                                         <Link
@@ -131,13 +131,13 @@ const Cart = () => {
                                         <Link to="#">Nike Jordan</Link>
                                     </div>
                                 </td>
-                                <td>$110</td>
+                                <td>Rs 110</td>
                                 <td>
                                     <div className="product-quantity border-0 bg-secondary-transparent">
                                     <CounterThree />
                                     </div>
                                 </td>
-                                <td>$330</td>
+                                <td>Rs 330</td>
                                 <td>
                                     <div className="edit-delete-action d-flex align-items-center">
                                         <Link
@@ -166,13 +166,13 @@ const Cart = () => {
                                         <Link to="#">Apple Series 5 Watch</Link>
                                     </div>
                                 </td>
-                                <td>$120</td>
+                                <td>Rs 120</td>
                                 <td>
                                     <div className="product-quantity border-0 bg-secondary-transparent">
                                     <CounterThree />
                                     </div>
                                 </td>
-                                <td>$1420</td>
+                                <td>Rs 1420</td>
                                 <td>
                                     <div className="edit-delete-action d-flex align-items-center">
                                         <Link
@@ -201,13 +201,13 @@ const Cart = () => {
                                         <Link to="#">Amazon Echo Dot</Link>
                                     </div>
                                 </td>
-                                <td>$80</td>
+                                <td>Rs 80</td>
                                 <td>
                                     <div className="product-quantity border-0 bg-secondary-transparent">
                                     <CounterThree />
                                     </div>
                                 </td>
-                                <td>$1200</td>
+                                <td>Rs 1200</td>
                                 <td>
                                     <div className="edit-delete-action d-flex align-items-center">
                                         <Link

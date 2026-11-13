@@ -189,21 +189,21 @@ const PosModals = () => {
             <tbody>
               <tr>
                 <td>1. Red Nike Laser</td>
-                <td>$50</td>
+                <td>Rs 50</td>
                 <td>3</td>
-                <td className="text-end">$150</td>
+                <td className="text-end">Rs 150</td>
               </tr>
               <tr>
                 <td>2. Iphone 14</td>
-                <td>$50</td>
+                <td>Rs 50</td>
                 <td>2</td>
-                <td className="text-end">$100</td>
+                <td className="text-end">Rs 100</td>
               </tr>
               <tr>
                 <td>3. Apple Series 8</td>
-                <td>$50</td>
+                <td>Rs 50</td>
                 <td>3</td>
-                <td className="text-end">$150</td>
+                <td className="text-end">Rs 150</td>
               </tr>
               <tr>
                 <td colSpan={4}>
@@ -211,11 +211,11 @@ const PosModals = () => {
                     <tbody>
                       <tr>
                         <td className="fw-bold">Sub Total :</td>
-                        <td className="text-end">$700.00</td>
+                        <td className="text-end">Rs 700.00</td>
                       </tr>
                       <tr>
                         <td className="fw-bold">Discount :</td>
-                        <td className="text-end">-$50.00</td>
+                        <td className="text-end">-Rs 50.00</td>
                       </tr>
                       <tr>
                         <td className="fw-bold">Shipping :</td>
@@ -223,19 +223,19 @@ const PosModals = () => {
                       </tr>
                       <tr>
                         <td className="fw-bold">Tax (5%) :</td>
-                        <td className="text-end">$5.00</td>
+                        <td className="text-end">Rs 5.00</td>
                       </tr>
                       <tr>
                         <td className="fw-bold">Total Bill :</td>
-                        <td className="text-end">$655.00</td>
+                        <td className="text-end">Rs 655.00</td>
                       </tr>
                       <tr>
                         <td className="fw-bold">Due :</td>
-                        <td className="text-end">$0.00</td>
+                        <td className="text-end">Rs 0.00</td>
                       </tr>
                       <tr>
                         <td className="fw-bold">Total Payable :</td>
-                        <td className="text-end">$655.00</td>
+                        <td className="text-end">Rs 655.00</td>
                       </tr>
                     </tbody>
                   </table>
@@ -312,7 +312,7 @@ const PosModals = () => {
                       <p>Quantity : 04</p>
                     </div>
                   </div>
-                  <p className="text-teal fw-bold">$2000</p>
+                  <p className="text-teal fw-bold">Rs 2000</p>
                 </div>
                 <div className="product-list bg-white align-items-center justify-content-between">
                   <div
@@ -333,7 +333,7 @@ const PosModals = () => {
                       <p>Quantity : 04</p>
                     </div>
                   </div>
-                  <p className="text-teal fw-bold">$3000</p>
+                  <p className="text-teal fw-bold">Rs 3000</p>
                 </div>
               </div>
             </div>
@@ -854,7 +854,7 @@ const PosModals = () => {
                             </td>
                             <td>INV/SL0101</td>
                             <td>24 Dec 2024</td>
-                            <td>$1000</td>
+                            <td>Rs 1000</td>
                             <td className="action-table-data">
                               <div className="edit-delete-action">
                                 <Link
@@ -903,7 +903,7 @@ const PosModals = () => {
                             </td>
                             <td>INV/SL0102</td>
                             <td>10 Dec 2024</td>
-                            <td>$1500</td>
+                            <td>Rs 1500</td>
                             <td className="action-table-data">
                               <div className="edit-delete-action">
                                 <Link
@@ -947,7 +947,7 @@ const PosModals = () => {
                             </td>
                             <td>INV/SL0103</td>
                             <td>27 Nov 2024</td>
-                            <td>$1500</td>
+                            <td>Rs 1500</td>
                             <td className="action-table-data">
                               <div className="edit-delete-action">
                                 <Link
@@ -991,7 +991,7 @@ const PosModals = () => {
                             </td>
                             <td>INV/SL0104</td>
                             <td>18 Nov 2024</td>
-                            <td>$2000</td>
+                            <td>Rs 2000</td>
                             <td className="action-table-data">
                               <div className="edit-delete-action">
                                 <Link
@@ -1035,7 +1035,7 @@ const PosModals = () => {
                             </td>
                             <td>INV/SL0105</td>
                             <td>06 Nov 2024</td>
-                            <td>$800</td>
+                            <td>Rs 800</td>
                             <td className="action-table-data">
                               <div className="edit-delete-action">
                                 <Link
@@ -1079,7 +1079,7 @@ const PosModals = () => {
                             </td>
                             <td>INV/SL0106</td>
                             <td>25 Oct 2024</td>
-                            <td>$750</td>
+                            <td>Rs 750</td>
                             <td className="action-table-data">
                               <div className="edit-delete-action">
                                 <Link
@@ -1123,7 +1123,7 @@ const PosModals = () => {
                             </td>
                             <td>INV/SL0107</td>
                             <td>14 Oct 2024</td>
-                            <td>$1300</td>
+                            <td>Rs 1300</td>
                             <td className="action-table-data">
                               <div className="edit-delete-action">
                                 <Link
@@ -1228,7 +1228,7 @@ const PosModals = () => {
                             </td>
                             <td>INV/SL0101</td>
                             <td>24 Dec 2024</td>
-                            <td>$1000</td>
+                            <td>Rs 1000</td>
                             <td className="action-table-data">
                               <div className="edit-delete-action">
                                 <Link
@@ -1274,7 +1274,7 @@ const PosModals = () => {
                             </td>
                             <td>INV/SL0102</td>
                             <td>10 Dec 2024</td>
-                            <td>$1500</td>
+                            <td>Rs 1500</td>
                             <td className="action-table-data">
                               <div className="edit-delete-action">
                                 <Link
@@ -1318,7 +1318,7 @@ const PosModals = () => {
                             </td>
                             <td>INV/SL0103</td>
                             <td>27 Nov 2024</td>
-                            <td>$1500</td>
+                            <td>Rs 1500</td>
                             <td className="action-table-data">
                               <div className="edit-delete-action">
                                 <Link
@@ -1362,7 +1362,7 @@ const PosModals = () => {
                             </td>
                             <td>INV/SL0104</td>
                             <td>18 Nov 2024</td>
-                            <td>$2000</td>
+                            <td>Rs 2000</td>
                             <td className="action-table-data">
                               <div className="edit-delete-action">
                                 <Link
@@ -1406,7 +1406,7 @@ const PosModals = () => {
                             </td>
                             <td>INV/SL0105</td>
                             <td>06 Nov 2024</td>
-                            <td>$800</td>
+                            <td>Rs 800</td>
                             <td className="action-table-data">
                               <div className="edit-delete-action">
                                 <Link
@@ -1450,7 +1450,7 @@ const PosModals = () => {
                             </td>
                             <td>INV/SL0106</td>
                             <td>25 Oct 2024</td>
-                            <td>$750</td>
+                            <td>Rs 750</td>
                             <td className="action-table-data">
                               <div className="edit-delete-action">
                                 <Link
@@ -1494,7 +1494,7 @@ const PosModals = () => {
                             </td>
                             <td>INV/SL0107</td>
                             <td>14 Oct 2024</td>
-                            <td>$1300</td>
+                            <td>Rs 1300</td>
                             <td className="action-table-data">
                               <div className="edit-delete-action">
                                 <Link
@@ -1599,7 +1599,7 @@ const PosModals = () => {
                             </td>
                             <td>INV/SL0101</td>
                             <td>24 Dec 2024</td>
-                            <td>$1000</td>
+                            <td>Rs 1000</td>
                             <td className="action-table-data">
                               <div className="edit-delete-action">
                                 <Link
@@ -1645,7 +1645,7 @@ const PosModals = () => {
                             </td>
                             <td>INV/SL0102</td>
                             <td>10 Dec 2024</td>
-                            <td>$1500</td>
+                            <td>Rs 1500</td>
                             <td className="action-table-data">
                               <div className="edit-delete-action">
                                 <Link
@@ -1689,7 +1689,7 @@ const PosModals = () => {
                             </td>
                             <td>INV/SL0103</td>
                             <td>27 Nov 2024</td>
-                            <td>$1500</td>
+                            <td>Rs 1500</td>
                             <td className="action-table-data">
                               <div className="edit-delete-action">
                                 <Link
@@ -1733,7 +1733,7 @@ const PosModals = () => {
                             </td>
                             <td>INV/SL0104</td>
                             <td>18 Nov 2024</td>
-                            <td>$2000</td>
+                            <td>Rs 2000</td>
                             <td className="action-table-data">
                               <div className="edit-delete-action">
                                 <Link
@@ -1777,7 +1777,7 @@ const PosModals = () => {
                             </td>
                             <td>INV/SL0105</td>
                             <td>06 Nov 2024</td>
-                            <td>$800</td>
+                            <td>Rs 800</td>
                             <td className="action-table-data">
                               <div className="edit-delete-action">
                                 <Link
@@ -1821,7 +1821,7 @@ const PosModals = () => {
                             </td>
                             <td>INV/SL0106</td>
                             <td>25 Oct 2024</td>
-                            <td>$750</td>
+                            <td>Rs 750</td>
                             <td className="action-table-data">
                               <div className="edit-delete-action">
                                 <Link
@@ -1865,7 +1865,7 @@ const PosModals = () => {
                             </td>
                             <td>INV/SL0107</td>
                             <td>14 Oct 2024</td>
-                            <td>$1300</td>
+                            <td>Rs 1300</td>
                             <td className="action-table-data">
                               <div className="edit-delete-action">
                                 <Link
@@ -2003,7 +2003,7 @@ const PosModals = () => {
                             <span className="fs-14 fw-bold text-gray-9">
                               Total :
                             </span>{" "}
-                            $900
+                            Rs 900
                           </p>
                         </div>
                         <div className="col-md-6">
@@ -2069,7 +2069,7 @@ const PosModals = () => {
                               <span className="fs-14 fw-bold text-gray-9">
                                 Total :
                               </span>{" "}
-                              $900
+                              Rs 900
                             </p>
                           </div>
                           <div className="col-md-6">
@@ -2121,7 +2121,7 @@ const PosModals = () => {
                             <span className="fs-14 fw-bold text-gray-9">
                               Total :
                             </span>{" "}
-                            $900
+                            Rs 900
                           </p>
                         </div>
                         <div className="col-md-6">
@@ -2186,7 +2186,7 @@ const PosModals = () => {
                             <span className="fs-14 fw-bold text-gray-9">
                               Total :
                             </span>{" "}
-                            $900
+                            Rs 900
                           </p>
                         </div>
                         <div className="col-md-6">
@@ -2237,7 +2237,7 @@ const PosModals = () => {
                             <span className="fs-14 fw-bold text-gray-9">
                               Total :
                             </span>{" "}
-                            $1000
+                            Rs 1000
                           </p>
                         </div>
                         <div className="col-md-6">
@@ -2302,7 +2302,7 @@ const PosModals = () => {
                             <span className="fs-14 fw-bold text-gray-9">
                               Total :
                             </span>{" "}
-                            $9100
+                            Rs 9100
                           </p>
                         </div>
                         <div className="col-md-6">
@@ -2346,8 +2346,7 @@ const PosModals = () => {
           </button>
           <div className="success-wrap scan-wrap text-center">
             <h5>
-              <span className="text-gray-6">Amount to Pay :</span> $150
-            </h5>
+              <span className="text-gray-6">Amount to Pay :</span>Rs 150</h5>
             <div className="scan-img">
               <ImageWithBasePath src="assets/img/icons/scan-img.svg" alt="img" />
             </div>
@@ -2561,13 +2560,13 @@ const PosModals = () => {
               <h3 className="mb-2">Congratulations, Sale Completed</h3>
               <div className="p-2 d-flex align-items-center justify-content-center gap-2 flex-wrap mb-3">
                 <p className="fs-13 fw-medium pe-2 border-end mb-0">
-                  Bill Amount : <span className="text-gray-9">$150</span>
+                  Bill Amount : <span className="text-gray-9">Rs 150</span>
                 </p>
                 <p className="fs-13 fw-medium pe-2 border-end mb-0">
-                  Total Paid : <span className="text-gray-9">$200</span>
+                  Total Paid : <span className="text-gray-9">Rs 200</span>
                 </p>
                 <p className="fs-13 fw-medium mb-0">
-                  Change : <span className="text-gray-9">$50</span>
+                  Change : <span className="text-gray-9">Rs 50</span>
                 </p>
               </div>
             </div>
@@ -2628,7 +2627,7 @@ const PosModals = () => {
               <h3 className="mb-2">Congratulations, Sale Completed</h3>
               <div className="p-2 text-center mb-3">
                 <p className="fs-13 fw-medium">
-                  Bill Amount : <span className="text-gray-9">$150</span>
+                  Bill Amount : <span className="text-gray-9">Rs 150</span>
                 </p>
               </div>
             </div>
@@ -2765,7 +2764,7 @@ const PosModals = () => {
                 <i className="ti ti-gift" />
               </span>
               <p className="fs-16 text-gray-9">
-                Available gift card balance : $45.56
+                Available gift card balance : Rs 45.56
               </p>
             </div>
             <div>
@@ -2829,7 +2828,7 @@ const PosModals = () => {
                 <i className="ti ti-gift" />
               </span>
               <p className="fs-16 text-gray-9">
-                Available gift card balance : $45.56
+                Available gift card balance : Rs 45.56
               </p>
             </div>
             <div>
@@ -2893,7 +2892,7 @@ const PosModals = () => {
               <div className="card-body d-flex align-items-center justify-content-between">
                 <div>
                   <p className="fs-13 mb-1">Tablet 1.02 inch</p>
-                  <h6 className="fs-13 fw-semibold">$3000</h6>
+                  <h6 className="fs-13 fw-semibold">Rs 3000</h6>
                 </div>
                 <div className="qty-item m-0">
                   <Link
@@ -4324,35 +4323,33 @@ const PosModals = () => {
               <tbody>
                 <tr>
                   <td>Cash in Hand</td>
-                  <td className="text-gray-9 fw-medium text-end">$45689</td>
+                  <td className="text-gray-9 fw-medium text-end">Rs 45689</td>
                 </tr>
                 <tr>
                   <td>Total Sale Amount</td>
-                  <td className="text-gray-9 fw-medium text-end">$565597.88</td>
+                  <td className="text-gray-9 fw-medium text-end">Rs 565597.88</td>
                 </tr>
                 <tr>
                   <td>Total Payment</td>
-                  <td className="text-gray-9 fw-medium text-end">$566867.97</td>
+                  <td className="text-gray-9 fw-medium text-end">Rs 566867.97</td>
                 </tr>
                 <tr>
                   <td>Cash Payment</td>
-                  <td className="text-gray-9 fw-medium text-end">$3355.84</td>
+                  <td className="text-gray-9 fw-medium text-end">Rs 3355.84</td>
                 </tr>
                 <tr>
                   <td>Total Sale Return</td>
-                  <td className="text-gray-9 fw-medium text-end">$1959</td>
+                  <td className="text-gray-9 fw-medium text-end">Rs 1959</td>
                 </tr>
                 <tr>
                   <td>Total Expense</td>
-                  <td className="text-gray-9 fw-medium text-end">$0</td>
+                  <td className="text-gray-9 fw-medium text-end">Rs 0</td>
                 </tr>
                 <tr>
                   <td className="text-gray-9 fw-bold bg-secondary-transparent">
                     Total Cash
                   </td>
-                  <td className="text-gray-9 fw-bold text-end bg-secondary-transparent">
-                    $587130.97
-                  </td>
+                  <td className="text-gray-9 fw-bold text-end bg-secondary-transparent">Rs 587130.97</td>
                 </tr>
               </tbody>
             </table>
@@ -4400,59 +4397,57 @@ const PosModals = () => {
               <tbody>
                 <tr>
                   <td>Total Sale Amount</td>
-                  <td className="text-gray-9 fw-medium text-end">$565597.88</td>
+                  <td className="text-gray-9 fw-medium text-end">Rs 565597.88</td>
                 </tr>
                 <tr>
                   <td>Cash Payment</td>
-                  <td className="text-gray-9 fw-medium text-end">$3355.84</td>
+                  <td className="text-gray-9 fw-medium text-end">Rs 3355.84</td>
                 </tr>
                 <tr>
                   <td>Credit Card Payment</td>
-                  <td className="text-gray-9 fw-medium text-end">$1959</td>
+                  <td className="text-gray-9 fw-medium text-end">Rs 1959</td>
                 </tr>
                 <tr>
                   <td>Cheque Payment:</td>
-                  <td className="text-gray-9 fw-medium text-end">$0</td>
+                  <td className="text-gray-9 fw-medium text-end">Rs 0</td>
                 </tr>
                 <tr>
                   <td>Deposit Payment</td>
-                  <td className="text-gray-9 fw-medium text-end">$565597.88</td>
+                  <td className="text-gray-9 fw-medium text-end">Rs 565597.88</td>
                 </tr>
                 <tr>
                   <td>Points Payment</td>
-                  <td className="text-gray-9 fw-medium text-end">$3355.84</td>
+                  <td className="text-gray-9 fw-medium text-end">Rs 3355.84</td>
                 </tr>
                 <tr>
                   <td>Gift Card Payment</td>
-                  <td className="text-gray-9 fw-medium text-end">$565597.88</td>
+                  <td className="text-gray-9 fw-medium text-end">Rs 565597.88</td>
                 </tr>
                 <tr>
                   <td>Scan &amp; Pay</td>
-                  <td className="text-gray-9 fw-medium text-end">$3355.84</td>
+                  <td className="text-gray-9 fw-medium text-end">Rs 3355.84</td>
                 </tr>
                 <tr>
                   <td>Pay Later</td>
-                  <td className="text-gray-9 fw-medium text-end">$3355.84</td>
+                  <td className="text-gray-9 fw-medium text-end">Rs 3355.84</td>
                 </tr>
                 <tr>
                   <td>Total Payment</td>
-                  <td className="text-gray-9 fw-medium text-end">$565597.88</td>
+                  <td className="text-gray-9 fw-medium text-end">Rs 565597.88</td>
                 </tr>
                 <tr>
                   <td>Total Sale Return</td>
-                  <td className="text-gray-9 fw-medium text-end">$565597.88</td>
+                  <td className="text-gray-9 fw-medium text-end">Rs 565597.88</td>
                 </tr>
                 <tr>
                   <td>Total Expense:</td>
-                  <td className="text-gray-9 fw-medium text-end">$565597.88</td>
+                  <td className="text-gray-9 fw-medium text-end">Rs 565597.88</td>
                 </tr>
                 <tr>
                   <td className="text-gray-9 fw-bold bg-secondary-transparent">
                     Total Cash
                   </td>
-                  <td className="text-gray-9 fw-bold text-end bg-secondary-transparent">
-                    $587130.97
-                  </td>
+                  <td className="text-gray-9 fw-bold text-end bg-secondary-transparent">Rs 587130.97</td>
                 </tr>
               </tbody>
             </table>
@@ -4499,19 +4494,19 @@ const PosModals = () => {
             <div className="col-lg-4 col-md-6 d-flex">
               <div className="border border-success bg-success-transparent br-8 p-3 flex-fill">
                 <p className="fs-16 text-gray-9 mb-1">Total Sale</p>
-                <h3 className="text-success">$89954</h3>
+                <h3 className="text-success">Rs 89954</h3>
               </div>
             </div>
             <div className="col-lg-4 col-md-6 d-flex">
               <div className="border border-danger bg-danger-transparent br-8 p-3 flex-fill">
                 <p className="fs-16 text-gray-9 mb-1">Expense</p>
-                <h3 className="text-danger">$89954</h3>
+                <h3 className="text-danger">Rs 89954</h3>
               </div>
             </div>
             <div className="col-lg-4 col-md-6 d-flex">
               <div className="border border-info bg-info-transparent br-8 p-3 flex-fill">
                 <p className="fs-16 text-gray-9 mb-1">Total Profit </p>
-                <h3 className="text-info">$2145</h3>
+                <h3 className="text-info">Rs 2145</h3>
               </div>
             </div>
           </div>
@@ -4520,59 +4515,57 @@ const PosModals = () => {
               <tbody>
                 <tr>
                   <td>Product Revenue</td>
-                  <td className="text-gray-9 fw-medium text-end">$565597.88</td>
+                  <td className="text-gray-9 fw-medium text-end">Rs 565597.88</td>
                 </tr>
                 <tr>
                   <td>Product Cost</td>
-                  <td className="text-gray-9 fw-medium text-end">$3355.84</td>
+                  <td className="text-gray-9 fw-medium text-end">Rs 3355.84</td>
                 </tr>
                 <tr>
                   <td>Expense</td>
-                  <td className="text-gray-9 fw-medium text-end">$1959</td>
+                  <td className="text-gray-9 fw-medium text-end">Rs 1959</td>
                 </tr>
                 <tr>
                   <td>Total Stock Adjustment</td>
-                  <td className="text-gray-9 fw-medium text-end">$0</td>
+                  <td className="text-gray-9 fw-medium text-end">Rs 0</td>
                 </tr>
                 <tr>
                   <td>Deposit Payment</td>
-                  <td className="text-gray-9 fw-medium text-end">$565597.88</td>
+                  <td className="text-gray-9 fw-medium text-end">Rs 565597.88</td>
                 </tr>
                 <tr>
                   <td>Total Purchase Shipping Cost</td>
-                  <td className="text-gray-9 fw-medium text-end">$3355.84</td>
+                  <td className="text-gray-9 fw-medium text-end">Rs 3355.84</td>
                 </tr>
                 <tr>
                   <td>Total Sell Discount</td>
-                  <td className="text-gray-9 fw-medium text-end">$565597.88</td>
+                  <td className="text-gray-9 fw-medium text-end">Rs 565597.88</td>
                 </tr>
                 <tr>
                   <td>Total Sell Return</td>
-                  <td className="text-gray-9 fw-medium text-end">$3355.84</td>
+                  <td className="text-gray-9 fw-medium text-end">Rs 3355.84</td>
                 </tr>
                 <tr>
                   <td>Closing Stock</td>
-                  <td className="text-gray-9 fw-medium text-end">$3355.84</td>
+                  <td className="text-gray-9 fw-medium text-end">Rs 3355.84</td>
                 </tr>
                 <tr>
                   <td>Total Sales</td>
-                  <td className="text-gray-9 fw-medium text-end">$565597.88</td>
+                  <td className="text-gray-9 fw-medium text-end">Rs 565597.88</td>
                 </tr>
                 <tr>
                   <td>Total Sale Return</td>
-                  <td className="text-gray-9 fw-medium text-end">$565597.88</td>
+                  <td className="text-gray-9 fw-medium text-end">Rs 565597.88</td>
                 </tr>
                 <tr>
                   <td>Total Expense</td>
-                  <td className="text-gray-9 fw-medium text-end">$565597.88</td>
+                  <td className="text-gray-9 fw-medium text-end">Rs 565597.88</td>
                 </tr>
                 <tr>
                   <td className="text-gray-9 fw-bold bg-secondary-transparent">
                     Total Cash
                   </td>
-                  <td className="text-gray-9 fw-bold text-end bg-secondary-transparent">
-                    $587130.97
-                  </td>
+                  <td className="text-gray-9 fw-bold text-end bg-secondary-transparent">Rs 587130.97</td>
                 </tr>
               </tbody>
             </table>

@@ -33,15 +33,6 @@ const TwoColumnSidebar = () => {
                                 <Link
                                     to="#"
                                     className="nav-link "
-                                    title="Super Admin"
-                                    data-bs-toggle="tab"
-                                    data-bs-target="#super-admin"
-                                >
-                                    <i className="ti ti-user-star" />
-                                </Link>
-                                <Link
-                                    to="#"
-                                    className="nav-link "
                                     title="Apps"
                                     data-bs-toggle="tab"
                                     data-bs-target="#application"
@@ -186,40 +177,9 @@ const TwoColumnSidebar = () => {
                                             <span>MAIN</span>
                                         </li>
                                         <li>
-                                            <Link to={route.dashboard} className="active">
-                                                Admin Dashboard
+                                            <Link to={route.newdashboard} className="active">
+                                                Dashboard
                                             </Link>
-                                        </li>
-                                        <li>
-                                            <Link to={route.newdashboard}>Admin Dashboard 2</Link>
-                                        </li>
-                                        <li>
-                                            <Link to={route.salesdashboard}>Sales Dashboard</Link>
-                                        </li>
-                                    </ul>
-                                </div>
-                                <div className="tab-pane fade" id="super-admin">
-                                    <ul>
-                                        <li className="menu-title">
-                                            <span>SUPER ADMIN</span>
-                                        </li>
-                                        <li>
-                                            <Link to={route.superadmindashboard}>Dashboard</Link>
-                                        </li>
-                                        <li>
-                                            <Link to={route.companies}>Companies</Link>
-                                        </li>
-                                        <li>
-                                            <Link to={route.subscription}>Subscriptions</Link>
-                                        </li>
-                                        <li>
-                                            <Link to={route.packagelist}>Packages</Link>
-                                        </li>
-                                        <li>
-                                            <Link to={route.domain}>Domain</Link>
-                                        </li>
-                                        <li>
-                                            <Link to={route.purchasetransaction}>Purchase Transaction</Link>
                                         </li>
                                     </ul>
                                 </div>

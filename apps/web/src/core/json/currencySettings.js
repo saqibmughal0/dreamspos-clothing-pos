@@ -25,9 +25,9 @@ export const currencySettingsData = [
   },
   {
     id: "4",
-    name: "US Dollar",
-    code: "USD",
-    symbol: "$",
+    name: "Pakistani Rupee",
+    code: "PKR",
+    symbol: "Rs",
     exchangeRate: "Default",
     createdOn: "10 Jan 2023",
   },

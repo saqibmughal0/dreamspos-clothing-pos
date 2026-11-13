@@ -1747,3 +1747,27 @@ body {
 .pos-category4 li h6{
   text-align: center;
 }
+
+/* DreamsPOS Logo Branding Optimization */
+.header-left .logo img,
+.sidebar-logo .logo img,
+.sidebar .sidebar-logo .logo img,
+.two-col-bar .sidebar-logo .logo img {
+  max-height: 48px !important;
+  width: auto !important;
+  object-fit: contain !important;
+}
+
+.header-left .logo-small img,
+.sidebar-logo .logo-small img,
+.two-col-bar .sidebar-logo .logo-small img {
+  max-height: 38px !important;
+  width: auto !important;
+  object-fit: contain !important;
+}
+
+.login-logo img {
+  max-height: 80px !important;
+  width: auto !important;
+  object-fit: contain !important;
+}

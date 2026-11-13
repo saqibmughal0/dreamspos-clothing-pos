@@ -864,7 +864,7 @@ const LayoutDemo = () => {
                                 <div className="me-2">
                                     <p className="text-white mb-1">Total Sales</p>
                                     <div className="d-inline-flex align-items-center flex-wrap gap-2">
-                                        <h4 className="text-white">$48,988,078</h4>
+                                        <h4 className="text-white">Rs 48,988,078</h4>
                                         <span className="badge badge-soft-primary">
                                             <i className="ti ti-arrow-up ms-2" />
                                             +22%
@@ -883,7 +883,7 @@ const LayoutDemo = () => {
                                 <div className="me-2">
                                     <p className="text-white mb-1">Total Sales Return</p>
                                     <div className="d-inline-flex align-items-center flex-wrap gap-2">
-                                        <h4 className="text-white">$16,478,145</h4>
+                                        <h4 className="text-white">Rs 16,478,145</h4>
                                         <span className="badge badge-soft-danger">
                                             <i className="ti ti-arrow-down ms-2" />
                                             -22%
@@ -902,7 +902,7 @@ const LayoutDemo = () => {
                                 <div className="me-2">
                                     <p className="text-white mb-1">Total Purchase</p>
                                     <div className="d-inline-flex align-items-center flex-wrap gap-2">
-                                        <h4 className="text-white">$24,145,789</h4>
+                                        <h4 className="text-white">Rs 24,145,789</h4>
                                         <span className="badge badge-soft-success">
                                             <i className="ti ti-arrow-up ms-2" />
                                             +22%
@@ -921,7 +921,7 @@ const LayoutDemo = () => {
                                 <div className="me-2">
                                     <p className="text-white mb-1">Total Purchase Return</p>
                                     <div className="d-inline-flex align-items-center flex-wrap gap-2">
-                                        <h4 className="text-white">$18,458,747</h4>
+                                        <h4 className="text-white">Rs 18,458,747</h4>
                                         <span className="badge badge-soft-success">
                                             <i className="ti ti-arrow-up ms-2" />
                                             +22%
@@ -939,7 +939,7 @@ const LayoutDemo = () => {
                             <div className="card-body">
                                 <div className="d-flex align-items-center justify-content-between mb-3 pb-3 border-bottom">
                                     <div>
-                                        <h4 className="mb-1">$8,458,798</h4>
+                                        <h4 className="mb-1">Rs 8,458,798</h4>
                                         <p>Profit</p>
                                     </div>
                                     <span className="revenue-icon bg-cyan-transparent text-cyan">
@@ -968,7 +968,7 @@ const LayoutDemo = () => {
                             <div className="card-body">
                                 <div className="d-flex align-items-center justify-content-between mb-3 pb-3 border-bottom">
                                     <div>
-                                        <h4 className="mb-1">$48,988,78</h4>
+                                        <h4 className="mb-1">Rs 48,988,78</h4>
                                         <p>Invoice Due</p>
                                     </div>
                                     <span className="revenue-icon bg-teal-transparent text-teal">
@@ -997,7 +997,7 @@ const LayoutDemo = () => {
                             <div className="card-body">
                                 <div className="d-flex align-items-center justify-content-between mb-3 pb-3 border-bottom">
                                     <div>
-                                        <h4 className="mb-1">$8,980,097</h4>
+                                        <h4 className="mb-1">Rs 8,980,097</h4>
                                         <p>Total Expenses</p>
                                     </div>
                                     <span className="revenue-icon bg-orange-transparent text-orange">
@@ -1026,7 +1026,7 @@ const LayoutDemo = () => {
                             <div className="card-body">
                                 <div className="d-flex align-items-center justify-content-between mb-3 pb-3 border-bottom">
                                     <div>
-                                        <h4 className="mb-1">$78,458,798</h4>
+                                        <h4 className="mb-1">Rs 78,458,798</h4>
                                         <p>Total Payment Returns</p>
                                     </div>
                                     <span className="revenue-icon bg-indigo-transparent text-indigo">
@@ -1391,7 +1391,7 @@ const LayoutDemo = () => {
                                                 <Link to="#">Charger Cable - Lighting</Link>
                                             </h6>
                                             <div className="d-flex align-items-center item-list">
-                                                <p>$187</p>
+                                                <p>Rs 187</p>
                                                 <p>247+ Sales</p>
                                             </div>
                                         </div>
@@ -1411,7 +1411,7 @@ const LayoutDemo = () => {
                                                 <Link to="#">Yves Saint Eau De Parfum</Link>
                                             </h6>
                                             <div className="d-flex align-items-center item-list">
-                                                <p>$145</p>
+                                                <p>Rs 145</p>
                                                 <p>289+ Sales</p>
                                             </div>
                                         </div>
@@ -1431,7 +1431,7 @@ const LayoutDemo = () => {
                                                 <Link to="#">Apple Airpods 2</Link>
                                             </h6>
                                             <div className="d-flex align-items-center item-list">
-                                                <p>$458</p>
+                                                <p>Rs 458</p>
                                                 <p>300+ Sales</p>
                                             </div>
                                         </div>
@@ -1451,7 +1451,7 @@ const LayoutDemo = () => {
                                                 <Link to="#">Vacuum Cleaner</Link>
                                             </h6>
                                             <div className="d-flex align-items-center item-list">
-                                                <p>$139</p>
+                                                <p>Rs 139</p>
                                                 <p>225+ Sales</p>
                                             </div>
                                         </div>
@@ -1471,7 +1471,7 @@ const LayoutDemo = () => {
                                                 <Link to="#">Samsung Galaxy S21 Fe 5g</Link>
                                             </h6>
                                             <div className="d-flex align-items-center item-list">
-                                                <p>$898</p>
+                                                <p>Rs 898</p>
                                                 <p>365+ Sales</p>
                                             </div>
                                         </div>
@@ -1643,7 +1643,7 @@ const LayoutDemo = () => {
                                             </h6>
                                             <div className="d-flex align-items-center item-list">
                                                 <p>Electronics</p>
-                                                <p className="text-gray-9">$640</p>
+                                                <p className="text-gray-9">Rs 640</p>
                                             </div>
                                         </div>
                                     </div>
@@ -1666,7 +1666,7 @@ const LayoutDemo = () => {
                                             </h6>
                                             <div className="d-flex align-items-center item-list">
                                                 <p>Fashion</p>
-                                                <p className="text-gray-9">$126</p>
+                                                <p className="text-gray-9">Rs 126</p>
                                             </div>
                                         </div>
                                     </div>
@@ -1689,7 +1689,7 @@ const LayoutDemo = () => {
                                             </h6>
                                             <div className="d-flex align-items-center item-list">
                                                 <p>Health</p>
-                                                <p className="text-gray-9">$69</p>
+                                                <p className="text-gray-9">Rs 69</p>
                                             </div>
                                         </div>
                                     </div>
@@ -1712,7 +1712,7 @@ const LayoutDemo = () => {
                                             </h6>
                                             <div className="d-flex align-items-center item-list">
                                                 <p>Sports</p>
-                                                <p className="text-gray-9">$65</p>
+                                                <p className="text-gray-9">Rs 65</p>
                                             </div>
                                         </div>
                                     </div>
@@ -1735,7 +1735,7 @@ const LayoutDemo = () => {
                                             </h6>
                                             <div className="d-flex align-items-center item-list">
                                                 <p>Lifestyles</p>
-                                                <p className="text-gray-9">$87.56</p>
+                                                <p className="text-gray-9">Rs 87.56</p>
                                             </div>
                                         </div>
                                     </div>
@@ -1795,9 +1795,7 @@ const LayoutDemo = () => {
                             <div className="card-body pb-0">
                                 <div className="d-flex align-items-center flex-wrap gap-2">
                                     <div className="border p-2 br-8">
-                                        <h5 className="d-inline-flex align-items-center text-teal">
-                                            $12,189
-                                            <span className="badge badge-success badge-xs d-inline-flex align-items-center me-2">
+                                        <h5 className="d-inline-flex align-items-center text-teal">Rs 12,189<span className="badge badge-success badge-xs d-inline-flex align-items-center me-2">
                                                 <i className="ti ti-arrow-up-left ms-2" />
                                                 25%
                                             </span>
@@ -1805,9 +1803,7 @@ const LayoutDemo = () => {
                                         <p>Revenue</p>
                                     </div>
                                     <div className="border p-2 br-8">
-                                        <h5 className="d-inline-flex align-items-center text-orange">
-                                            $48,988,078
-                                            <span className="badge badge-danger badge-xs d-inline-flex align-items-center me-2">
+                                        <h5 className="d-inline-flex align-items-center text-orange">Rs 48,988,078<span className="badge badge-danger badge-xs d-inline-flex align-items-center me-2">
                                                 <i className="ti ti-arrow-down-right ms-2" />
                                                 25%
                                             </span>
@@ -1921,7 +1917,7 @@ const LayoutDemo = () => {
                                                                 Completed
                                                             </span>
                                                         </td>
-                                                        <td className="fs-16 fw-bold text-gray-9">$4,560</td>
+                                                        <td className="fs-16 fw-bold text-gray-9">Rs 4,560</td>
                                                     </tr>
                                                     <tr>
                                                         <td>23 May 2025</td>
@@ -1951,7 +1947,7 @@ const LayoutDemo = () => {
                                                                 Completed
                                                             </span>
                                                         </td>
-                                                        <td className="fs-16 fw-bold text-gray-9">$3,569</td>
+                                                        <td className="fs-16 fw-bold text-gray-9">Rs 3,569</td>
                                                     </tr>
                                                     <tr>
                                                         <td>22 May 2025</td>
@@ -1983,7 +1979,7 @@ const LayoutDemo = () => {
                                                                 Draft
                                                             </span>
                                                         </td>
-                                                        <td className="fs-16 fw-bold text-gray-9">$4,560</td>
+                                                        <td className="fs-16 fw-bold text-gray-9">Rs 4,560</td>
                                                     </tr>
                                                     <tr>
                                                         <td>21 May 2025</td>
@@ -2013,7 +2009,7 @@ const LayoutDemo = () => {
                                                                 Completed
                                                             </span>
                                                         </td>
-                                                        <td className="fs-16 fw-bold text-gray-9">$2,155</td>
+                                                        <td className="fs-16 fw-bold text-gray-9">Rs 2,155</td>
                                                     </tr>
                                                     <tr>
                                                         <td>21 May 2025</td>
@@ -2045,7 +2041,7 @@ const LayoutDemo = () => {
                                                                 Completed
                                                             </span>
                                                         </td>
-                                                        <td className="fs-16 fw-bold text-gray-9">$5,123</td>
+                                                        <td className="fs-16 fw-bold text-gray-9">Rs 5,123</td>
                                                     </tr>
                                                 </tbody>
                                             </table>
@@ -2076,7 +2072,7 @@ const LayoutDemo = () => {
                                                                 Completed
                                                             </span>
                                                         </td>
-                                                        <td className="text-gray-9">$1000</td>
+                                                        <td className="text-gray-9">Rs 1000</td>
                                                     </tr>
                                                     <tr>
                                                         <td>23 May 2025</td>
@@ -2091,7 +2087,7 @@ const LayoutDemo = () => {
                                                                 Completed
                                                             </span>
                                                         </td>
-                                                        <td className="text-gray-9">$1500</td>
+                                                        <td className="text-gray-9">Rs 1500</td>
                                                     </tr>
                                                     <tr>
                                                         <td>22 May 2025</td>
@@ -2106,7 +2102,7 @@ const LayoutDemo = () => {
                                                                 Pending
                                                             </span>
                                                         </td>
-                                                        <td className="text-gray-9">$2000</td>
+                                                        <td className="text-gray-9">Rs 2000</td>
                                                     </tr>
                                                     <tr>
                                                         <td>21 May 2025</td>
@@ -2121,7 +2117,7 @@ const LayoutDemo = () => {
                                                                 Completed
                                                             </span>
                                                         </td>
-                                                        <td className="text-gray-9">$1200</td>
+                                                        <td className="text-gray-9">Rs 1200</td>
                                                     </tr>
                                                     <tr>
                                                         <td>21 May 2025</td>
@@ -2136,7 +2132,7 @@ const LayoutDemo = () => {
                                                                 Completed
                                                             </span>
                                                         </td>
-                                                        <td className="text-gray-9">$1300</td>
+                                                        <td className="text-gray-9">Rs 1300</td>
                                                     </tr>
                                                     <tr>
                                                         <td>28 May 2025</td>
@@ -2151,7 +2147,7 @@ const LayoutDemo = () => {
                                                                 Completed
                                                             </span>
                                                         </td>
-                                                        <td className="text-gray-9">$1600</td>
+                                                        <td className="text-gray-9">Rs 1600</td>
                                                     </tr>
                                                     <tr>
                                                         <td>26 May 2025</td>
@@ -2166,7 +2162,7 @@ const LayoutDemo = () => {
                                                                 Completed
                                                             </span>
                                                         </td>
-                                                        <td className="text-gray-9">$1100</td>
+                                                        <td className="text-gray-9">Rs 1100</td>
                                                     </tr>
                                                 </tbody>
                                             </table>
@@ -2212,7 +2208,7 @@ const LayoutDemo = () => {
                                                                 Sent
                                                             </span>
                                                         </td>
-                                                        <td className="text-gray-9">$4,560</td>
+                                                        <td className="text-gray-9">Rs 4,560</td>
                                                     </tr>
                                                     <tr>
                                                         <td>23 May 2025</td>
@@ -2242,7 +2238,7 @@ const LayoutDemo = () => {
                                                                 Ordered
                                                             </span>
                                                         </td>
-                                                        <td className="text-gray-9">$3,569</td>
+                                                        <td className="text-gray-9">Rs 3,569</td>
                                                     </tr>
                                                     <tr>
                                                         <td>22 May 2025</td>
@@ -2274,7 +2270,7 @@ const LayoutDemo = () => {
                                                                 Pending
                                                             </span>
                                                         </td>
-                                                        <td className="text-gray-9">$4,560</td>
+                                                        <td className="text-gray-9">Rs 4,560</td>
                                                     </tr>
                                                     <tr>
                                                         <td>21 May 2025</td>
@@ -2304,7 +2300,7 @@ const LayoutDemo = () => {
                                                                 Ordered
                                                             </span>
                                                         </td>
-                                                        <td className="text-gray-9">$2,155</td>
+                                                        <td className="text-gray-9">Rs 2,155</td>
                                                     </tr>
                                                     <tr>
                                                         <td>21 May 2025</td>
@@ -2336,7 +2332,7 @@ const LayoutDemo = () => {
                                                                 Sent
                                                             </span>
                                                         </td>
-                                                        <td className="text-gray-9">$5,123</td>
+                                                        <td className="text-gray-9">Rs 5,123</td>
                                                     </tr>
                                                 </tbody>
                                             </table>
@@ -2370,7 +2366,7 @@ const LayoutDemo = () => {
                                                                 Approved
                                                             </span>
                                                         </td>
-                                                        <td className="text-gray-9">$200</td>
+                                                        <td className="text-gray-9">Rs 200</td>
                                                     </tr>
                                                     <tr>
                                                         <td>23 May 2025</td>
@@ -2388,7 +2384,7 @@ const LayoutDemo = () => {
                                                                 Approved
                                                             </span>
                                                         </td>
-                                                        <td className="text-gray-9">$200</td>
+                                                        <td className="text-gray-9">Rs 200</td>
                                                     </tr>
                                                     <tr>
                                                         <td>22 May 2025</td>
@@ -2406,7 +2402,7 @@ const LayoutDemo = () => {
                                                                 Approved
                                                             </span>
                                                         </td>
-                                                        <td className="text-gray-9">$50</td>
+                                                        <td className="text-gray-9">Rs 50</td>
                                                     </tr>
                                                     <tr>
                                                         <td>21 May 2025</td>
@@ -2422,7 +2418,7 @@ const LayoutDemo = () => {
                                                                 Pending
                                                             </span>
                                                         </td>
-                                                        <td className="text-gray-9">$800</td>
+                                                        <td className="text-gray-9">Rs 800</td>
                                                     </tr>
                                                     <tr>
                                                         <td>21 May 2025</td>
@@ -2438,7 +2434,7 @@ const LayoutDemo = () => {
                                                                 Approved
                                                             </span>
                                                         </td>
-                                                        <td className="text-gray-9">$100</td>
+                                                        <td className="text-gray-9">Rs 100</td>
                                                     </tr>
                                                 </tbody>
                                             </table>
@@ -2484,7 +2480,7 @@ const LayoutDemo = () => {
                                                                 Paid
                                                             </span>
                                                         </td>
-                                                        <td className="text-gray-9">$1300</td>
+                                                        <td className="text-gray-9">Rs 1300</td>
                                                     </tr>
                                                     <tr>
                                                         <td>
@@ -2514,7 +2510,7 @@ const LayoutDemo = () => {
                                                                 Overdue
                                                             </span>
                                                         </td>
-                                                        <td className="text-gray-9">$1250</td>
+                                                        <td className="text-gray-9">Rs 1250</td>
                                                     </tr>
                                                     <tr>
                                                         <td>
@@ -2546,7 +2542,7 @@ const LayoutDemo = () => {
                                                                 Paid
                                                             </span>
                                                         </td>
-                                                        <td className="text-gray-9">$1700</td>
+                                                        <td className="text-gray-9">Rs 1700</td>
                                                     </tr>
                                                     <tr>
                                                         <td>
@@ -2576,7 +2572,7 @@ const LayoutDemo = () => {
                                                                 Unpaid
                                                             </span>
                                                         </td>
-                                                        <td className="text-gray-9">$1500</td>
+                                                        <td className="text-gray-9">Rs 1500</td>
                                                     </tr>
                                                     <tr>
                                                         <td>
@@ -2608,7 +2604,7 @@ const LayoutDemo = () => {
                                                                 Paid
                                                             </span>
                                                         </td>
-                                                        <td className="text-gray-9">$1000</td>
+                                                        <td className="text-gray-9">Rs 1000</td>
                                                     </tr>
                                                 </tbody>
                                             </table>
@@ -2661,7 +2657,7 @@ const LayoutDemo = () => {
                                         </div>
                                     </div>
                                     <div className="text-end">
-                                        <h5>$8,9645</h5>
+                                        <h5>Rs 8,9645</h5>
                                     </div>
                                 </div>
                                 <div className="d-flex align-items-center justify-content-between border-bottom mb-3 pb-3 flex-wrap gap-2">
@@ -2686,7 +2682,7 @@ const LayoutDemo = () => {
                                         </div>
                                     </div>
                                     <div className="text-end">
-                                        <h5>$16,985</h5>
+                                        <h5>Rs 16,985</h5>
                                     </div>
                                 </div>
                                 <div className="d-flex align-items-center justify-content-between border-bottom mb-3 pb-3 flex-wrap gap-2">
@@ -2711,7 +2707,7 @@ const LayoutDemo = () => {
                                         </div>
                                     </div>
                                     <div className="text-end">
-                                        <h5>$5,366</h5>
+                                        <h5>Rs 5,366</h5>
                                     </div>
                                 </div>
                                 <div className="d-flex align-items-center justify-content-between border-bottom mb-3 pb-3 flex-wrap gap-2">
@@ -2736,7 +2732,7 @@ const LayoutDemo = () => {
                                         </div>
                                     </div>
                                     <div className="text-end">
-                                        <h5>$4,569</h5>
+                                        <h5>Rs 4,569</h5>
                                     </div>
                                 </div>
                                 <div className="d-flex align-items-center justify-content-between flex-wrap gap-2">
@@ -2761,7 +2757,7 @@ const LayoutDemo = () => {
                                         </div>
                                     </div>
                                     <div className="text-end">
-                                        <h5>$3,5698</h5>
+                                        <h5>Rs 3,5698</h5>
                                     </div>
                                 </div>
                             </div>

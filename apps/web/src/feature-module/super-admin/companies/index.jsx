@@ -140,7 +140,7 @@ const Companies = () => {
     { value: "Yearly", label: "Yearly" },
   ];
   const currency = [
-    { value: "USD", label: "USD" },
+    { value: 'PKR', label: 'PKR' },
     { value: "Euro", label: "Euro" },
   ];
   const language = [
@@ -1441,7 +1441,7 @@ const Companies = () => {
                     <div className="col-md-4">
                       <div className="mb-3">
                         <p className="fs-12 mb-0">Currency</p>
-                        <p className="text-gray-9">United Stated Dollar (USD)</p>
+                        <p className="text-gray-9">Pakistani Rupee (PKR)</p>
                       </div>
                     </div>
                     <div className="col-md-4">
@@ -1478,7 +1478,7 @@ const Companies = () => {
                     <div className="col-md-4">
                       <div className="mb-3">
                         <p className="fs-12 mb-0">Price</p>
-                        <p className="text-gray-9">$200</p>
+                        <p className="text-gray-9">Rs 200</p>
                       </div>
                     </div>
                   </div>

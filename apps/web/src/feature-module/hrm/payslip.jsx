@@ -104,46 +104,46 @@ const Payslip = () => {
                                             <tbody>
                                                 <tr>
                                                     <td>Basic Salary</td>
-                                                    <td>$32,000</td>
+                                                    <td>Rs 32,000</td>
                                                     <td>PF</td>
-                                                    <td>$0.00</td>
+                                                    <td>Rs 0.00</td>
                                                 </tr>
                                                 <tr>
                                                     <td>HRA Allowance</td>
-                                                    <td>$0.00</td>
+                                                    <td>Rs 0.00</td>
                                                     <td>Professional Tax</td>
-                                                    <td>$0.00</td>
+                                                    <td>Rs 0.00</td>
                                                 </tr>
                                                 <tr>
                                                     <td>Conveyance</td>
-                                                    <td>$0.00</td>
+                                                    <td>Rs 0.00</td>
                                                     <td>TDS</td>
-                                                    <td>$0.00</td>
+                                                    <td>Rs 0.00</td>
                                                 </tr>
                                                 <tr>
                                                     <td>Medical Allowance</td>
-                                                    <td>$0.00</td>
+                                                    <td>Rs 0.00</td>
                                                     <td>Loans &amp; Others</td>
-                                                    <td>$0.00</td>
+                                                    <td>Rs 0.00</td>
                                                 </tr>
                                                 <tr>
                                                     <td>Bonus</td>
-                                                    <td>$0.00</td>
+                                                    <td>Rs 0.00</td>
                                                     <td>Bonus</td>
-                                                    <td>$0.00</td>
+                                                    <td>Rs 0.00</td>
                                                 </tr>
                                                 <tr>
                                                     <td>
                                                         <h6>Total Earnings</h6>
                                                     </td>
                                                     <td>
-                                                        <h6>$32,000</h6>
+                                                        <h6>Rs 32,000</h6>
                                                     </td>
                                                     <td>
                                                         <h6>Total Deductions</h6>
                                                     </td>
                                                     <td>
-                                                        <h6>$0.00</h6>
+                                                        <h6>Rs 0.00</h6>
                                                     </td>
                                                 </tr>
                                             </tbody>
@@ -157,7 +157,7 @@ const Payslip = () => {
                                     <p>Inwords</p>
                                 </div>
                                 <div className="mb-3">
-                                    <h6 className="mb-2">$32,000</h6>
+                                    <h6 className="mb-2">Rs 32,000</h6>
                                     <p>Thirty Two Thousand Only</p>
                                 </div>
                             </div>

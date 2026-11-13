@@ -57,11 +57,11 @@ const OnlineorderModal = () => {
                                                     <tr>
                                                         <th>Product</th>
                                                         <th>Qty</th>
-                                                        <th>Purchase Price($)</th>
-                                                        <th>Discount($)</th>
+                                                        <th>Purchase Price(Rs)</th>
+                                                        <th>Discount(Rs)</th>
                                                         <th>Tax(%)</th>
-                                                        <th>Tax Amount($)</th>
-                                                        <th>Unit Cost($)</th>
+                                                        <th>Tax Amount(Rs)</th>
+                                                        <th>Unit Cost(Rs)</th>
                                                         <th>Total Cost(%)</th>
                                                     </tr>
                                                 </thead>
@@ -157,19 +157,19 @@ const OnlineorderModal = () => {
                                                     <ul className="border-1 rounded-2">
                                                         <li className="border-bottom">
                                                             <h4 className="border-end">Order Tax</h4>
-                                                            <h5>$ 0.00</h5>
+                                                            <h5>Rs 0.00</h5>
                                                         </li>
                                                         <li className="border-bottom">
                                                             <h4 className="border-end">Discount</h4>
-                                                            <h5>$ 0.00</h5>
+                                                            <h5>Rs 0.00</h5>
                                                         </li>
                                                         <li className="border-bottom">
                                                             <h4 className="border-end">Shipping</h4>
-                                                            <h5>$ 0.00</h5>
+                                                            <h5>Rs 0.00</h5>
                                                         </li>
                                                         <li className="border-bottom">
                                                             <h4 className="border-end">Grand Total</h4>
-                                                            <h5>$ 0.00</h5>
+                                                            <h5>Rs 0.00</h5>
                                                         </li>
                                                     </ul>
                                                 </div>
@@ -346,11 +346,11 @@ const OnlineorderModal = () => {
                                                     <thead>
                                                         <tr>
                                                             <th>Product</th>
-                                                            <th>Purchase Price($)</th>
-                                                            <th>Discount($)</th>
+                                                            <th>Purchase Price(Rs)</th>
+                                                            <th>Discount(Rs)</th>
                                                             <th>Tax(%)</th>
-                                                            <th>Tax Amount($)</th>
-                                                            <th>Unit Cost($)</th>
+                                                            <th>Tax Amount(Rs)</th>
+                                                            <th>Unit Cost(Rs)</th>
                                                             <th>Total Cost(%)</th>
                                                         </tr>
                                                     </thead>
@@ -434,23 +434,23 @@ const OnlineorderModal = () => {
                                                         <ul className="border-1 rounded-1">
                                                             <li className="border-bottom">
                                                                 <h4 className="border-end">Order Tax</h4>
-                                                                <h5>$ 0.00</h5>
+                                                                <h5>Rs 0.00</h5>
                                                             </li>
                                                             <li className="border-bottom">
                                                                 <h4 className="border-end">Discount</h4>
-                                                                <h5>$ 0.00</h5>
+                                                                <h5>Rs 0.00</h5>
                                                             </li>
                                                             <li className="border-bottom">
                                                                 <h4 className="border-end">Grand Total</h4>
-                                                                <h5>$ 5200.00</h5>
+                                                                <h5>Rs 5200.00</h5>
                                                             </li>
                                                             <li className="border-bottom">
                                                                 <h4 className="border-end">Paid</h4>
-                                                                <h5>$ 5200.00</h5>
+                                                                <h5>Rs 5200.00</h5>
                                                             </li>
                                                             <li className="border-bottom">
                                                                 <h4 className="border-end">Due</h4>
-                                                                <h5>$ 0.00</h5>
+                                                                <h5>Rs 0.00</h5>
                                                             </li>
                                                         </ul>
                                                     </div>
@@ -506,11 +506,11 @@ const OnlineorderModal = () => {
                                                             <tr>
                                                                 <th>Product</th>
                                                                 <th>Qty</th>
-                                                                <th>Purchase Price($)</th>
-                                                                <th>Discount($)</th>
+                                                                <th>Purchase Price(Rs)</th>
+                                                                <th>Discount(Rs)</th>
                                                                 <th>Tax(%)</th>
-                                                                <th>Tax Amount($)</th>
-                                                                <th>Unit Cost($)</th>
+                                                                <th>Tax Amount(Rs)</th>
+                                                                <th>Unit Cost(Rs)</th>
                                                                 <th>Total Cost(%)</th>
                                                             </tr>
                                                         </thead>
@@ -722,19 +722,19 @@ const OnlineorderModal = () => {
                                                             <ul className="border-1 rounded-1">
                                                                 <li className="border-bottom">
                                                                     <h4 className="border-end">Order Tax</h4>
-                                                                    <h5>$ 0.00</h5>
+                                                                    <h5>Rs 0.00</h5>
                                                                 </li>
                                                                 <li className="border-bottom">
                                                                     <h4 className="border-end">Discount</h4>
-                                                                    <h5>$ 0.00</h5>
+                                                                    <h5>Rs 0.00</h5>
                                                                 </li>
                                                                 <li className="border-bottom">
                                                                     <h4 className="border-end">Shipping</h4>
-                                                                    <h5>$ 0.00</h5>
+                                                                    <h5>Rs 0.00</h5>
                                                                 </li>
                                                                 <li className="border-bottom">
                                                                     <h4 className="border-end">Grand Total</h4>
-                                                                    <h5>$5200.00</h5>
+                                                                    <h5>Rs 5200.00</h5>
                                                                 </li>
                                                             </ul>
                                                         </div>
@@ -867,7 +867,7 @@ const OnlineorderModal = () => {
                                                         <tr>
                                                             <td>19 Jan 2023</td>
                                                             <td>INV/SL0101</td>
-                                                            <td>$1500</td>
+                                                            <td>Rs 1500</td>
                                                             <td>Cash</td>
                                                             <td>
                                                                 <div className="edit-delete-action d-flex align-items-center">

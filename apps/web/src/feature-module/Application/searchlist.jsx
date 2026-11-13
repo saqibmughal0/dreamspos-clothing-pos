@@ -82,7 +82,7 @@ const Searchlist = () => {
                                                     <i className="ti ti-star-filled text-gray-2 me-1" />
                                                     (45)
                                                 </div>
-                                                <span className="text-gray-9">$35</span>
+                                                <span className="text-gray-9">Rs 35</span>
                                             </div>
                                         </div>
                                     </div>

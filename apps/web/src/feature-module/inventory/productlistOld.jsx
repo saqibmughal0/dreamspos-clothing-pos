@@ -62,8 +62,8 @@ const ProductList = () => {
   ];
   const price = [
     { value: "price", label: "Price" },
-    { value: "12500", label: "$12,500.00" },
-    { value: "13000", label: "$13,000.00" }, 
+    { value: "12500", label: "Rs 12,500.00" },
+    { value: "13000", label: "Rs 13,000.00" }, 
   ];
 
   const columns = [

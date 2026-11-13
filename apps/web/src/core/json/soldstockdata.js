@@ -6,8 +6,8 @@ export const SoldStockData =[
 		img: "assets/img/products/stock-img-01.png",
 		Unit: "6000",
 		Quantity: "100",
-		Tax_Value: "$300",
-		Total: "$300"
+		Tax_Value: "Rs 300",
+		Total: "Rs 300"
 	},
 	{
 		id:"2",
@@ -16,8 +16,8 @@ export const SoldStockData =[
 		img: "assets/img/products/stock-img-06.png",
 		Unit: "10",
 		Quantity: "140",
-		Tax_Value: "$10",
-		Total: "$1600"
+		Tax_Value: "Rs 10",
+		Total: "Rs 1600"
 	},
 	{
 		id:"3",
@@ -26,8 +26,8 @@ export const SoldStockData =[
 		img: "assets/img/products/stock-img-02.png",
 		Unit: "08",
 		Quantity: "300",
-		Tax_Value: "$80",
-		Total: "$880"
+		Tax_Value: "Rs 80",
+		Total: "Rs 880"
 	},
 	{
 		id:"4",
@@ -36,8 +36,8 @@ export const SoldStockData =[
 		img: "assets/img/products/stock-img-03.png",
 		Unit: "10",
 		Quantity: "450",
-		Tax_Value: "$100",
-		Total: "$1200"
+		Tax_Value: "Rs 100",
+		Total: "Rs 1200"
 	},
 	{
 		id:"5",
@@ -46,8 +46,8 @@ export const SoldStockData =[
 		img: "assets/img/products/stock-img-04.png",
 		Unit: "05",
 		Quantity: "320",
-		Tax_Value: "$400",
-		Total: "$400"
+		Tax_Value: "Rs 400",
+		Total: "Rs 400"
 	},
 	{
 		id:"6",
@@ -56,8 +56,8 @@ export const SoldStockData =[
 		img: "assets/img/products/stock-img-05.png",
 		Unit: "07",
 		Quantity: "650",
-		Tax_Value: "$220",
-		Total: "$2240"
+		Tax_Value: "Rs 220",
+		Total: "Rs 2240"
 	},
 	{
 		id:"7",
@@ -66,8 +66,8 @@ export const SoldStockData =[
 		img: "assets/img/products/expire-product-01.png",
 		Unit: "15",
 		Quantity: "700",
-		Tax_Value: "$90",
-		Total: "$900"
+		Tax_Value: "Rs 90",
+		Total: "Rs 900"
 	},
 	{
 		id:"8",
@@ -76,8 +76,8 @@ export const SoldStockData =[
 		img: "assets/img/products/expire-product-02.png",
 		Unit: "12",
 		Quantity: "630",
-		Tax_Value: "$680",
-		Total: "$6480"
+		Tax_Value: "Rs 680",
+		Total: "Rs 6480"
 	},
 	{
 		id:"9",
@@ -86,8 +86,8 @@ export const SoldStockData =[
 		img: "assets/img/products/expire-product-03.png",
 		Unit: "10",
 		Quantity: "410",
-		Tax_Value: "$200",
-		Total: "$2000"
+		Tax_Value: "Rs 200",
+		Total: "Rs 2000"
 	},
 	{
 		id:"10",
@@ -96,7 +96,7 @@ export const SoldStockData =[
 		img: "assets/img/products/expire-product-04.png",
 		Unit: "20",
 		Quantity: "550",
-		Tax_Value: "$400",
-		Total: "$900"
+		Tax_Value: "Rs 400",
+		Total: "Rs 900"
 	}
 ]

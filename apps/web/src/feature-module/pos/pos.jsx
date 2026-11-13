@@ -485,7 +485,7 @@ const Pos = () => {
                                   <div className="d-flex align-items-center justify-content-between price mt-2 pt-2 border-top">
                                     <div>
                                       <p className="text-gray-9 mb-0 fw-bold fs-15">
-                                        ${Number(displayPrice).toFixed(2)}
+                                        Rs {Number(displayPrice).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 2 })}
                                       </p>
                                       <small className="text-muted" style={{ fontSize: '11px' }}>
                                         Stock: {displayStock} pcs
@@ -658,7 +658,7 @@ const Pos = () => {
                                         </div>
                                       </td>
                                       <td className="fs-13 fw-semibold text-gray-9 text-end py-2">
-                                        ${(item.price * item.quantity - item.discount).toFixed(2)}
+                                        Rs {(item.price * item.quantity - item.discount).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 2 })}
                                       </td>
                                     </tr>
                                   ))}
@@ -676,27 +676,27 @@ const Pos = () => {
                           <tbody>
                             <tr>
                               <td className="text-muted fs-13 py-1">Sub Total</td>
-                              <td className="text-gray-9 fw-semibold text-end py-1">${getSubtotal().toFixed(2)}</td>
+                              <td className="text-gray-9 fw-semibold text-end py-1">Rs {getSubtotal().toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 2 })}</td>
                             </tr>
                             {orderDiscount > 0 && (
                               <tr>
                                 <td className="text-danger fs-13 py-1">Discount</td>
-                                <td className="text-danger fw-semibold text-end py-1">-${orderDiscount.toFixed(2)}</td>
+                                <td className="text-danger fw-semibold text-end py-1">-Rs {orderDiscount.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 2 })}</td>
                               </tr>
                             )}
                             <tr>
                               <td className="text-muted fs-13 py-1">Sales Tax (Est.)</td>
-                              <td className="text-gray-9 fw-semibold text-end py-1">${getTotalTax().toFixed(2)}</td>
+                              <td className="text-gray-9 fw-semibold text-end py-1">Rs {getTotalTax().toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 2 })}</td>
                             </tr>
                             {shippingFee > 0 && (
                               <tr>
                                 <td className="text-muted fs-13 py-1">Shipping</td>
-                                <td className="text-gray-9 fw-semibold text-end py-1">${shippingFee.toFixed(2)}</td>
+                                <td className="text-gray-9 fw-semibold text-end py-1">Rs {shippingFee.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 2 })}</td>
                               </tr>
                             )}
                             <tr className="border-top border-dashed">
                               <td className="fw-bold fs-15 py-2">Total Payable</td>
-                              <td className="text-primary fw-bold text-end fs-16 py-2">${getGrandTotal().toFixed(2)}</td>
+                              <td className="text-primary fw-bold text-end fs-16 py-2">Rs {getGrandTotal().toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 2 })}</td>
                             </tr>
                           </tbody>
                         </table>
@@ -762,7 +762,7 @@ const Pos = () => {
                       disabled={cart.length === 0}
                     >
                       <i className="ti ti-shopping-cart me-2 fs-18" />
-                      Place Order (${getGrandTotal().toFixed(2)})
+                      Place Order (Rs {getGrandTotal().toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 2 })})
                     </button>
                   </div>
                 </div>
@@ -871,7 +871,7 @@ const Pos = () => {
                               <td>{h.heldAt}</td>
                               <td>{h.customer?.name || "Walk-in Customer"}</td>
                               <td>{h.items.length} items</td>
-                              <td className="fw-bold text-primary">${orderTotal.toFixed(2)}</td>
+                              <td className="fw-bold text-primary">Rs {orderTotal.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 2 })}</td>
                               <td className="text-center">
                                 <button
                                   type="button"

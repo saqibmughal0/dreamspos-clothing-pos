@@ -40,7 +40,7 @@ const Pricing = () => {
                                         <div className="card-body">
                                             <p className="mb-1">Basic Plan</p>
                                             <div className="d-flex align-items-center mb-2">
-                                                <h4>$29.00 </h4>
+                                                <h4>Rs 29.00</h4>
                                                 <span className="d-inline-flex ms-1">/ Per Month</span>
                                             </div>
                                             <p className="mb-3">Feature for upto 10 users</p>
@@ -96,7 +96,7 @@ const Pricing = () => {
                                         <div className="card-body">
                                             <p className="mb-1">Business Plan</p>
                                             <div className="d-flex align-items-center mb-2">
-                                                <h4>$69.00 </h4>
+                                                <h4>Rs 69.00</h4>
                                                 <span className="d-inline-flex ms-1">/ Per Month</span>
                                             </div>
                                             <p className="mb-3">Feature for upto 22 users</p>
@@ -151,7 +151,7 @@ const Pricing = () => {
                                         <div className="card-body">
                                             <p className="mb-1">Premium Plan</p>
                                             <div className="d-flex align-items-center mb-2">
-                                                <h4>$99.00 </h4>
+                                                <h4>Rs 99.00</h4>
                                                 <span className="d-inline-flex ms-1">/ Per Month</span>
                                             </div>
                                             <p className="mb-3">Feature for upto 33 users</p>
@@ -206,7 +206,7 @@ const Pricing = () => {
                                         <div className="card-body">
                                             <p className="mb-1">Enterprise Plan</p>
                                             <div className="d-flex align-items-center mb-2">
-                                                <h4>$199.00 </h4>
+                                                <h4>Rs 199.00</h4>
                                                 <span className="d-inline-flex ms-1">/ Per Month</span>
                                             </div>
                                             <p className="mb-3">Feature for upto Unlimited users</p>

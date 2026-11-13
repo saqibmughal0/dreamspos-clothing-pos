@@ -30,9 +30,9 @@ const PosOrder = () => {
                     reference: s.invoiceNumber,
                     date: new Date(s.createdAt).toLocaleDateString(),
                     status: s.status === 'COMPLETED' ? 'Completed' : 'Pending',
-                    total: `$${Number(s.totalAmount).toFixed(2)}`,
-                    paid: `$${Number(s.paidAmount).toFixed(2)}`,
-                    due: `$${Number(s.dueAmount).toFixed(2)}`,
+                    total: `Rs ${Number(s.totalAmount).toFixed(2)}`,
+                    paid: `Rs ${Number(s.paidAmount).toFixed(2)}`,
+                    due: `Rs ${Number(s.dueAmount).toFixed(2)}`,
                     paymentstatus: s.paymentStatus === 'PAID' ? 'Paid' : s.paymentStatus === 'PARTIAL' ? 'Partial' : 'Unpaid',
                     biller: s.cashier?.name || "POS Cashier",
                     image: "user-01.jpg",
@@ -136,9 +136,9 @@ const PosOrder = () => {
                                 onClick={() => {
                                     setSelectedSaleForPrint(record.rawSale || {
                                         invoiceNumber: record.reference,
-                                        totalAmount: record.total ? Number(record.total.replace('$', '')) : 0,
+                                        totalAmount: record.total ? Number(record.total.replace(/[^0-9.-]+/g, '')) : 0,
                                         customerName: record.customer,
-                                        items: [{ name: "Clothing Items", quantity: 1, price: record.total ? Number(record.total.replace('$', '')) : 0 }]
+                                        items: [{ name: "Clothing Items", quantity: 1, price: record.total ? Number(record.total.replace(/[^0-9.-]+/g, '')) : 0 }]
                                     });
                                     setShowReceiptModal(true);
                                 }}

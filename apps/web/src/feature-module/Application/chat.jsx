@@ -1584,11 +1584,11 @@ const Chat = () => {
                                 <tr>
                                   <th>Product</th>
                                   <th>Qty</th>
-                                  <th>Purchase Price($)</th>
-                                  <th>Discount($)</th>
+                                  <th>Purchase Price(Rs)</th>
+                                  <th>Discount(Rs)</th>
                                   <th>Tax(%)</th>
-                                  <th>Tax Amount($)</th>
-                                  <th>Unit Cost($)</th>
+                                  <th>Tax Amount(Rs)</th>
+                                  <th>Unit Cost(Rs)</th>
                                   <th>Total Cost(%)</th>
                                 </tr>
                               </thead>
@@ -1750,13 +1750,13 @@ const Chat = () => {
                                     <tr>
                                       <th>Product Name</th>
                                       <th>QTY</th>
-                                      <th>Purchase Price($) </th>
-                                      <th>Discount($) </th>
+                                      <th>Purchase Price(Rs) </th>
+                                      <th>Discount(Rs) </th>
                                       <th>Tax %</th>
-                                      <th>Tax Amount($)</th>
-                                      <th className="text-end">Unit Cost($)</th>
+                                      <th>Tax Amount(Rs)</th>
+                                      <th className="text-end">Unit Cost(Rs)</th>
                                       <th className="text-end">
-                                        Total Cost ($){" "}
+                                        Total Cost (Rs){" "}
                                       </th>
                                       <th />
                                     </tr>
@@ -1826,19 +1826,19 @@ const Chat = () => {
                               <ul>
                                 <li>
                                   <h4>Order Tax</h4>
-                                  <h5>$ 0.00</h5>
+                                  <h5>Rs 0.00</h5>
                                 </li>
                                 <li>
                                   <h4>Discount</h4>
-                                  <h5>$ 0.00</h5>
+                                  <h5>Rs 0.00</h5>
                                 </li>
                                 <li>
                                   <h4>Shipping</h4>
-                                  <h5>$ 0.00</h5>
+                                  <h5>Rs 0.00</h5>
                                 </li>
                                 <li className="total">
                                   <h4>Grand Total</h4>
-                                  <h5>$1500.00</h5>
+                                  <h5>Rs 1500.00</h5>
                                 </li>
                               </ul>
                             </div>

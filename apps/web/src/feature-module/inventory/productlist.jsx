@@ -35,7 +35,7 @@ const ProductList = () => {
             productImage: p.image || "assets/img/products/pos-product-01.png",
             category: p.categoryName || "Apparel",
             brand: "Dreams Apparel",
-            price: `$${Number(p.sellingPrice).toFixed(2)}`,
+            price: `Rs ${Number(p.sellingPrice).toFixed(2)}`,
             unit: p.unitName || "pc",
             qty: `${p.stockQuantity ?? 50} Pcs`,
             createdby: "Admin"

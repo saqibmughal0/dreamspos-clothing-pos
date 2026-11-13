@@ -223,9 +223,9 @@ const CustomerDueReport = () => {
                           <Table.Summary.Cell index={3}><h6>Total</h6></Table.Summary.Cell>
                           <Table.Summary.Cell ></Table.Summary.Cell>
                           <Table.Summary.Cell ></Table.Summary.Cell>
-                          <Table.Summary.Cell ><h6>$33268.53</h6></Table.Summary.Cell>
-                          <Table.Summary.Cell ><h6>$25651.53</h6></Table.Summary.Cell>
-                          <Table.Summary.Cell ><h6>$0.0</h6></Table.Summary.Cell>
+                          <Table.Summary.Cell ><h6>Rs 33268.53</h6></Table.Summary.Cell>
+                          <Table.Summary.Cell ><h6>Rs 25651.53</h6></Table.Summary.Cell>
+                          <Table.Summary.Cell ><h6>Rs 0.0</h6></Table.Summary.Cell>
                           <Table.Summary.Cell ></Table.Summary.Cell>
                         </Table.Summary.Row>
                       </>

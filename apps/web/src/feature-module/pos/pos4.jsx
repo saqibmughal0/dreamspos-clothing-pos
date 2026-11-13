@@ -216,7 +216,7 @@ const Pos4 = () => {
                                 <Link to="#">Charger Cable</Link>
                               </h6>
                               <div className="d-flex align-items-center justify-content-between">
-                                <h6 className="text-teal fs-14 fw-bold">$30</h6>
+                                <h6 className="text-teal fs-14 fw-bold">Rs 30</h6>
                                 <p className="text-pink">40 Pcs</p>
                               </div>
                             </div>
@@ -240,9 +240,7 @@ const Pos4 = () => {
                                 </Link>
                               </h6>
                               <div className="d-flex align-items-center justify-content-between">
-                                <h6 className="text-teal fs-14 fw-bold">
-                                  $120
-                                </h6>
+                                <h6 className="text-teal fs-14 fw-bold">Rs 120</h6>
                                 <p className="text-pink">25 Pcs</p>
                               </div>
                             </div>
@@ -264,9 +262,7 @@ const Pos4 = () => {
                                 <Link to="#">Vacuum Cleaner</Link>
                               </h6>
                               <div className="d-flex align-items-center justify-content-between">
-                                <h6 className="text-teal fs-14 fw-bold">
-                                  $800
-                                </h6>
+                                <h6 className="text-teal fs-14 fw-bold">Rs 800</h6>
                                 <p className="text-pink">12 Pcs</p>
                               </div>
                             </div>
@@ -288,9 +284,7 @@ const Pos4 = () => {
                                 <Link to="#">Realme 8 Pro</Link>
                               </h6>
                               <div className="d-flex align-items-center justify-content-between">
-                                <h6 className="text-teal fs-14 fw-bold">
-                                  $700
-                                </h6>
+                                <h6 className="text-teal fs-14 fw-bold">Rs 700</h6>
                                 <p className="text-pink">18 Pcs</p>
                               </div>
                             </div>
@@ -312,9 +306,7 @@ const Pos4 = () => {
                                 <Link to="#">Vacuum Robot</Link>
                               </h6>
                               <div className="d-flex align-items-center justify-content-between">
-                                <h6 className="text-teal fs-14 fw-bold">
-                                  $600
-                                </h6>
+                                <h6 className="text-teal fs-14 fw-bold">Rs 600</h6>
                                 <p className="text-pink">35 Pcs</p>
                               </div>
                             </div>
@@ -338,9 +330,7 @@ const Pos4 = () => {
                                 </Link>
                               </h6>
                               <div className="d-flex align-items-center justify-content-between">
-                                <h6 className="text-teal fs-14 fw-bold">
-                                  $300
-                                </h6>
+                                <h6 className="text-teal fs-14 fw-bold">Rs 300</h6>
                                 <p className="text-pink">08 Pcs</p>
                               </div>
                             </div>
@@ -364,9 +354,7 @@ const Pos4 = () => {
                                 </Link>
                               </h6>
                               <div className="d-flex align-items-center justify-content-between">
-                                <h6 className="text-teal fs-14 fw-bold">
-                                  $300
-                                </h6>
+                                <h6 className="text-teal fs-14 fw-bold">Rs 300</h6>
                                 <p className="text-pink">08 Pcs</p>
                               </div>
                             </div>
@@ -388,9 +376,7 @@ const Pos4 = () => {
                                 <Link to="#">Bracelet</Link>
                               </h6>
                               <div className="d-flex align-items-center justify-content-between">
-                                <h6 className="text-teal fs-14 fw-bold">
-                                  $1430
-                                </h6>
+                                <h6 className="text-teal fs-14 fw-bold">Rs 1430</h6>
                                 <p className="text-pink">13 Pcs</p>
                               </div>
                             </div>
@@ -412,9 +398,7 @@ const Pos4 = () => {
                                 <Link to="#">YETI Flask</Link>
                               </h6>
                               <div className="d-flex align-items-center justify-content-between">
-                                <h6 className="text-teal fs-14 fw-bold">
-                                  $1560
-                                </h6>
+                                <h6 className="text-teal fs-14 fw-bold">Rs 1560</h6>
                                 <p className="text-pink">30 Pcs</p>
                               </div>
                             </div>
@@ -436,9 +420,7 @@ const Pos4 = () => {
                                 <Link to="#">Osmo Med Kit</Link>
                               </h6>
                               <div className="d-flex align-items-center justify-content-between">
-                                <h6 className="text-teal fs-14 fw-bold">
-                                  $410
-                                </h6>
+                                <h6 className="text-teal fs-14 fw-bold">Rs 410</h6>
                                 <p className="text-pink">15 Pcs</p>
                               </div>
                             </div>
@@ -462,9 +444,7 @@ const Pos4 = () => {
                                 </Link>
                               </h6>
                               <div className="d-flex align-items-center justify-content-between">
-                                <h6 className="text-teal fs-14 fw-bold">
-                                  $150
-                                </h6>
+                                <h6 className="text-teal fs-14 fw-bold">Rs 150</h6>
                                 <p className="text-pink">45 Pcs</p>
                               </div>
                             </div>
@@ -486,9 +466,7 @@ const Pos4 = () => {
                                 <Link to="#">Dell XPS 13</Link>
                               </h6>
                               <div className="d-flex align-items-center justify-content-between">
-                                <h6 className="text-teal fs-14 fw-bold">
-                                  $1140
-                                </h6>
+                                <h6 className="text-teal fs-14 fw-bold">Rs 1140</h6>
                                 <p className="text-pink">22 Pcs</p>
                               </div>
                             </div>
@@ -510,7 +488,7 @@ const Pos4 = () => {
                                 <Link to="#">Cheese Snack</Link>
                               </h6>
                               <div className="d-flex align-items-center justify-content-between">
-                                <h6 className="text-teal fs-14 fw-bold">$15</h6>
+                                <h6 className="text-teal fs-14 fw-bold">Rs 15</h6>
                                 <p className="text-pink">55 Pcs</p>
                               </div>
                             </div>
@@ -534,9 +512,7 @@ const Pos4 = () => {
                                 </Link>
                               </h6>
                               <div className="d-flex align-items-center justify-content-between">
-                                <h6 className="text-teal fs-14 fw-bold">
-                                  $320
-                                </h6>
+                                <h6 className="text-teal fs-14 fw-bold">Rs 320</h6>
                                 <p className="text-pink">30 Pcs</p>
                               </div>
                             </div>
@@ -558,9 +534,7 @@ const Pos4 = () => {
                                 <Link to="#">Sonic Aura X7</Link>
                               </h6>
                               <div className="d-flex align-items-center justify-content-between">
-                                <h6 className="text-teal fs-14 fw-bold">
-                                  $230
-                                </h6>
+                                <h6 className="text-teal fs-14 fw-bold">Rs 230</h6>
                                 <p className="text-pink">20 Pcs</p>
                               </div>
                             </div>
@@ -584,9 +558,7 @@ const Pos4 = () => {
                                 </Link>
                               </h6>
                               <div className="d-flex align-items-center justify-content-between">
-                                <h6 className="text-teal fs-14 fw-bold">
-                                  $160
-                                </h6>
+                                <h6 className="text-teal fs-14 fw-bold">Rs 160</h6>
                                 <p className="text-pink">13 Pcs</p>
                               </div>
                             </div>
@@ -610,9 +582,7 @@ const Pos4 = () => {
                                 </Link>
                               </h6>
                               <div className="d-flex align-items-center justify-content-between">
-                                <h6 className="text-teal fs-14 fw-bold">
-                                  $1200
-                                </h6>
+                                <h6 className="text-teal fs-14 fw-bold">Rs 1200</h6>
                                 <p className="text-pink">15 Pcs</p>
                               </div>
                             </div>
@@ -636,9 +606,7 @@ const Pos4 = () => {
                                 </Link>
                               </h6>
                               <div className="d-flex align-items-center justify-content-between">
-                                <h6 className="text-teal fs-14 fw-bold">
-                                  $900
-                                </h6>
+                                <h6 className="text-teal fs-14 fw-bold">Rs 900</h6>
                                 <p className="text-pink">20 Pcs</p>
                               </div>
                             </div>
@@ -662,7 +630,7 @@ const Pos4 = () => {
                                 </Link>
                               </h6>
                               <div className="d-flex align-items-center justify-content-between">
-                                <h6 className="text-teal fs-14 fw-bold">$80</h6>
+                                <h6 className="text-teal fs-14 fw-bold">Rs 80</h6>
                                 <p className="text-pink">16 Pcs</p>
                               </div>
                             </div>
@@ -686,9 +654,7 @@ const Pos4 = () => {
                                 </Link>
                               </h6>
                               <div className="d-flex align-items-center justify-content-between">
-                                <h6 className="text-teal fs-14 fw-bold">
-                                  $170
-                                </h6>
+                                <h6 className="text-teal fs-14 fw-bold">Rs 170</h6>
                                 <p className="text-pink">35 Pcs</p>
                               </div>
                             </div>
@@ -716,9 +682,7 @@ const Pos4 = () => {
                                 </Link>
                               </h6>
                               <div className="d-flex align-items-center justify-content-between">
-                                <h6 className="text-teal fs-14 fw-bold">
-                                  $120
-                                </h6>
+                                <h6 className="text-teal fs-14 fw-bold">Rs 120</h6>
                                 <p className="text-pink">25 Pcs</p>
                               </div>
                             </div>
@@ -740,9 +704,7 @@ const Pos4 = () => {
                                 <Link to="#">Sonic Aura X7</Link>
                               </h6>
                               <div className="d-flex align-items-center justify-content-between">
-                                <h6 className="text-teal fs-14 fw-bold">
-                                  $1200
-                                </h6>
+                                <h6 className="text-teal fs-14 fw-bold">Rs 1200</h6>
                                 <p className="text-pink">15 Pcs</p>
                               </div>
                             </div>
@@ -770,9 +732,7 @@ const Pos4 = () => {
                                 </Link>
                               </h6>
                               <div className="d-flex align-items-center justify-content-between">
-                                <h6 className="text-teal fs-14 fw-bold">
-                                  $320
-                                </h6>
+                                <h6 className="text-teal fs-14 fw-bold">Rs 320</h6>
                                 <p className="text-pink">30 Pcs</p>
                               </div>
                             </div>
@@ -796,9 +756,7 @@ const Pos4 = () => {
                                 </Link>
                               </h6>
                               <div className="d-flex align-items-center justify-content-between">
-                                <h6 className="text-teal fs-14 fw-bold">
-                                  $160
-                                </h6>
+                                <h6 className="text-teal fs-14 fw-bold">Rs 160</h6>
                                 <p className="text-pink">13 Pcs</p>
                               </div>
                             </div>
@@ -824,7 +782,7 @@ const Pos4 = () => {
                                 <Link to="#">Charger Cable</Link>
                               </h6>
                               <div className="d-flex align-items-center justify-content-between">
-                                <h6 className="text-teal fs-14 fw-bold">$30</h6>
+                                <h6 className="text-teal fs-14 fw-bold">Rs 30</h6>
                                 <p className="text-pink">40 Pcs</p>
                               </div>
                             </div>
@@ -846,9 +804,7 @@ const Pos4 = () => {
                                 <Link to="#">Realme 8 Pro</Link>
                               </h6>
                               <div className="d-flex align-items-center justify-content-between">
-                                <h6 className="text-teal fs-14 fw-bold">
-                                  $700
-                                </h6>
+                                <h6 className="text-teal fs-14 fw-bold">Rs 700</h6>
                                 <p className="text-pink">18 Pcs</p>
                               </div>
                             </div>
@@ -872,9 +828,7 @@ const Pos4 = () => {
                                 </Link>
                               </h6>
                               <div className="d-flex align-items-center justify-content-between">
-                                <h6 className="text-teal fs-14 fw-bold">
-                                  $1200
-                                </h6>
+                                <h6 className="text-teal fs-14 fw-bold">Rs 1200</h6>
                                 <p className="text-pink">15 Pcs</p>
                               </div>
                             </div>
@@ -902,9 +856,7 @@ const Pos4 = () => {
                                 </Link>
                               </h6>
                               <div className="d-flex align-items-center justify-content-between">
-                                <h6 className="text-teal fs-14 fw-bold">
-                                  $300
-                                </h6>
+                                <h6 className="text-teal fs-14 fw-bold">Rs 300</h6>
                                 <p className="text-pink">08 Pcs</p>
                               </div>
                             </div>
@@ -930,9 +882,7 @@ const Pos4 = () => {
                                 <Link to="#">Dell XPS 13</Link>
                               </h6>
                               <div className="d-flex align-items-center justify-content-between">
-                                <h6 className="text-teal fs-14 fw-bold">
-                                  $1140
-                                </h6>
+                                <h6 className="text-teal fs-14 fw-bold">Rs 1140</h6>
                                 <p className="text-pink">22 Pcs</p>
                               </div>
                             </div>
@@ -954,7 +904,7 @@ const Pos4 = () => {
                                 <Link to="#">Charger Cable</Link>
                               </h6>
                               <div className="d-flex align-items-center justify-content-between">
-                                <h6 className="text-teal fs-14 fw-bold">$30</h6>
+                                <h6 className="text-teal fs-14 fw-bold">Rs 30</h6>
                                 <p className="text-pink">40 Pcs</p>
                               </div>
                             </div>
@@ -980,9 +930,7 @@ const Pos4 = () => {
                                 <Link to="#">Vacuum Cleaner</Link>
                               </h6>
                               <div className="d-flex align-items-center justify-content-between">
-                                <h6 className="text-teal fs-14 fw-bold">
-                                  $800
-                                </h6>
+                                <h6 className="text-teal fs-14 fw-bold">Rs 800</h6>
                                 <p className="text-pink">12 Pcs</p>
                               </div>
                             </div>
@@ -1004,9 +952,7 @@ const Pos4 = () => {
                                 <Link to="#">Vacuum Robot</Link>
                               </h6>
                               <div className="d-flex align-items-center justify-content-between">
-                                <h6 className="text-teal fs-14 fw-bold">
-                                  $600
-                                </h6>
+                                <h6 className="text-teal fs-14 fw-bold">Rs 600</h6>
                                 <p className="text-pink">35 Pcs</p>
                               </div>
                             </div>
@@ -1028,7 +974,7 @@ const Pos4 = () => {
                                 <Link to="#">Cheese Snack</Link>
                               </h6>
                               <div className="d-flex align-items-center justify-content-between">
-                                <h6 className="text-teal fs-14 fw-bold">$15</h6>
+                                <h6 className="text-teal fs-14 fw-bold">Rs 15</h6>
                                 <p className="text-pink">55 Pcs</p>
                               </div>
                             </div>
@@ -1052,7 +998,7 @@ const Pos4 = () => {
                                 </Link>
                               </h6>
                               <div className="d-flex align-items-center justify-content-between">
-                                <h6 className="text-teal fs-14 fw-bold">$80</h6>
+                                <h6 className="text-teal fs-14 fw-bold">Rs 80</h6>
                                 <p className="text-pink">16 Pcs</p>
                               </div>
                             </div>
@@ -1076,9 +1022,7 @@ const Pos4 = () => {
                                 </Link>
                               </h6>
                               <div className="d-flex align-items-center justify-content-between">
-                                <h6 className="text-teal fs-14 fw-bold">
-                                  $170
-                                </h6>
+                                <h6 className="text-teal fs-14 fw-bold">Rs 170</h6>
                                 <p className="text-pink">35 Pcs</p>
                               </div>
                             </div>
@@ -1106,9 +1050,7 @@ const Pos4 = () => {
                                 </Link>
                               </h6>
                               <div className="d-flex align-items-center justify-content-between">
-                                <h6 className="text-teal fs-14 fw-bold">
-                                  $120
-                                </h6>
+                                <h6 className="text-teal fs-14 fw-bold">Rs 120</h6>
                                 <p className="text-pink">25 Pcs</p>
                               </div>
                             </div>
@@ -1132,9 +1074,7 @@ const Pos4 = () => {
                                 </Link>
                               </h6>
                               <div className="d-flex align-items-center justify-content-between">
-                                <h6 className="text-teal fs-14 fw-bold">
-                                  $1200
-                                </h6>
+                                <h6 className="text-teal fs-14 fw-bold">Rs 1200</h6>
                                 <p className="text-pink">15 Pcs</p>
                               </div>
                             </div>
@@ -1225,14 +1165,14 @@ const Pos4 = () => {
                                     <i className="ti ti-edit" />
                                   </Link>
                                 </div>
-                                Price : $400
+                                Price : Rs 400
                               </td>
                               <td>
                                 <div className="qty-item m-0">
                                  <CounterTwo defaultValue={4}/>
                                 </div>
                               </td>
-                              <td className="fw-bold">$400</td>
+                              <td className="fw-bold">Rs 400</td>
                               <td className="text-end">
                                 <Link
                                   className="btn-icon delete-icon"
@@ -1265,14 +1205,14 @@ const Pos4 = () => {
                                     <i className="ti ti-edit" />
                                   </Link>
                                 </div>
-                                Price : $400
+                                Price : Rs 400
                               </td>
                               <td>
                                 <div className="qty-item m-0">
                                 <CounterTwo defaultValue={1}/>
                                 </div>
                               </td>
-                              <td className="fw-bold">$400</td>
+                              <td className="fw-bold">Rs 400</td>
                               <td className="text-end">
                                 <Link
                                   className="btn-icon delete-icon"
@@ -1305,14 +1245,14 @@ const Pos4 = () => {
                                     <i className="ti ti-edit" />
                                   </Link>
                                 </div>
-                                Price : $600
+                                Price : Rs 600
                               </td>
                               <td>
                                 <div className="qty-item m-0">
                                 <CounterTwo defaultValue={3}/>
                                 </div>
                               </td>
-                              <td className="fw-bold">$600</td>
+                              <td className="fw-bold">Rs 600</td>
                               <td className="text-end">
                                 <Link
                                   className="btn-icon delete-icon"
@@ -1345,14 +1285,14 @@ const Pos4 = () => {
                                     <i className="ti ti-edit" />
                                   </Link>
                                 </div>
-                                Price : $1400
+                                Price : Rs 1400
                               </td>
                               <td>
                                 <div className="qty-item m-0">
                                 <CounterTwo defaultValue={1}/>
                                 </div>
                               </td>
-                              <td className="fw-bold">$1400</td>
+                              <td className="fw-bold">Rs 1400</td>
                               <td className="text-end">
                                 <Link
                                   className="btn-icon delete-icon"
@@ -1377,23 +1317,23 @@ const Pos4 = () => {
                         <tbody>
                           <tr>
                             <td>Sub Total</td>
-                            <td className="text-end">$1250</td>
+                            <td className="text-end">Rs 1250</td>
                           </tr>
                           <tr>
                             <td>Shipping</td>
-                            <td className="text-end">$35</td>
+                            <td className="text-end">Rs 35</td>
                           </tr>
                           <tr>
                             <td>Tax (15%)</td>
-                            <td className="text-end">$25</td>
+                            <td className="text-end">Rs 25</td>
                           </tr>
                           <tr>
                             <td>Discount (5%)</td>
-                            <td className="text-danger text-end">-$24</td>
+                            <td className="text-danger text-end">-Rs 24</td>
                           </tr>
                           <tr>
                             <td>Grand Total</td>
-                            <td className="text-end">$56590</td>
+                            <td className="text-end">Rs 56590</td>
                           </tr>
                         </tbody>
                       </table>

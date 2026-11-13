@@ -7,7 +7,7 @@ export const BestSellerData = [
 		Brand: "Lenovo",
 		Category: "Computers",
 		Sold_Qty: "05",
-		Sold_Amount: "$3000",
+		Sold_Amount: "Rs 3000",
 		Instock_Qty: "100",
 	},
 	{
@@ -18,7 +18,7 @@ export const BestSellerData = [
 		Brand: "Beats",
 		Category: "Electronics",
 		Sold_Qty: "10",
-		Sold_Amount: "$1600",
+		Sold_Amount: "Rs 1600",
 		Instock_Qty: "140",
 	},
 	{
@@ -29,7 +29,7 @@ export const BestSellerData = [
 		Brand: "Nike",
 		Category: "Shoe",
 		Sold_Qty: "08",
-		Sold_Amount: "$880",
+		Sold_Amount: "Rs 880",
 		Instock_Qty: "300",
 	},
 	{
@@ -40,7 +40,7 @@ export const BestSellerData = [
 		Brand: "Apple",
 		Category: "Electronics",
 		Sold_Qty: "10",
-		Sold_Amount: "$1200",
+		Sold_Amount: "Rs 1200",
 		Instock_Qty: "450",
 	},
 	{
@@ -51,7 +51,7 @@ export const BestSellerData = [
 		Brand: "Amazon",
 		Category: "Electronics",
 		Sold_Qty: "05",
-		Sold_Amount: "$400",
+		Sold_Amount: "Rs 400",
 		Instock_Qty: "320",
 	},
 	{
@@ -62,7 +62,7 @@ export const BestSellerData = [
 		Brand: "Modern Wave",
 		Category: "Furniture",
 		Sold_Qty: "07",
-		Sold_Amount: "$2240",
+		Sold_Amount: "Rs 2240",
 		Instock_Qty: "650",
 	},
 	{
@@ -73,7 +73,7 @@ export const BestSellerData = [
 		Brand: "Dior",
 		Category: "Bags",
 		Sold_Qty: "15",
-		Sold_Amount: "$900",
+		Sold_Amount: "Rs 900",
 		Instock_Qty: "700",
 	},
 	{
@@ -84,7 +84,7 @@ export const BestSellerData = [
 		Brand: "Apple",
 		Category: "Phone",
 		Sold_Qty: "12",
-		Sold_Amount: "$6480",
+		Sold_Amount: "Rs 6480",
 		Instock_Qty: "630",
 	},
 	{
@@ -95,7 +95,7 @@ export const BestSellerData = [
 		Brand: "Arlime",
 		Category: "Furniture",
 		Sold_Qty: "10",
-		Sold_Amount: "$2000",
+		Sold_Amount: "Rs 2000",
 		Instock_Qty: "410",
 	},
 	{
@@ -106,7 +106,7 @@ export const BestSellerData = [
 		Brand: "The North Face",
 		Category: "Bags",
 		Sold_Qty: "20",
-		Sold_Amount: "$900",
+		Sold_Amount: "Rs 900",
 		Instock_Qty: "550",
 	},
 ];

@@ -142,7 +142,7 @@ export const CashRegisterModal: React.FC<CashRegisterModalProps> = ({
                 </div>
 
                 <div className="mb-3">
-                  <label className="form-label fs-13 fw-semibold">Physical Counted Cash ($)</label>
+                  <label className="form-label fs-13 fw-semibold">Physical Counted Cash (Rs)</label>
                   <input
                     type="number"
                     step="0.01"
@@ -178,7 +178,7 @@ export const CashRegisterModal: React.FC<CashRegisterModalProps> = ({
                   No active shift open. Enter the opening float cash to begin processing POS sales.
                 </p>
                 <div className="mb-3">
-                  <label className="form-label fs-13 fw-semibold">Opening Float Amount ($)</label>
+                  <label className="form-label fs-13 fw-semibold">Opening Float Amount (Rs)</label>
                   <input
                     type="number"
                     step="0.01"

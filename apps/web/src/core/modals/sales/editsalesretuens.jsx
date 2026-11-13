@@ -117,12 +117,12 @@ const EditSalesRetuens = () => {
                         <thead>
                           <tr>
                             <th>Product Name</th>
-                            <th>Net Unit Price($) </th>
+                            <th>Net Unit Price(Rs) </th>
                             <th>Stock</th>
                             <th>QTY </th>
-                            <th>Discount($) </th>
+                            <th>Discount(Rs) </th>
                             <th>Tax %</th>
-                            <th>Subtotal ($)</th>
+                            <th>Subtotal (Rs)</th>
                           </tr>
                         </thead>
                         <tbody>
@@ -179,19 +179,19 @@ const EditSalesRetuens = () => {
                           <ul className="rounded-1 border-1">
                             <li className="border-0 border-bottom">
                               <h4 className="border-end">Order Tax</h4>
-                              <h5>$ 0.00</h5>
+                              <h5>Rs 0.00</h5>
                             </li>
                             <li className="border-0 border-bottom">
                               <h4 className="border-end">Discount</h4>
-                              <h5>$ 0.00</h5>
+                              <h5>Rs 0.00</h5>
                             </li>
                             <li className="border-0 border-bottom">
                               <h4 className="border-end">Shipping</h4>
-                              <h5>$ 0.00</h5>
+                              <h5>Rs 0.00</h5>
                             </li>
                             <li className="border-0 border-bottom">
                               <h4 className="border-end">Grand Total</h4>
-                              <h5>$ 0.00</h5>
+                              <h5>Rs 0.00</h5>
                             </li>
                           </ul>
                         </div>

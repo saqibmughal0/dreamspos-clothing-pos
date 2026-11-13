@@ -69,7 +69,7 @@ const PrinterSettings = () => {
                             <td>HP Printer</td>
                             <td>Network</td>
                             <td>151.00.1.22</td>
-                            <td>$200</td>
+                            <td>Rs 200</td>
                             <td className="action-table-data">
                               <div className="edit-delete-action">
                                 <Link
@@ -95,7 +95,7 @@ const PrinterSettings = () => {
                             <td>Epson</td>
                             <td>Network</td>
                             <td>151.00.2.20</td>
-                            <td>$50</td>
+                            <td>Rs 50</td>
                             <td className="action-table-data">
                               <div className="edit-delete-action">
                                 <Link

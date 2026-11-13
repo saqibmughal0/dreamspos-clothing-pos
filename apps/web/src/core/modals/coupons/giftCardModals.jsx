@@ -215,7 +215,7 @@ const GiftCardModals = () => {
                       <input
                         type="text"
                         className="form-control"
-                        defaultValue="$200"
+                        defaultValue="Rs 200"
                       />
                     </div>
                   </div>
@@ -227,7 +227,7 @@ const GiftCardModals = () => {
                       <input
                         type="text"
                         className="form-control"
-                        defaultValue="$100"
+                        defaultValue="Rs 100"
                       />
                     </div>
                   </div>
@@ -290,11 +290,11 @@ const GiftCardModals = () => {
                   </div>
                   <div className="col-6 col-sm-4 col-md-3">
                     <p className="mb-0 fw-medium text-gray-9">Amount</p>
-                    <p>$200</p>
+                    <p>Rs 200</p>
                   </div>
                   <div className="col-6 col-sm-4 col-md-3">
                     <p className="mb-0 fw-medium text-gray-9">Balance</p>
-                    <p>$100</p>
+                    <p>Rs 100</p>
                   </div>
                   <div className="col-6 col-sm-4 col-md-3">
                     <p className="mb-0 fw-medium text-gray-9">Customer</p>
@@ -358,22 +358,22 @@ const GiftCardModals = () => {
                         <td className="p-3">16 Jan 2025</td>
                         <td className="p-3">Purchase</td>
                         <td className="p-3">Electro Mart</td>
-                        <td className="p-3">$75</td>
-                        <td className="p-3">$100</td>
+                        <td className="p-3">Rs 75</td>
+                        <td className="p-3">Rs 100</td>
                       </tr>
                       <tr>
                         <td className="p-3">04 Jan 2025</td>
                         <td className="p-3">Refund</td>
                         <td className="p-3">Online</td>
-                        <td className="p-3">$25</td>
-                        <td className="p-3">$175</td>
+                        <td className="p-3">Rs 25</td>
+                        <td className="p-3">Rs 175</td>
                       </tr>
                       <tr>
                         <td className="p-3">26 Dec 2024</td>
                         <td className="p-3">Purchase</td>
                         <td className="p-3">Gadget World</td>
-                        <td className="p-3">$50</td>
-                        <td className="p-3">$150</td>
+                        <td className="p-3">Rs 50</td>
+                        <td className="p-3">Rs 150</td>
                       </tr>
                     </tbody>
                   </table>

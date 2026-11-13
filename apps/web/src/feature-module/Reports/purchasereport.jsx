@@ -25,7 +25,7 @@ const PurchaseReport = () => {
             key: p.id || idx,
             img: "assets/img/products/pos-product-01.png",
             productName: `PO ${p.purchaseNumber} (${p.supplierName})`,
-            productAmount: `$${Number(p.totalAmount).toFixed(2)}`,
+            productAmount: `Rs ${Number(p.totalAmount).toFixed(2)}`,
             purchasedQty: "50",
             instockQty: "50"
           }));

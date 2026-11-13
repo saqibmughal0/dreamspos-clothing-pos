@@ -463,7 +463,7 @@ const Projects = () => {
                                   <span className="fw-medium fs-12 d-block mb-1">
                                     Budget
                                   </span>
-                                  <p className="fs-12 text-dark">$24,000</p>
+                                  <p className="fs-12 text-dark">Rs 24,000</p>
                                 </div>
                                 <div className="me-3 pe-3 border-end">
                                   <span className="fw-medium fs-12 d-block mb-1">
@@ -614,7 +614,7 @@ const Projects = () => {
                                   <span className="fw-medium fs-12 d-block mb-1">
                                     Budget
                                   </span>
-                                  <p className="fs-12 text-dark">$24,000</p>
+                                  <p className="fs-12 text-dark">Rs 24,000</p>
                                 </div>
                                 <div className="me-3 pe-3 border-end">
                                   <span className="fw-medium fs-12 d-block mb-1">
@@ -820,7 +820,7 @@ const Projects = () => {
                                   <span className="fw-medium fs-12 d-block mb-1">
                                     Budget
                                   </span>
-                                  <p className="fs-12 text-dark">$24,000</p>
+                                  <p className="fs-12 text-dark">Rs 24,000</p>
                                 </div>
                                 <div className="me-3 pe-3 border-end">
                                   <span className="fw-medium fs-12 d-block mb-1">
@@ -971,7 +971,7 @@ const Projects = () => {
                                   <span className="fw-medium fs-12 d-block mb-1">
                                     Budget
                                   </span>
-                                  <p className="fs-12 text-dark">$24,000</p>
+                                  <p className="fs-12 text-dark">Rs 24,000</p>
                                 </div>
                                 <div className="me-3 pe-3 border-end">
                                   <span className="fw-medium fs-12 d-block mb-1">
@@ -1122,7 +1122,7 @@ const Projects = () => {
                                   <span className="fw-medium fs-12 d-block mb-1">
                                     Budget
                                   </span>
-                                  <p className="fs-12 text-dark">$24,000</p>
+                                  <p className="fs-12 text-dark">Rs 24,000</p>
                                 </div>
                                 <div className="me-3 pe-3 border-end">
                                   <span className="fw-medium fs-12 d-block mb-1">
@@ -1328,7 +1328,7 @@ const Projects = () => {
                                   <span className="fw-medium fs-12 d-block mb-1">
                                     Budget
                                   </span>
-                                  <p className="fs-12 text-dark">$24,000</p>
+                                  <p className="fs-12 text-dark">Rs 24,000</p>
                                 </div>
                                 <div className="me-3 pe-3 border-end">
                                   <span className="fw-medium fs-12 d-block mb-1">
@@ -1479,7 +1479,7 @@ const Projects = () => {
                                   <span className="fw-medium fs-12 d-block mb-1">
                                     Budget
                                   </span>
-                                  <p className="fs-12 text-dark">$24,000</p>
+                                  <p className="fs-12 text-dark">Rs 24,000</p>
                                 </div>
                                 <div className="me-3 pe-3 border-end">
                                   <span className="fw-medium fs-12 d-block mb-1">
@@ -1685,7 +1685,7 @@ const Projects = () => {
                                   <span className="fw-medium fs-12 d-block mb-1">
                                     Budget
                                   </span>
-                                  <p className="fs-12 text-dark">$24,000</p>
+                                  <p className="fs-12 text-dark">Rs 24,000</p>
                                 </div>
                                 <div className="me-3 pe-3 border-end">
                                   <span className="fw-medium fs-12 d-block mb-1">
@@ -1895,7 +1895,7 @@ const Projects = () => {
                                   <span className="fw-medium fs-12 d-block mb-1">
                                     Budget
                                   </span>
-                                  <p className="fs-12 text-dark">$24,000</p>
+                                  <p className="fs-12 text-dark">Rs 24,000</p>
                                 </div>
                                 <div className="me-3 pe-3 border-end">
                                   <span className="fw-medium fs-12 d-block mb-1">
@@ -2046,7 +2046,7 @@ const Projects = () => {
                                   <span className="fw-medium fs-12 d-block mb-1">
                                     Budget
                                   </span>
-                                  <p className="fs-12 text-dark">$24,000</p>
+                                  <p className="fs-12 text-dark">Rs 24,000</p>
                                 </div>
                                 <div className="me-3 pe-3 border-end">
                                   <span className="fw-medium fs-12 d-block mb-1">
@@ -2252,7 +2252,7 @@ const Projects = () => {
                                   <span className="fw-medium fs-12 d-block mb-1">
                                     Budget
                                   </span>
-                                  <p className="fs-12 text-dark">$24,000</p>
+                                  <p className="fs-12 text-dark">Rs 24,000</p>
                                 </div>
                                 <div className="me-3 pe-3 border-end">
                                   <span className="fw-medium fs-12 d-block mb-1">
@@ -2403,7 +2403,7 @@ const Projects = () => {
                                   <span className="fw-medium fs-12 d-block mb-1">
                                     Budget
                                   </span>
-                                  <p className="fs-12 text-dark">$24,000</p>
+                                  <p className="fs-12 text-dark">Rs 24,000</p>
                                 </div>
                                 <div className="me-3 pe-3 border-end">
                                   <span className="fw-medium fs-12 d-block mb-1">
@@ -2609,7 +2609,7 @@ const Projects = () => {
                                   <span className="fw-medium fs-12 d-block mb-1">
                                     Budget
                                   </span>
-                                  <p className="fs-12 text-dark">$24,000</p>
+                                  <p className="fs-12 text-dark">Rs 24,000</p>
                                 </div>
                                 <div className="me-3 pe-3 border-end">
                                   <span className="fw-medium fs-12 d-block mb-1">
@@ -2815,7 +2815,7 @@ const Projects = () => {
                                   <span className="fw-medium fs-12 d-block mb-1">
                                     Budget
                                   </span>
-                                  <p className="fs-12 text-dark">$24,000</p>
+                                  <p className="fs-12 text-dark">Rs 24,000</p>
                                 </div>
                                 <div className="me-3 pe-3 border-end">
                                   <span className="fw-medium fs-12 d-block mb-1">
@@ -3025,7 +3025,7 @@ const Projects = () => {
                                   <span className="fw-medium fs-12 d-block mb-1">
                                     Budget
                                   </span>
-                                  <p className="fs-12 text-dark">$24,000</p>
+                                  <p className="fs-12 text-dark">Rs 24,000</p>
                                 </div>
                                 <div className="me-3 pe-3 border-end">
                                   <span className="fw-medium fs-12 d-block mb-1">
@@ -3176,7 +3176,7 @@ const Projects = () => {
                                   <span className="fw-medium fs-12 d-block mb-1">
                                     Budget
                                   </span>
-                                  <p className="fs-12 text-dark">$24,000</p>
+                                  <p className="fs-12 text-dark">Rs 24,000</p>
                                 </div>
                                 <div className="me-3 pe-3 border-end">
                                   <span className="fw-medium fs-12 d-block mb-1">
@@ -3382,7 +3382,7 @@ const Projects = () => {
                                   <span className="fw-medium fs-12 d-block mb-1">
                                     Budget
                                   </span>
-                                  <p className="fs-12 text-dark">$24,000</p>
+                                  <p className="fs-12 text-dark">Rs 24,000</p>
                                 </div>
                                 <div className="me-3 pe-3 border-end">
                                   <span className="fw-medium fs-12 d-block mb-1">
@@ -3533,7 +3533,7 @@ const Projects = () => {
                                   <span className="fw-medium fs-12 d-block mb-1">
                                     Budget
                                   </span>
-                                  <p className="fs-12 text-dark">$24,000</p>
+                                  <p className="fs-12 text-dark">Rs 24,000</p>
                                 </div>
                                 <div className="me-3 pe-3 border-end">
                                   <span className="fw-medium fs-12 d-block mb-1">
@@ -3739,7 +3739,7 @@ const Projects = () => {
                                   <span className="fw-medium fs-12 d-block mb-1">
                                     Budget
                                   </span>
-                                  <p className="fs-12 text-dark">$24,000</p>
+                                  <p className="fs-12 text-dark">Rs 24,000</p>
                                 </div>
                                 <div className="me-3 pe-3 border-end">
                                   <span className="fw-medium fs-12 d-block mb-1">
@@ -3945,7 +3945,7 @@ const Projects = () => {
                                   <span className="fw-medium fs-12 d-block mb-1">
                                     Budget
                                   </span>
-                                  <p className="fs-12 text-dark">$24,000</p>
+                                  <p className="fs-12 text-dark">Rs 24,000</p>
                                 </div>
                                 <div className="me-3 pe-3 border-end">
                                   <span className="fw-medium fs-12 d-block mb-1">
@@ -4155,7 +4155,7 @@ const Projects = () => {
                                   <span className="fw-medium fs-12 d-block mb-1">
                                     Budget
                                   </span>
-                                  <p className="fs-12 text-dark">$24,000</p>
+                                  <p className="fs-12 text-dark">Rs 24,000</p>
                                 </div>
                                 <div className="me-3 pe-3 border-end">
                                   <span className="fw-medium fs-12 d-block mb-1">
@@ -4306,7 +4306,7 @@ const Projects = () => {
                                   <span className="fw-medium fs-12 d-block mb-1">
                                     Budget
                                   </span>
-                                  <p className="fs-12 text-dark">$24,000</p>
+                                  <p className="fs-12 text-dark">Rs 24,000</p>
                                 </div>
                                 <div className="me-3 pe-3 border-end">
                                   <span className="fw-medium fs-12 d-block mb-1">
@@ -4512,7 +4512,7 @@ const Projects = () => {
                                   <span className="fw-medium fs-12 d-block mb-1">
                                     Budget
                                   </span>
-                                  <p className="fs-12 text-dark">$24,000</p>
+                                  <p className="fs-12 text-dark">Rs 24,000</p>
                                 </div>
                                 <div className="me-3 pe-3 border-end">
                                   <span className="fw-medium fs-12 d-block mb-1">
@@ -4663,7 +4663,7 @@ const Projects = () => {
                                   <span className="fw-medium fs-12 d-block mb-1">
                                     Budget
                                   </span>
-                                  <p className="fs-12 text-dark">$24,000</p>
+                                  <p className="fs-12 text-dark">Rs 24,000</p>
                                 </div>
                                 <div className="me-3 pe-3 border-end">
                                   <span className="fw-medium fs-12 d-block mb-1">
@@ -4869,7 +4869,7 @@ const Projects = () => {
                                   <span className="fw-medium fs-12 d-block mb-1">
                                     Budget
                                   </span>
-                                  <p className="fs-12 text-dark">$24,000</p>
+                                  <p className="fs-12 text-dark">Rs 24,000</p>
                                 </div>
                                 <div className="me-3 pe-3 border-end">
                                   <span className="fw-medium fs-12 d-block mb-1">
@@ -5075,7 +5075,7 @@ const Projects = () => {
                                   <span className="fw-medium fs-12 d-block mb-1">
                                     Budget
                                   </span>
-                                  <p className="fs-12 text-dark">$24,000</p>
+                                  <p className="fs-12 text-dark">Rs 24,000</p>
                                 </div>
                                 <div className="me-3 pe-3 border-end">
                                   <span className="fw-medium fs-12 d-block mb-1">

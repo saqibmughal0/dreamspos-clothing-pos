@@ -91,7 +91,7 @@ const Wishlist = () => {
                                                 </span>
                                             </div>
                                             <div className="d-flex align-items-center justify-content-between price">
-                                                <p className="mb-0">$15800</p>
+                                                <p className="mb-0">Rs 15800</p>
                                                 <Link to="#" className="btn btn-primary">
                                                     <i className="ti ti-shopping-cart me-1" />
                                                     Move to Cart
@@ -141,7 +141,7 @@ const Wishlist = () => {
                                                 </span>
                                             </div>
                                             <div className="d-flex align-items-center justify-content-between price">
-                                                <p className="mb-0">$1000</p>
+                                                <p className="mb-0">Rs 1000</p>
                                                 <Link to="#" className="btn btn-primary">
                                                     <i className="ti ti-shopping-cart me-1" />
                                                     Move to Cart
@@ -191,7 +191,7 @@ const Wishlist = () => {
                                                 </span>
                                             </div>
                                             <div className="d-flex align-items-center justify-content-between price">
-                                                <p className="mb-0">$6800</p>
+                                                <p className="mb-0">Rs 6800</p>
                                                 <Link to="#" className="btn btn-primary">
                                                     <i className="ti ti-shopping-cart me-1" />
                                                     Move to Cart
@@ -241,7 +241,7 @@ const Wishlist = () => {
                                                 </span>
                                             </div>
                                             <div className="d-flex align-items-center justify-content-between price">
-                                                <p className="mb-0">$7800</p>
+                                                <p className="mb-0">Rs 7800</p>
                                                 <Link to="#" className="btn btn-primary">
                                                     <i className="ti ti-shopping-cart me-1" />
                                                     Move to Cart
@@ -291,7 +291,7 @@ const Wishlist = () => {
                                                 </span>
                                             </div>
                                             <div className="d-flex align-items-center justify-content-between price">
-                                                <p className="mb-0">$5478</p>
+                                                <p className="mb-0">Rs 5478</p>
                                                 <Link to="#" className="btn btn-primary">
                                                     <i className="ti ti-shopping-cart me-1" />
                                                     Move to Cart
@@ -341,7 +341,7 @@ const Wishlist = () => {
                                                 </span>
                                             </div>
                                             <div className="d-flex align-items-center justify-content-between price">
-                                                <p className="mb-0">$987</p>
+                                                <p className="mb-0">Rs 987</p>
                                                 <Link to="#" className="btn btn-primary">
                                                     <i className="ti ti-shopping-cart me-1" />
                                                     Move to Cart
@@ -391,7 +391,7 @@ const Wishlist = () => {
                                                 </span>
                                             </div>
                                             <div className="d-flex align-items-center justify-content-between price">
-                                                <p className="mb-0">$1454</p>
+                                                <p className="mb-0">Rs 1454</p>
                                                 <Link to="#" className="btn btn-primary">
                                                     <i className="ti ti-shopping-cart me-1" />
                                                     Move to Cart
@@ -441,7 +441,7 @@ const Wishlist = () => {
                                                 </span>
                                             </div>
                                             <div className="d-flex align-items-center justify-content-between price">
-                                                <p className="mb-0">$6587</p>
+                                                <p className="mb-0">Rs 6587</p>
                                                 <Link to="#" className="btn btn-primary">
                                                     <i className="ti ti-shopping-cart me-1" />
                                                     Move to Cart
@@ -491,7 +491,7 @@ const Wishlist = () => {
                                                 </span>
                                             </div>
                                             <div className="d-flex align-items-center justify-content-between price">
-                                                <p className="mb-0">$1457</p>
+                                                <p className="mb-0">Rs 1457</p>
                                                 <Link to="#" className="btn btn-primary">
                                                     <i className="ti ti-shopping-cart me-1" />
                                                     Move to Cart
@@ -541,7 +541,7 @@ const Wishlist = () => {
                                                 </span>
                                             </div>
                                             <div className="d-flex align-items-center justify-content-between price">
-                                                <p className="mb-0">$4744</p>
+                                                <p className="mb-0">Rs 4744</p>
                                                 <Link to="#" className="btn btn-primary">
                                                     <i className="ti ti-shopping-cart me-1" />
                                                     Move to Cart

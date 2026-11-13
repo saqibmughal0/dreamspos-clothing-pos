@@ -149,14 +149,14 @@ const Checkout = () => {
                                                         <i data-feather="edit" />
                                                     </Link>
                                                 </div>
-                                                <p className="mb-0">Price : $400</p>
+                                                <p className="mb-0">Price : Rs 400</p>
                                             </td>
                                             <td>
                                                 <div className="checkout product-quantity border-0 bg-secondary-transparent">
                                                    <CounterTwo />
                                                 </div>
                                             </td>
-                                            <td className="fw-bold">$400</td>
+                                            <td className="fw-bold">Rs 400</td>
                                             <td>
                                                 <div className="checkout-delete edit-delete-action d-flex align-items-center">
                                                     <Link
@@ -184,14 +184,14 @@ const Checkout = () => {
                                                         <i data-feather="edit" />
                                                     </Link>
                                                 </div>
-                                                <p className="mb-0">Price : $400</p>
+                                                <p className="mb-0">Price : Rs 400</p>
                                             </td>
                                             <td>
                                                 <div className="checkout product-quantity border-0 bg-secondary-transparent">
                                                 <CounterTwo />
                                                 </div>
                                             </td>
-                                            <td className="fw-bold">$400</td>
+                                            <td className="fw-bold">Rs 400</td>
                                             <td>
                                                 <div className="checkout-delete edit-delete-action d-flex align-items-center">
                                                     <Link
@@ -219,14 +219,14 @@ const Checkout = () => {
                                                         <i data-feather="edit" />
                                                     </Link>
                                                 </div>
-                                                <p className="mb-0">Price : $200</p>
+                                                <p className="mb-0">Price : Rs 200</p>
                                             </td>
                                             <td>
                                                 <div className="checkout product-quantity border-0 bg-secondary-transparent">
                                                 <CounterTwo />
                                                 </div>
                                             </td>
-                                            <td className="fw-bold">$600</td>
+                                            <td className="fw-bold">Rs 600</td>
                                             <td>
                                                 <div className="checkout-delete edit-delete-action d-flex align-items-center">
                                                     <Link
@@ -254,14 +254,14 @@ const Checkout = () => {
                                                         <i data-feather="edit" />
                                                     </Link>
                                                 </div>
-                                                <p className="mb-0">Price : $400</p>
+                                                <p className="mb-0">Price : Rs 400</p>
                                             </td>
                                             <td>
                                                 <div className="checkout product-quantity border-0 bg-secondary-transparent">
                                                 <CounterTwo />
                                                 </div>
                                             </td>
-                                            <td className="fw-bold">$400</td>
+                                            <td className="fw-bold">Rs 400</td>
                                             <td>
                                                 <div className="checkout-delete edit-delete-action d-flex align-items-center">
                                                     <Link
@@ -283,25 +283,25 @@ const Checkout = () => {
                                     <div className="card-body">
                                         <div className="d-flex align-items-center justify-content-between mb-3">
                                             <p className="mb-0 fs-16">Sub Total</p>
-                                            <p className="fs-16">$1250</p>
+                                            <p className="fs-16">Rs 1250</p>
                                         </div>
                                         <div className="d-flex align-items-center justify-content-between mb-3">
                                             <p className="mb-0 fs-16">Shipping</p>
-                                            <p className="fs-16">$35</p>
+                                            <p className="fs-16">Rs 35</p>
                                         </div>
                                         <div className="d-flex align-items-center justify-content-between mb-3">
                                             <p className="mb-0 fs-16">Tax (15%)</p>
-                                            <p className="fs-16">$25</p>
+                                            <p className="fs-16">Rs 25</p>
                                         </div>
                                         <div className="d-flex align-items-center justify-content-between mb-3">
                                             <p className="mb-0 fs-16">Discount (5%)</p>
-                                            <p className="fs-16 fw-medium text-danger">-$24</p>
+                                            <p className="fs-16 fw-medium text-danger">-Rs 24</p>
                                         </div>
                                     </div>
                                     <div className="card-footer bg-secondary-transparent">
                                         <div className="d-flex align-items-center justify-content-between">
                                             <p className="mb-0 fs-16 text-gray-9 fw-bold">Grand Total</p>
-                                            <p className="fs-16 text-gray-9 fw-bold">$56590</p>
+                                            <p className="fs-16 text-gray-9 fw-bold">Rs 56590</p>
                                         </div>
                                     </div>
                                 </div>
