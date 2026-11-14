@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import ImageWithBasePath from '../../core/img/imagewithbasebath'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { Tooltip } from 'antd';
 import { all_routes } from '../../Router/all_routes';
 import { Settings, User } from 'feather-icons-react/build/IconComponents';
@@ -8,8 +8,39 @@ import { CashRegisterModal } from '../../core/modals/pos-modal/CashRegisterModal
 import { ThermalReceiptModal } from '../../core/modals/pos-modal/ThermalReceiptModal';
 import { ClothingExchangeModal } from '../../core/modals/pos-modal/ClothingExchangeModal';
 import { usePosStore } from '../../core/posStore';
+import { apiClient } from '../../core/apiClient';
 
 const PosHeader = () => {
+    const navigate = useNavigate();
+    const [currentUser, setCurrentUser] = useState(() => {
+        try {
+            return JSON.parse(localStorage.getItem("user") || "null");
+        } catch {
+            return null;
+        }
+    });
+
+    const handleLogout = async (e) => {
+        if (e) e.preventDefault();
+        try {
+            await apiClient.post("/auth/logout");
+        } catch {
+            // ignore
+        }
+        localStorage.removeItem("accessToken");
+        localStorage.removeItem("user");
+        navigate(all_routes.signin);
+    };
+
+    const getPosAvatar = () => {
+        if (!currentUser?.avatar) return "/assets/img/profiles/avator1.jpg";
+        if (currentUser.avatar.startsWith("http://") || currentUser.avatar.startsWith("https://")) {
+            return currentUser.avatar;
+        }
+        const apiUrl = import.meta.env.VITE_API_URL || "";
+        const backendOrigin = apiUrl.replace(/\/api\/?$/, "");
+        return `${backendOrigin}${currentUser.avatar}`;
+    };
 
     const [isFullscreen, setIsFullscreen] = useState(false);
     const [showRegisterModal, setShowRegisterModal] = useState(false);
@@ -126,62 +157,7 @@ const PosHeader = () => {
                             Dashboard
                         </Link>
                     </li>
-                    {/* Select Store */}
-                    <li className="nav-item dropdown has-arrow main-drop select-store-dropdown">
-                        <Link
-                            to="#"
-                            className="dropdown-toggle nav-link select-store"
-                            data-bs-toggle="dropdown"
-                        >
-                            <span className="user-info">
-                                <span className="user-letter">
-                                    <ImageWithBasePath
-                                        src="assets/img/store/store-01.png"
-                                        alt="Store Logo"
-                                        className="img-fluid"
-                                    />
-                                </span>
-                                <span className="user-detail">
-                                    <span className="user-name">Freshmart</span>
-                                </span>
-                            </span>
-                        </Link>
-                        <div className="dropdown-menu dropdown-menu-right">
-                            <Link to="#" className="dropdown-item">
-                                <ImageWithBasePath
-                                    src="assets/img/store/store-01.png"
-                                    alt="Store Logo"
-                                    className="img-fluid"
-                                />
-                                Freshmart
-                            </Link>
-                            <Link to="#" className="dropdown-item">
-                                <ImageWithBasePath
-                                    src="assets/img/store/store-02.png"
-                                    alt="Store Logo"
-                                    className="img-fluid"
-                                />
-                                Grocery Apex
-                            </Link>
-                            <Link to="#" className="dropdown-item">
-                                <ImageWithBasePath
-                                    src="assets/img/store/store-03.png"
-                                    alt="Store Logo"
-                                    className="img-fluid"
-                                />
-                                Grocery Bevy
-                            </Link>
-                            <Link to="#" className="dropdown-item">
-                                <ImageWithBasePath
-                                    src="assets/img/store/store-04.png"
-                                    alt="Store Logo"
-                                    className="img-fluid"
-                                />
-                                Grocery Eden
-                            </Link>
-                        </div>
-                    </li>
-                    {/* /Select Store */}
+
                     <li className="nav-item nav-item-box">
                         <Link
                             to="#"
@@ -288,10 +264,14 @@ const PosHeader = () => {
                         >
                             <span className="user-info p-0">
                                 <span className="user-letter">
-                                    <ImageWithBasePath
-                                        src="assets/img/profiles/avator1.jpg"
-                                        alt="Img"
-                                        className="img-fluid"
+                                    <img
+                                        src={getPosAvatar()}
+                                        alt="User Avatar"
+                                        className="img-fluid rounded-circle"
+                                        style={{ width: "36px", height: "36px", objectFit: "cover" }}
+                                        onError={(e) => {
+                                            e.currentTarget.src = "/assets/img/profiles/avator1.jpg";
+                                        }}
                                     />
                                 </span>
                             </span>
@@ -300,12 +280,20 @@ const PosHeader = () => {
                             <div className="profilename">
                                 <div className="profileset">
                                     <span className="user-img">
-                                        <ImageWithBasePath src="assets/img/profiles/avator1.jpg" alt="Img" />
+                                        <img
+                                            src={getPosAvatar()}
+                                            alt="User Avatar"
+                                            className="img-fluid rounded-circle"
+                                            style={{ width: "40px", height: "40px", objectFit: "cover" }}
+                                            onError={(e) => {
+                                                e.currentTarget.src = "/assets/img/profiles/avator1.jpg";
+                                            }}
+                                        />
                                         <span className="status online" />
                                     </span>
                                     <div className="profilesets">
-                                        <h6>John Smilga</h6>
-                                        <h5>Super Admin</h5>
+                                        <h6>{currentUser?.name || "MR Bilal Admin"}</h6>
+                                        <h5>{currentUser?.role || "Admin"}</h5>
                                     </div>
                                 </div>
                                 <hr className="m-0" />
@@ -318,7 +306,7 @@ const PosHeader = () => {
                                     Settings
                                 </Link>
                                 <hr className="m-0" />
-                                <Link className="dropdown-item logout pb-0" to={all_routes.signin}>
+                                <Link className="dropdown-item logout pb-0" to="#" onClick={handleLogout}>
                                     <ImageWithBasePath
                                         src="assets/img/icons/log-out.svg"
                                         className="me-2"
@@ -348,7 +336,7 @@ const PosHeader = () => {
                         <Link className="dropdown-item" to={all_routes.generalsettings}>
                             Settings
                         </Link>
-                        <Link className="dropdown-item" to={all_routes.signin}>
+                        <Link className="dropdown-item" to="#" onClick={handleLogout}>
                             Logout
                         </Link>
                     </div>

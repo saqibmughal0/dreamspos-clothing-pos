@@ -15,6 +15,36 @@ const Sidebar = () => {
   const Location = useLocation();
   const { t } = useTranslation();
 
+  const [currentUser, setCurrentUser] = useState(() => {
+    try {
+      return JSON.parse(localStorage.getItem("user") || "null");
+    } catch {
+      return null;
+    }
+  });
+
+  React.useEffect(() => {
+    const handleStorage = () => {
+      try {
+        setCurrentUser(JSON.parse(localStorage.getItem("user") || "null"));
+      } catch {
+        // ignore
+      }
+    };
+    window.addEventListener("storage", handleStorage);
+    return () => window.removeEventListener("storage", handleStorage);
+  }, []);
+
+  const getSidebarAvatar = () => {
+    if (!currentUser?.avatar) return "/assets/img/customer/customer15.jpg";
+    if (currentUser.avatar.startsWith("http://") || currentUser.avatar.startsWith("https://")) {
+      return currentUser.avatar;
+    }
+    const apiUrl = import.meta.env.VITE_API_URL || "";
+    const backendOrigin = apiUrl.replace(/\/api\/?$/, "");
+    return `${backendOrigin}${currentUser.avatar}`;
+  };
+
   const [subOpen, setSubopen] = useState("");
   const [subsidebar, setSubsidebar] = useState("");
 
@@ -77,14 +107,18 @@ const Sidebar = () => {
           <div className="modern-profile p-3 pb-0">
             <div className="text-center rounded bg-light p-3 mb-4 border">
               <div className="avatar avatar-lg online mb-3">
-                <ImageWithBasePath
-                  src="assets/img/customer/customer15.jpg"
-                  alt="Img"
+                <img
+                  src={getSidebarAvatar()}
+                  alt="User Avatar"
                   className="img-fluid rounded-circle"
+                  style={{ width: "64px", height: "64px", objectFit: "cover" }}
+                  onError={(e) => {
+                    e.currentTarget.src = "/assets/img/customer/customer15.jpg";
+                  }}
                 />
               </div>
-              <h6 className="fs-14 fw-bold mb-1">Adrian Herman</h6>
-              <p className="fs-12 mb-0">System Admin</p>
+              <h6 className="fs-14 fw-bold mb-1">{currentUser?.name || "MR Bilal Admin"}</h6>
+              <p className="fs-12 mb-0">{currentUser?.role || "System Admin"}</p>
             </div>
             <div className="sidebar-nav mb-3">
               <ul
@@ -112,15 +146,19 @@ const Sidebar = () => {
           <div className="sidebar-header p-3 pb-0 pt-2">
             <div className="text-center rounded bg-light p-2 mb-4 sidebar-profile d-flex align-items-center">
               <div className="avatar avatar-md onlin">
-                <ImageWithBasePath
-                  src="assets/img/customer/customer15.jpg"
-                  alt="Img"
+                <img
+                  src={getSidebarAvatar()}
+                  alt="User Avatar"
                   className="img-fluid rounded-circle"
+                  style={{ width: "40px", height: "40px", objectFit: "cover" }}
+                  onError={(e) => {
+                    e.currentTarget.src = "/assets/img/customer/customer15.jpg";
+                  }}
                 />
               </div>
               <div className="text-start sidebar-profile-info ms-2">
-                <h6 className="fs-14 fw-bold mb-1">Adrian Herman</h6>
-                <p className="fs-12">System Admin</p>
+                <h6 className="fs-14 fw-bold mb-1">{currentUser?.name || "MR Bilal Admin"}</h6>
+                <p className="fs-12">{currentUser?.role || "System Admin"}</p>
               </div>
             </div>
             <div className="d-flex align-items-center justify-content-between menu-item mb-3">

@@ -6,6 +6,7 @@ import jwt from "jsonwebtoken";
 import { config } from "../src/config";
 import { AppError, UnauthorizedError } from "../src/utils/errors";
 import { errorHandler } from "../src/middleware/errorHandler";
+import { hashToken } from "../src/utils/security";
 
 describe("AuthService & Authentication Error Handling", () => {
   const mockUser = {
@@ -16,8 +17,10 @@ describe("AuthService & Authentication Error Handling", () => {
     email: "admin@dreamspos.com",
     passwordHash: "",
     isActive: true,
+    emailVerified: true,
     role: { name: "SUPER_ADMIN" },
     company: { id: "company-123", name: "Dreams Apparel" },
+    store: { id: "store-123", name: "Main Store" },
     createdAt: new Date("2026-01-01T00:00:00.000Z"),
     avatar: null
   };
@@ -25,6 +28,9 @@ describe("AuthService & Authentication Error Handling", () => {
   beforeEach(async () => {
     vi.restoreAllMocks();
     mockUser.passwordHash = await bcrypt.hash("Admin@12345", 10);
+    vi.spyOn(prisma.refreshToken, "create").mockResolvedValue({} as any);
+    vi.spyOn(prisma.refreshToken, "delete").mockResolvedValue({} as any);
+    vi.spyOn(prisma.refreshToken, "deleteMany").mockResolvedValue({ count: 1 } as any);
   });
 
   it("1. Successfully logs in with valid credentials and returns JWT tokens", async () => {
@@ -116,8 +122,18 @@ describe("AuthService & Authentication Error Handling", () => {
       { expiresIn: "7d" }
     );
 
+    const tokenHash = hashToken(validRefreshToken);
+    vi.spyOn(prisma.refreshToken, "findFirst").mockResolvedValue({
+      id: "token-1",
+      userId: mockUser.id,
+      tokenHash,
+      expiresAt: new Date(Date.now() + 1000000),
+      createdAt: new Date()
+    } as any);
+
     const result = await authService.refreshToken(validRefreshToken);
     expect(result.accessToken).toBeDefined();
+    expect(result.refreshToken).toBeDefined();
 
     const decoded = jwt.verify(result.accessToken, config.jwt.secret) as any;
     expect(decoded.id).toBe(mockUser.id);
@@ -150,11 +166,15 @@ describe("AuthService & Authentication Error Handling", () => {
       }
     } as any;
 
-    const unauthErr = new UnauthorizedError("Invalid email or password");
-    errorHandler(unauthErr, mockReq, mockRes, (() => {}) as any);
+    const mockNext = vi.fn();
+
+    const unauthorizedError = new UnauthorizedError("Custom authentication failed");
+    errorHandler(unauthorizedError, mockReq, mockRes, mockNext);
 
     expect(responseStatus).toBe(401);
-    expect(responseBody.success).toBe(false);
-    expect(responseBody.message).toBe("Invalid email or password");
+    expect(responseBody).toEqual({
+      success: false,
+      message: "Custom authentication failed"
+    });
   });
 });

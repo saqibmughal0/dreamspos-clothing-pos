@@ -111,10 +111,29 @@ const Dashboard = () => {
     },
   });
 
+  const [currentUser] = useState(() => {
+    try {
+      return JSON.parse(localStorage.getItem("user") || "null");
+    } catch {
+      return null;
+    }
+  });
+  const firstName = currentUser?.name ? currentUser.name.split(" ")[0] : "Bilal";
+
   return (
     <div>
       <div className="page-wrapper">
         <div className="content">
+          <div className="page-header d-flex justify-content-between align-items-center mb-4">
+            <div className="page-title">
+              <h4 className="fs-22 fw-bold text-gray-9 mb-1">
+                Welcome, <span className="text-primary">{firstName}</span>!
+              </h4>
+              <h6 className="text-muted fs-14 mb-0">
+                Here is your store summary and performance overview for today.
+              </h6>
+            </div>
+          </div>
           <div className="row">
           <div className="col-xl-3 col-sm-6 col-12 d-flex">
             <div className="card dash-widget w-100">

@@ -32,24 +32,6 @@ const TwoColumnSidebar = () => {
                                 </Link>
                                 <Link
                                     to="#"
-                                    className="nav-link "
-                                    title="Apps"
-                                    data-bs-toggle="tab"
-                                    data-bs-target="#application"
-                                >
-                                    <i className="ti ti-layout-grid-add" />
-                                </Link>
-                                <Link
-                                    to="#"
-                                    className="nav-link"
-                                    title="Layout"
-                                    data-bs-toggle="tab"
-                                    data-bs-target="#layout"
-                                >
-                                    <i className="ti ti-layout-board-split" />
-                                </Link>
-                                <Link
-                                    to="#"
                                     className="nav-link"
                                     title="Inventory"
                                     data-bs-toggle="tab"
@@ -105,11 +87,11 @@ const TwoColumnSidebar = () => {
                                 <Link
                                     to="#"
                                     className="nav-link"
-                                    title="Pages"
+                                    title="User Management"
                                     data-bs-toggle="tab"
                                     data-bs-target="#pages"
                                 >
-                                    <i className="ti ti-page-break" />
+                                    <i className="ti ti-shield-up" />
                                 </Link>
                                 <Link
                                     to="#"
@@ -120,15 +102,7 @@ const TwoColumnSidebar = () => {
                                 >
                                     <i className="ti ti-lock-check" />
                                 </Link>
-                                <Link
-                                    to="#"
-                                    className="nav-link "
-                                    title="UI Elements"
-                                    data-bs-toggle="tab"
-                                    data-bs-target="#ui-elements"
-                                >
-                                    <i className="ti ti-ux-circle" />
-                                </Link>
+
                                 <Link
                                     to="#"
                                     className="nav-link"
@@ -180,117 +154,6 @@ const TwoColumnSidebar = () => {
                                             <Link to={route.newdashboard} className="active">
                                                 Dashboard
                                             </Link>
-                                        </li>
-                                    </ul>
-                                </div>
-                                <div className="tab-pane fade" id="application">
-                                    <ul>
-                                        <li>
-                                            <Link to="chat.html">Chat</Link>
-                                        </li>
-                                        <li className="submenu submenu-two">
-                                            <Link to="#">
-                                                Call
-                                                <span className="menu-arrow inside-submenu" />
-                                            </Link>
-                                            <ul>
-                                                <li>
-                                                    <Link to={route.videocall}>Video Call</Link>
-                                                </li>
-                                                <li>
-                                                    <Link to={route.audiocall}>Audio Call</Link>
-                                                </li>
-                                                <li>
-                                                    <Link to={route.callhistory}>Call History</Link>
-                                                </li>
-                                            </ul>
-                                        </li>
-                                        <li>
-                                            <Link to={route.calendars}>Calendar</Link>
-                                        </li>
-                                        {/* <li>
-                                            <Link to="contacts.html">Contacts</Link>
-                                        </li> */}
-                                        <li>
-                                            <Link to={route.email}>Email</Link>
-                                        </li>
-                                        <li>
-                                            <Link to={route.todo}>To Do</Link>
-                                        </li>
-                                        <li>
-                                            <Link to={route.notes}>Notes</Link>
-                                        </li>
-                                        <li>
-                                            <Link to={route.filemanager}>File Manager</Link>
-                                        </li>
-                                        <li>
-                                            <Link to={route.projects}>Projects</Link>
-                                        </li>
-                                        <li className="submenu submenu-two">
-                                            <Link to="#">
-                                                Ecommerce
-                                                <span className="menu-arrow inside-submenu" />
-                                            </Link>
-                                            <ul>
-                                                <li>
-                                                    <Link to={route.product}>Products</Link>
-                                                </li>
-                                                <li>
-                                                    <Link to={route.orders}>Orders</Link>
-                                                </li>
-                                                <li>
-                                                    <Link to={route.customer}>Customers</Link>
-                                                </li>
-                                                <li>
-                                                    <Link to={route.cart}>Cart</Link>
-                                                </li>
-                                                <li>
-                                                    <Link to={route.checkout}>Checkout</Link>
-                                                </li>
-                                                <li>
-                                                    <Link to={route.wishlist}>Wishlist</Link>
-                                                </li>
-                                                <li>
-                                                    <Link to={route.reviews}>Reviews</Link>
-                                                </li>
-                                            </ul>
-                                        </li>
-                                        <li>
-                                            <Link to={route.SocialFeed}>Social Feed</Link>
-                                        </li>
-                                        <li>
-                                            <Link to={route.searchlist}>Search List</Link>
-                                        </li>
-                                    </ul>
-                                </div>
-                                <div className="tab-pane fade" id="layout">
-                                    <ul>
-                                        <li className="menu-title">
-                                            <span>LAYOUT</span>
-                                        </li>
-                                        <li>
-                                            <Link to="layout-horizontal.html">Horizontal</Link>
-                                        </li>
-                                        <li>
-                                            <Link to="layout-detached.html">Detached</Link>
-                                        </li>
-                                        <li>
-                                            <Link to="layout-modern.html">Modern</Link>
-                                        </li>
-                                        <li>
-                                            <Link to="layout-two-column.html">Two Column</Link>
-                                        </li>
-                                        <li>
-                                            <Link to="layout-hovered.html">Hovered</Link>
-                                        </li>
-                                        <li>
-                                            <Link to="layout-boxed.html">Boxed</Link>
-                                        </li>
-                                        <li>
-                                            <Link to="layout-rtl.html">RTL</Link>
-                                        </li>
-                                        <li>
-                                            <Link to="layout-dark.html">Dark</Link>
                                         </li>
                                     </ul>
                                 </div>
@@ -417,28 +280,10 @@ const TwoColumnSidebar = () => {
                                                 <span>Quotation</span>
                                             </Link>
                                         </li>
-                                        <li className="submenu">
-                                            <Link to="#">
+                                        <li>
+                                            <Link to={route.pos}>
                                                 <span>POS</span>
-                                                <span className="menu-arrow" />
                                             </Link>
-                                            <ul>
-                                                <li>
-                                                    <Link to={route.pos}>POS 1</Link>
-                                                </li>
-                                                <li>
-                                                    <Link to={route.pos2}>POS 2</Link>
-                                                </li>
-                                                <li>
-                                                    <Link to={route.pos3}>POS 3</Link>
-                                                </li>
-                                                <li>
-                                                    <Link to={route.pos4}>POS 4</Link>
-                                                </li>
-                                                <li>
-                                                    <Link to={route.pos5}>POS 5</Link>
-                                                </li>
-                                            </ul>
                                         </li>
                                     </ul>
                                 </div>
@@ -773,65 +618,7 @@ const TwoColumnSidebar = () => {
                                 <div className="tab-pane fade" id="pages">
                                     <ul>
                                         <li className="menu-title">
-                                            <span>Pages</span>
-                                        </li>
-                                        <li className="submenu">
-                                            <Link to="#">
-                                                <span>Pages</span>
-                                                <span className="menu-arrow" />
-                                            </Link>
-                                            <ul>
-                                                <li>
-                                                    <Link to={route.pagesList}>Pages</Link>
-                                                </li>
-                                            </ul>
-                                        </li>
-                                        <li className="submenu">
-                                            <Link to="#">
-                                                <span>Blog</span>
-                                                <span className="menu-arrow" />
-                                            </Link>
-                                            <ul>
-                                                <li>
-                                                    <Link to={route.allBlogs}>All Blog</Link>
-                                                </li>
-                                                <li>
-                                                    <Link to={route.blogTag}>Blog Tags</Link>
-                                                </li>
-                                                <li>
-                                                    <Link to={route.categorylist}>Categories</Link>
-                                                </li>
-                                                <li>
-                                                    <Link to={route.blogComments}>Blog Comments</Link>
-                                                </li>
-                                            </ul>
-                                        </li>
-                                        <li className="submenu">
-                                            <Link to="#">
-                                                <span>Location</span>
-                                                <span className="menu-arrow" />
-                                            </Link>
-                                            <ul>
-                                                <li>
-                                                    <Link to={route.counter}>Countries</Link>
-                                                </li>
-                                                <li>
-                                                    <Link to={route.state}>States</Link>
-                                                </li>
-                                                <li>
-                                                    <Link to={route.cities}>Cities</Link>
-                                                </li>
-                                            </ul>
-                                        </li>
-                                        <li>
-                                            <Link to={route.testimonials}>
-                                                <span>Testimonials</span>
-                                            </Link>
-                                        </li>
-                                        <li>
-                                            <Link to={route.faq}>
-                                                <span>FAQ</span>
-                                            </Link>
+                                            <span>User Management</span>
                                         </li>
                                         <li>
                                             <Link to={route.users}>
@@ -848,166 +635,17 @@ const TwoColumnSidebar = () => {
                                                 <span>Delete Account Request</span>
                                             </Link>
                                         </li>
-                                        <li>
-                                            <Link to={route.profile}>
-                                                <span>Profile</span>
-                                            </Link>
-                                        </li>
-                                        <li className="submenu">
-                                            <Link to="#">
-                                                <span>Authentication</span>
-                                                <span className="menu-arrow" />
-                                            </Link>
-                                            <ul>
-                                                <li className="submenu submenu-two">
-                                                    <Link to="#">
-                                                        Login
-                                                        <span className="menu-arrow inside-submenu" />
-                                                    </Link>
-                                                    <ul>
-                                                        <li>
-                                                            <Link to={route.signin}>Cover</Link>
-                                                        </li>
-                                                        <li>
-                                                            <Link to={route.signintwo}>Illustration</Link>
-                                                        </li>
-                                                        <li>
-                                                            <Link to={route.signinthree}>Basic</Link>
-                                                        </li>
-                                                    </ul>
-                                                </li>
-                                                <li className="submenu submenu-two">
-                                                    <Link to="#">
-                                                        Register
-                                                        <span className="menu-arrow inside-submenu" />
-                                                    </Link>
-                                                    <ul>
-                                                        <li>
-                                                            <Link to={route.register}>Cover</Link>
-                                                        </li>
-                                                        <li>
-                                                            <Link to={route.registerTwo}>Illustration</Link>
-                                                        </li>
-                                                        <li>
-                                                            <Link to={route.registerThree}>Basic</Link>
-                                                        </li>
-                                                    </ul>
-                                                </li>
-                                                <li className="submenu submenu-two">
-                                                    <Link to="#">
-                                                        Forgot Password
-                                                        <span className="menu-arrow inside-submenu" />
-                                                    </Link>
-                                                    <ul>
-                                                        <li>
-                                                            <Link to={route.forgotPassword}>Cover</Link>
-                                                        </li>
-                                                        <li>
-                                                            <Link to={route.forgotPasswordTwo}>Illustration</Link>
-                                                        </li>
-                                                        <li>
-                                                            <Link to={route.forgotPasswordThree}>Basic</Link>
-                                                        </li>
-                                                    </ul>
-                                                </li>
-                                                <li className="submenu submenu-two">
-                                                    <Link to="#">
-                                                        Reset Password
-                                                        <span className="menu-arrow inside-submenu" />
-                                                    </Link>
-                                                    <ul>
-                                                        <li>
-                                                            <Link to={route.resetpassword}>Cover</Link>
-                                                        </li>
-                                                        <li>
-                                                            <Link to={route.resetpasswordTwo}>Illustration</Link>
-                                                        </li>
-                                                        <li>
-                                                            <Link to={route.resetpasswordThree}>Basic</Link>
-                                                        </li>
-                                                    </ul>
-                                                </li>
-                                                <li className="submenu submenu-two">
-                                                    <Link to="#">
-                                                        Email Verification
-                                                        <span className="menu-arrow inside-submenu" />
-                                                    </Link>
-                                                    <ul>
-                                                        <li>
-                                                            <Link to={route.emailverification}>Cover</Link>
-                                                        </li>
-                                                        <li>
-                                                            <Link to={route.emailverificationTwo}>Illustration</Link>
-                                                        </li>
-                                                        <li>
-                                                            <Link to={route.emailverificationThree}>Basic</Link>
-                                                        </li>
-                                                    </ul>
-                                                </li>
-                                                <li className="submenu submenu-two">
-                                                    <Link to="#">
-                                                        2 Step Verification
-                                                        <span className="menu-arrow inside-submenu" />
-                                                    </Link>
-                                                    <ul>
-                                                        <li>
-                                                            <Link to={route.twostepverification}>Cover</Link>
-                                                        </li>
-                                                        <li>
-                                                            <Link to={route.twostepverificationTwo}>
-                                                                Illustration
-                                                            </Link>
-                                                        </li>
-                                                        <li>
-                                                            <Link to={route.twostepverificationThree}>Basic</Link>
-                                                        </li>
-                                                    </ul>
-                                                </li>
-                                                <li>
-                                                    <Link to={route.lockscreen}>Lock Screen</Link>
-                                                </li>
-                                            </ul>
-                                        </li>
-                                        <li className="submenu">
-                                            <Link to="#">
-                                                <span>Error Pages</span>
-                                                <span className="menu-arrow" />
-                                            </Link>
-                                            <ul>
-                                                <li>
-                                                    <Link to={route.error404}>404 Error </Link>
-                                                </li>
-                                                <li>
-                                                    <Link to={route.error500}>500 Error </Link>
-                                                </li>
-                                            </ul>
-                                        </li>
-                                        <li>
-                                            <Link to={route.blankpage}>
-                                                <span>Blank Page</span>{" "}
-                                            </Link>
-                                        </li>
-                                        <li>
-                                            <Link to={route.pricing}>
-                                                <span>Pricing</span>{" "}
-                                            </Link>
-                                        </li>
-                                        <li>
-                                            <Link to={route.comingsoon}>
-                                                <span>Coming Soon</span>{" "}
-                                            </Link>
-                                        </li>
-                                        <li>
-                                            <Link to={route.undermaintenance}>
-                                                <span>Under Maintenance</span>{" "}
-                                            </Link>
-                                        </li>
                                     </ul>
                                 </div>
                                 <div className="tab-pane fade" id="settings">
                                     <ul>
                                         <li className="menu-title">
                                             <span>Settings</span>
+                                        </li>
+                                        <li>
+                                            <Link to={route.profile}>
+                                                <span>Profile</span>
+                                            </Link>
                                         </li>
                                         <li className="submenu">
                                             <Link to="#">
@@ -1176,313 +814,6 @@ const TwoColumnSidebar = () => {
                                             <Link to={route.signin}>
                                                 <span>Logout</span>{" "}
                                             </Link>
-                                        </li>
-                                    </ul>
-                                </div>
-                                <div className="tab-pane fade" id="ui-elements">
-                                    <ul>
-                                        <li className="menu-title">
-                                            <span>Ui Interface</span>
-                                        </li>
-                                        <li className="submenu">
-                                            <Link to="#">
-                                                <span>Base UI</span>
-                                                <span className="menu-arrow" />
-                                            </Link>
-                                            <ul>
-                                                <li>
-                                                    <Link to={route.alerts}>Alerts</Link>
-                                                </li>
-                                                <li>
-                                                    <Link to={route.accordion}>Accordion</Link>
-                                                </li>
-                                                <li>
-                                                    <Link to={route.avatar}>Avatar</Link>
-                                                </li>
-                                                <li>
-                                                    <Link to={route.badges}>Badges</Link>
-                                                </li>
-                                                <li>
-                                                    <Link to={route.borders}>Border</Link>
-                                                </li>
-                                                <li>
-                                                    <Link to={route.buttons}>Buttons</Link>
-                                                </li>
-                                                <li>
-                                                    <Link to={route.buttonsgroup}>Button Group</Link>
-                                                </li>
-                                                <li>
-                                                    <Link to={route.breadcrumb}>Breadcrumb</Link>
-                                                </li>
-                                                <li>
-                                                    <Link to={route.cards}>Card</Link>
-                                                </li>
-                                                <li>
-                                                    <Link to={route.carousel}>Carousel</Link>
-                                                </li>
-                                                <li>
-                                                    <Link to={route.colors}>Colors</Link>
-                                                </li>
-                                                <li>
-                                                    <Link to={route.dropdowns}>Dropdowns</Link>
-                                                </li>
-                                                <li>
-                                                    <Link to={route.grid}>Grid</Link>
-                                                </li>
-                                                <li>
-                                                    <Link to={route.images}>Images</Link>
-                                                </li>
-                                                <li>
-                                                    <Link to={route.lightbox}>Lightbox</Link>
-                                                </li>
-                                                <li>
-                                                    <Link to={route.media}>Media</Link>
-                                                </li>
-                                                <li>
-                                                    <Link to={route.modals}>Modals</Link>
-                                                </li>
-                                                <li>
-                                                    <Link to={route.offcanvas}>Offcanvas</Link>
-                                                </li>
-                                                <li>
-                                                    <Link to={route.pagination}>Pagination</Link>
-                                                </li>
-                                                <li>
-                                                    <Link to={route.popover}>Popovers</Link>
-                                                </li>
-                                                <li>
-                                                    <Link to={route.progress}>Progress</Link>
-                                                </li>
-                                                <li>
-                                                    <Link to={route.placeholder}>Placeholders</Link>
-                                                </li>
-                                                <li>
-                                                    <Link to={route.rangeslider}>Range Slider</Link>
-                                                </li>
-                                                <li>
-                                                    <Link to={route.spinner}>Spinner</Link>
-                                                </li>
-                                                <li>
-                                                    <Link to={route.sweetalerts}>Sweet Alerts</Link>
-                                                </li>
-                                                <li>
-                                                    <Link to={route.navtabs}>Tabs</Link>
-                                                </li>
-                                                <li>
-                                                    <Link to={route.toasts}>Toasts</Link>
-                                                </li>
-                                                <li>
-                                                    <Link to={route.tooltip}>Tooltips</Link>
-                                                </li>
-                                                <li>
-                                                    <Link to={route.typography}>Typography</Link>
-                                                </li>
-                                                <li>
-                                                    <Link to={route.video}>Video</Link>
-                                                </li>
-                                                <li>
-                                                    <Link to={route.Sortable}>Sortable</Link>
-                                                </li>
-                                                <li>
-                                                    <Link to={route.SwiperJs}>Swiperjs</Link>
-                                                </li>
-                                            </ul>
-                                        </li>
-                                        <li className="submenu">
-                                            <Link to="#">
-                                                <span>Advanced UI</span>
-                                                <span className="menu-arrow" />
-                                            </Link>
-                                            <ul>
-                                                <li>
-                                                    <Link to={route.ribbon}>Ribbon</Link>
-                                                </li>
-                                                <li>
-                                                    <Link to={route.clipboard}>Clipboard</Link>
-                                                </li>
-                                                <li>
-                                                    <Link to={route.draganddrop}>Drag &amp; Drop</Link>
-                                                </li>
-                                                <li>
-                                                    <Link to={route.rangeslider}>Range Slider</Link>
-                                                </li>
-                                                <li>
-                                                    <Link to={route.rating}>Rating</Link>
-                                                </li>
-                                                <li>
-                                                    <Link to={route.texteditor}>Text Editor</Link>
-                                                </li>
-                                                <li>
-                                                    <Link to={route.counter}>Counter</Link>
-                                                </li>
-                                                <li>
-                                                    <Link to={route.scrollbar}>Scrollbar</Link>
-                                                </li>
-                                                <li>
-                                                    <Link to={route.stickynote}>Sticky Note</Link>
-                                                </li>
-                                                <li>
-                                                    <Link to={route.timeline}>Timeline</Link>
-                                                </li>
-                                            </ul>
-                                        </li>
-                                        <li className="submenu">
-                                            <Link to="#">
-                                                <span>Charts</span>
-                                                <span className="menu-arrow" />
-                                            </Link>
-                                            <ul>
-                                                <li>
-                                                    <Link to={route.apexchart}>Apex Charts</Link>
-                                                </li>
-                                                <li>
-                                                    <Link to={route.chartjs}>Chart Js</Link>
-                                                </li>
-                                            </ul>
-                                        </li>
-                                        <li className="submenu">
-                                            <Link to="#">
-                                                <span>Icons</span>
-                                                <span className="menu-arrow" />
-                                            </Link>
-                                            <ul>
-                                                <li>
-                                                    <Link to={route.fontawesome}>Fontawesome Icons</Link>
-                                                </li>
-                                                <li>
-                                                    <Link to={route.feathericon}>Feather Icons</Link>
-                                                </li>
-                                                <li>
-                                                    <Link to={route.ionicicons}>Ionic Icons</Link>
-                                                </li>
-                                                <li>
-                                                    <Link to={route.materialicons}>Material Icons</Link>
-                                                </li>
-                                                <li>
-                                                    <Link to={route.pe7icons}>Pe7 Icons</Link>
-                                                </li>
-                                                <li>
-                                                    <Link to={route.simpleline}>Simpleline Icons</Link>
-                                                </li>
-                                                <li>
-                                                    <Link to={route.themifyicons}>Themify Icons</Link>
-                                                </li>
-                                                <li>
-                                                    <Link to={route.iconweather}>Weather Icons</Link>
-                                                </li>
-                                                <li>
-                                                    <Link to={route.typicons}>Typicon Icons</Link>
-                                                </li>
-                                                <li>
-                                                    <Link to={route.flagicons}>Flag Icons</Link>
-                                                </li>
-                                                <li>
-                                                    <Link to={route.TablerIcon}>Tabler Icons</Link>
-                                                </li>
-                                                <li>
-                                                    <Link to={route.BootstrapIcon}>Bootstrap Icons</Link>
-                                                </li>
-                                                <li>
-                                                    <Link to={route.remixIcon}>Remix Icons</Link>
-                                                </li>
-                                            </ul>
-                                        </li>
-                                        <li className="submenu">
-                                            <Link to="#">
-                                                <span>Forms</span>
-                                                <span className="menu-arrow" />
-                                            </Link>
-                                            <ul>
-                                                <li className="submenu submenu-two">
-                                                    <Link to="#">
-                                                        Form Elements
-                                                        <span className="menu-arrow inside-submenu" />
-                                                    </Link>
-                                                    <ul>
-                                                        <li>
-                                                            <Link to={route.basicinput}>Basic Inputs</Link>
-                                                        </li>
-                                                        <li>
-                                                            <Link to={route.checkboxradio}>
-                                                                Checkbox &amp; Radios
-                                                            </Link>
-                                                        </li>
-                                                        <li>
-                                                            <Link to={route.inputgroup}>Input Groups</Link>
-                                                        </li>
-                                                        <li>
-                                                            <Link to={route.gridgutters}>
-                                                                Grid &amp; Gutters
-                                                            </Link>
-                                                        </li>
-                                                        <li>
-                                                            <Link to={route.formselect}>Form Select</Link>
-                                                        </li>
-                                                        <li>
-                                                            <Link to={route.inputgroup}>Input Masks</Link>
-                                                        </li>
-                                                        <li>
-                                                            <Link to={route.fileupload}>File Uploads</Link>
-                                                        </li>
-                                                    </ul>
-                                                </li>
-                                                <li className="submenu submenu-two">
-                                                    <Link to="#">
-                                                        Layouts
-                                                        <span className="menu-arrow inside-submenu" />
-                                                    </Link>
-                                                    <ul>
-                                                        <li>
-                                                            <Link to={route.formhorizontal}>Horizontal Form</Link>
-                                                        </li>
-                                                        <li>
-                                                            <Link to={route.formvertical}>Vertical Form</Link>
-                                                        </li>
-                                                        <li>
-                                                            <Link to={route.floatinglabel}>
-                                                                Floating Labels
-                                                            </Link>
-                                                        </li>
-                                                    </ul>
-                                                </li>
-                                                <li>
-                                                    <Link to={route.formvalidation}>Form Validation</Link>
-                                                </li>
-                                                <li>
-                                                    <Link to={route.select2}>Select2</Link>
-                                                </li>
-                                                <li>
-                                                    <Link to={route.wizard}>Form Wizard</Link>
-                                                </li>
-                                                <li>
-                                                    <Link to={route.FormPicker}>Form Picker</Link>
-                                                </li>
-                                            </ul>
-                                        </li>
-                                        <li className="submenu">
-                                            <Link to="#">
-                                                <span>Tables</span>
-                                                <span className="menu-arrow" />
-                                            </Link>
-                                            <ul>
-                                                <li>
-                                                    <Link to={route.tablebasic}>Basic Tables </Link>
-                                                </li>
-                                                <li>
-                                                    <Link to={route.datatable}>Data Table </Link>
-                                                </li>
-                                            </ul>
-                                        </li>
-                                        <li className="submenu">
-                                            <Link to="#">
-                                                <span>Maps</span>
-                                                <span className="menu-arrow" />
-                                            </Link>
-                                            <ul>
-                                                <li>
-                                                    <Link to={route.Leaflets}>Leaflet</Link>
-                                                </li>
-                                            </ul>
                                         </li>
                                     </ul>
                                 </div>

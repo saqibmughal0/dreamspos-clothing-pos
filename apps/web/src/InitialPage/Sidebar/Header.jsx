@@ -1,32 +1,61 @@
 /* eslint-disable */
 
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import FeatherIcon from "feather-icons-react";
 import ImageWithBasePath from "../../core/img/imagewithbasebath";
 import { Search } from "react-feather";
 import { all_routes } from "../../Router/all_routes";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
+import { apiClient } from "../../core/apiClient";
 const Header = () => {
   const route = all_routes;
+  const navigate = useNavigate();
+  const [currentUser, setCurrentUser] = useState(() => {
+    try {
+      return JSON.parse(localStorage.getItem("user") || "null");
+    } catch {
+      return null;
+    }
+  });
+
+  useEffect(() => {
+    const handleStorage = () => {
+      try {
+        setCurrentUser(JSON.parse(localStorage.getItem("user") || "null"));
+      } catch {
+        // ignore
+      }
+    };
+    window.addEventListener("storage", handleStorage);
+    return () => window.removeEventListener("storage", handleStorage);
+  }, []);
+
+  const handleLogout = async (e) => {
+    if (e) e.preventDefault();
+    try {
+      await apiClient.post("/auth/logout");
+    } catch (err) {
+      // ignore
+    }
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("user");
+    navigate(route.signin);
+  };
+
+  const getHeaderAvatar = () => {
+    if (!currentUser?.avatar) return "/assets/img/profiles/avator1.jpg";
+    if (currentUser.avatar.startsWith("http://") || currentUser.avatar.startsWith("https://")) {
+      return currentUser.avatar;
+    }
+    const apiUrl = import.meta.env.VITE_API_URL || "";
+    const backendOrigin = apiUrl.replace(/\/api\/?$/, "");
+    return `${backendOrigin}${currentUser.avatar}`;
+  };
   const [toggle, SetToggle] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
-  const [flagImage, setFlagImage] = useState('assets/img/flags/us-flag.svg');
-  const { t, i18n } = useTranslation();
-  const changeLanguage = (lng) => {
-    // Debugging statement
-    i18n.changeLanguage(lng);
-    setFlagImage(
-      lng === "en"
-        ? 'assets/img/flags/us-flag.svg'
-        : lng === "fr"
-          ? 'assets/img/flags/fr.png'
-          : lng === "es"
-            ? 'assets/img/flags/es.png'
-            : 'assets/img/flags/de.png'
-    );
-  };
+  const { t } = useTranslation();
   const isElementVisible = (element) => {
     return element.offsetWidth > 0 || element.offsetHeight > 0;
   };
@@ -307,62 +336,7 @@ const Header = () => {
             </li>
             {/* /Search */}
 
-            {/* Select Store */}
-            <li className="nav-item dropdown has-arrow main-drop select-store-dropdown">
-              <Link
-                to="#"
-                className="dropdown-toggle nav-link select-store"
-                data-bs-toggle="dropdown"
-              >
-                <span className="user-info">
-                  <span className="user-letter">
-                    <ImageWithBasePath
-                      src="assets/img/store/store-01.png"
-                      alt="Store Logo"
-                      className="img-fluid"
-                    />
-                  </span>
-                  <span className="user-detail">
-                    <span className="user-name">Freshmart</span>
-                  </span>
-                </span>
-              </Link>
-              <div className="dropdown-menu dropdown-menu-right">
-                <Link to="#" className="dropdown-item">
-                  <ImageWithBasePath
-                    src="assets/img/store/store-01.png"
-                    alt="Store Logo"
-                    className="img-fluid"
-                  />
-                  Freshmart
-                </Link>
-                <Link to="#" className="dropdown-item">
-                  <ImageWithBasePath
-                    src="assets/img/store/store-02.png"
-                    alt="Store Logo"
-                    className="img-fluid"
-                  />
-                  Grocery Apex
-                </Link>
-                <Link to="#" className="dropdown-item">
-                  <ImageWithBasePath
-                    src="assets/img/store/store-03.png"
-                    alt="Store Logo"
-                    className="img-fluid"
-                  />
-                  Grocery Bevy
-                </Link>
-                <Link to="#" className="dropdown-item">
-                  <ImageWithBasePath
-                    src="assets/img/store/store-04.png"
-                    alt="Store Logo"
-                    className="img-fluid"
-                  />
-                  Grocery Eden
-                </Link>
-              </div>
-            </li>
-            {/* /Select Store */}
+
 
             <li className="nav-item dropdown link-nav">
               <Link
@@ -486,44 +460,7 @@ const Header = () => {
 
 
 
-            {/* Flag */}
-            <li className="nav-item dropdown has-arrow flag-nav nav-item-box">
-              <Link
-                className="nav-link dropdown-toggle"
-                data-bs-toggle="dropdown"
-                to="#"
-                role="button"
-              >
-                {/* <i data-feather="globe" /> */}
-                {/* <FeatherIcon icon="globe" /> */}
-                <ImageWithBasePath
-                  src={flagImage}
-                  alt="img"
-                  height={16}
-                />
-              </Link>
-              <div className="dropdown-menu dropdown-menu-right">
-                <Link to="#" className="dropdown-item active" onClick={() => changeLanguage("en")}>
-                  <ImageWithBasePath
-                    src="assets/img/flags/english.svg"
-                    alt="img"
-                    height={16}
 
-                  />
-                  {t('English')}
-                </Link>
-                <Link to="#" className="dropdown-item" onClick={() => changeLanguage("fr")}>
-                  <ImageWithBasePath
-                    src="assets/img/flags/arabic.svg"
-                    alt="img"
-                    height={16}
-                  />{" "}
-                  Arabic
-                </Link>
-
-              </div>
-            </li>
-            {/* /Flag */}
             <li className="nav-item nav-item-box">
               <Link
                 to="#"
@@ -655,10 +592,14 @@ const Header = () => {
               >
                 <span className="user-info p-0">
                   <span className="user-letter">
-                    <ImageWithBasePath
-                      src="assets/img/profiles/avator1.jpg"
-                      alt="Img"
-                      className="img-fluid"
+                    <img
+                      src={getHeaderAvatar()}
+                      alt="User Avatar"
+                      className="img-fluid rounded-circle"
+                      style={{ width: "36px", height: "36px", objectFit: "cover" }}
+                      onError={(e) => {
+                        e.currentTarget.src = "/assets/img/profiles/avator1.jpg";
+                      }}
                     />
                   </span>
                 </span>
@@ -666,11 +607,19 @@ const Header = () => {
               <div className="dropdown-menu menu-drop-user">
                 <div className="profileset d-flex align-items-center">
                   <span className="user-img me-2">
-                    <ImageWithBasePath src="assets/img/profiles/avator1.jpg" alt="Img" />
+                    <img
+                      src={getHeaderAvatar()}
+                      alt="User Avatar"
+                      className="img-fluid rounded-circle"
+                      style={{ width: "40px", height: "40px", objectFit: "cover" }}
+                      onError={(e) => {
+                        e.currentTarget.src = "/assets/img/profiles/avator1.jpg";
+                      }}
+                    />
                   </span>
                   <div>
-                    <h6 className="fw-medium">John Smilga</h6>
-                    <p>Admin</p>
+                    <h6 className="fw-medium">{currentUser?.name || "MR Bilal Admin"}</h6>
+                    <p>{currentUser?.role || "Admin"}</p>
                   </div>
                 </div>
                 <Link className="dropdown-item" to={route.profile}>
@@ -686,7 +635,7 @@ const Header = () => {
                   Settings
                 </Link>
                 <hr className="my-2" />
-                <Link className="dropdown-item logout pb-0" to={route.signin}>
+                <Link className="dropdown-item logout pb-0" to="#" onClick={handleLogout}>
                   <i className="ti ti-logout me-2" />
                   Logout
                 </Link>
@@ -712,7 +661,7 @@ const Header = () => {
               <Link className="dropdown-item" to="generalsettings">
                 Settings
               </Link>
-              <Link className="dropdown-item" to="signin">
+              <Link className="dropdown-item" to="#" onClick={handleLogout}>
                 Logout
               </Link>
             </div>

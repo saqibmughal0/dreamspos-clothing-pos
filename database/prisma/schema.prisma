@@ -88,7 +88,19 @@ model User {
   name         String
   email        String   @unique
   passwordHash String   @map("password_hash")
-  avatar       String?
+  avatar                   String?
+  phone                    String?
+  emailVerified            Boolean   @default(false) @map("email_verified")
+  googleId                 String?   @unique @map("google_id")
+  verificationTokenHash     String?   @map("verification_token_hash")
+  verificationTokenExpires DateTime? @map("verification_token_expires")
+  verificationAttempts     Int       @default(0) @map("verification_attempts")
+  verificationSentAt       DateTime? @map("verification_sent_at")
+  resetPasswordTokenHash   String?   @map("reset_password_token_hash")
+  resetPasswordExpires     DateTime? @map("reset_password_expires")
+  resetAttempts            Int       @default(0) @map("reset_attempts")
+  resetSentAt              DateTime? @map("reset_sent_at")
+  pendingEmail             String?   @map("pending_email")
   isActive     Boolean  @default(true) @map("is_active")
   createdAt    DateTime @default(now()) @map("created_at")
   updatedAt    DateTime @updatedAt @map("updated_at")

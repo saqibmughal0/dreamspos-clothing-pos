@@ -29,7 +29,7 @@ const SigninTwo = () => {
                     <div className="login-userheading">
                       <h3>Sign In</h3>
                       <h4>
-                        Access the Dreamspos panel using your email and passcode.
+                        Access the MR Bilal panel using your email and passcode.
                       </h4>
                     </div>
                     <div className="mb-3">
@@ -95,46 +95,22 @@ const SigninTwo = () => {
                       <h4>OR</h4>
                     </div>
                     <div className="form-sociallink">
-                      <div className="d-flex align-items-center justify-content-center flex-wrap">
-                        <div className="text-center me-2 flex-fill">
-                          <Link
-                            to="#"
-                            className="br-10 p-2 btn btn-info d-flex align-items-center justify-content-center"
-                          >
-                            <ImageWithBasePath
-                              className="img-fluid m-1"
-                              src="assets/img/icons/facebook-logo.svg"
-                              alt="Facebook"
-                            />
-                          </Link>
-                        </div>
-                        <div className="text-center me-2 flex-fill">
-                          <Link
-                            to="#"
-                            className="btn btn-white br-10 p-2  border d-flex align-items-center justify-content-center"
-                          >
-                            <ImageWithBasePath
-                              className="img-fluid m-1"
-                              src="assets/img/icons/google-logo.svg"
-                              alt="Facebook"
-                            />
-                          </Link>
-                        </div>
-                        <div className="text-center flex-fill">
-                          <Link
-                            to="#"
-                            className="bg-dark br-10 p-2 btn btn-dark d-flex align-items-center justify-content-center"
-                          >
-                            <ImageWithBasePath
-                              className="img-fluid m-1"
-                              src="assets/img/icons/apple-logo.svg"
-                              alt="Apple"
-                            />
-                          </Link>
-                        </div>
+                      <div className="d-flex align-items-center justify-content-center">
+                        <Link
+                          to="#"
+                          className="btn btn-white auth-google-btn br-10 p-2 border d-inline-flex align-items-center justify-content-center w-100"
+                          style={{ maxWidth: "260px" }}
+                        >
+                          <ImageWithBasePath
+                            className="img-fluid m-1 me-2"
+                            src="assets/img/icons/google-logo.svg"
+                            alt="Google"
+                          />
+                          <span className="fs-14 fw-medium text-gray-9">Sign in with Google</span>
+                        </Link>
                       </div>
                       <div className="my-4 d-flex justify-content-center align-items-center copyright-text">
-                        <p>Copyright © 2025 DreamsPOS</p>
+                        <p>Copyright © 2025 MR Bilal</p>
                       </div>
                     </div>
                   </div>
@@ -144,8 +120,8 @@ const SigninTwo = () => {
             <div className="col-lg-6 p-0">
               <div className="login-img">
                 <ImageWithBasePath
-                  src="assets/img/authentication/authentication-01.svg"
-                  alt="img"
+                  src="assets/img/authentication/Golden Mannequins in Embroidered Elegance.png"
+                  alt="MR Bilal - Golden Mannequins in Embroidered Elegance"
                 />
               </div>
             </div>
