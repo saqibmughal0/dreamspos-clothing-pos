@@ -1771,3 +1771,83 @@ body {
   width: auto !important;
   object-fit: contain !important;
 }
+
+/* MR Bilal Auth Pages Split Screen & Clean Design */
+.login-wrapper.auth-split-wrapper {
+  background-image: none !important;
+  background-color: #ffffff !important;
+  display: flex !important;
+  flex-direction: row !important;
+  flex-wrap: nowrap !important;
+  height: 100vh;
+  width: 100%;
+  overflow: hidden;
+
+  .login-content.authent-content {
+    width: 50% !important;
+    height: 100vh;
+    background: #ffffff !important;
+    backdrop-filter: none !important;
+    overflow-y: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 30px 24px;
+    z-index: 2;
+
+    @media (max-width: 991.98px) {
+      width: 100% !important;
+      padding: 24px 16px;
+    }
+
+    form {
+      width: 100%;
+      max-width: 440px;
+      margin: 0 auto;
+
+      @media (max-width: 991.98px) {
+        width: 100%;
+        max-width: 420px;
+      }
+    }
+
+    .login-userset {
+      width: 100%;
+    }
+  }
+
+  .login-side-img {
+    width: 50% !important;
+    height: 100vh !important;
+    position: relative;
+    overflow: hidden;
+    background-color: #0b111e;
+    flex-shrink: 0;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center 20%;
+      display: block;
+    }
+  }
+}
+
+.login-img img {
+  object-fit: cover !important;
+  object-position: center 20% !important;
+}
+
+.auth-google-btn {
+  transition: all 0.2s ease-in-out;
+  background-color: #ffffff;
+  border-color: #e5e7eb;
+
+  &:hover {
+    background-color: #f9fafb !important;
+    border-color: #d1d5db !important;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.06);
+  }
+}
+

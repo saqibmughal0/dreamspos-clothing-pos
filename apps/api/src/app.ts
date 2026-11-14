@@ -3,6 +3,7 @@ import cors from "cors";
 import helmet from "helmet";
 import morgan from "morgan";
 import cookieParser from "cookie-parser";
+import path from "path";
 import { prisma } from "@dreamspos/database";
 import { config } from "./config";
 import { errorHandler } from "./middleware/errorHandler";
@@ -18,6 +19,7 @@ import { purchaseRouter } from "./modules/purchases/purchase.routes";
 import { financeRouter } from "./modules/finance/finance.routes";
 import { reportsRouter } from "./modules/reports/reports.routes";
 import { settingsRouter } from "./modules/settings/settings.routes";
+import { userRouter } from "./modules/users/user.routes";
 
 export const app = express();
 
@@ -85,8 +87,12 @@ app.get(["/api/health", "/health"], async (req, res) => {
   });
 });
 
+// Static Uploads
+app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
+
 // Mount Module Routes
 app.use("/api/auth", authRouter);
+app.use("/api/users", userRouter);
 app.use("/api/dashboard", dashboardRouter);
 app.use("/api/products", productRouter);
 app.use("/api/pos", posRouter);

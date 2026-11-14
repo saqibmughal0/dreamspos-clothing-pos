@@ -19,6 +19,22 @@ const HeaderLayouts = () => {
   const dataTopbarAll = useSelector((state) => state.themeSetting.dataTopbarAll);
 
   useEffect(() => {
+      // Route Guard: Ensure authenticated & verified user
+      const token = localStorage.getItem("accessToken");
+      if (!token) {
+        window.location.href = "/signin";
+        return;
+      }
+      try {
+        const user = JSON.parse(localStorage.getItem("user") || "{}");
+        if (user.email && user.emailVerified === false) {
+          window.location.href = `/email-verification?email=${encodeURIComponent(user.email)}`;
+          return;
+        }
+      } catch {
+        // ignore
+      }
+
       // Show the loader when navigating to a new route
       setShowLoader(true);
 

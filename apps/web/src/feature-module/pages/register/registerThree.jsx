@@ -37,7 +37,7 @@ const RegisterThree = () => {
                       <div className="card-body p-5">
                         <div className="login-userheading">
                           <h3>Register</h3>
-                          <h4>Create New Dreamspos Account</h4>
+                          <h4>Create New MR Bilal Account</h4>
                         </div>
                         <div className="mb-3">
                           <label className="form-label">
@@ -141,43 +141,19 @@ const RegisterThree = () => {
                           <h4>OR</h4>
                         </div>
                         <div className="mt-2">
-                          <div className="d-flex align-items-center justify-content-center flex-wrap">
-                            <div className="text-center me-2 flex-fill">
-                              <Link
-                                to="#"
-                                className="br-10 p-2 btn btn-info d-flex align-items-center justify-content-center"
-                              >
-                                <ImageWithBasePath
-                                  className="img-fluid m-1"
-                                  src="assets/img/icons/facebook-logo.svg"
-                                  alt="Facebook"
-                                />
-                              </Link>
-                            </div>
-                            <div className="text-center me-2 flex-fill">
-                              <Link
-                                to="#"
-                                className="btn btn-white br-10 p-2  border d-flex align-items-center justify-content-center"
-                              >
-                                <ImageWithBasePath
-                                  className="img-fluid m-1"
-                                  src="assets/img/icons/google-logo.svg"
-                                  alt="Facebook"
-                                />
-                              </Link>
-                            </div>
-                            <div className="text-center flex-fill">
-                              <Link
-                                to="#"
-                                className="bg-dark br-10 p-2 btn btn-dark d-flex align-items-center justify-content-center"
-                              >
-                                <ImageWithBasePath
-                                  className="img-fluid m-1"
-                                  src="assets/img/icons/apple-logo.svg"
-                                  alt="Apple"
-                                />
-                              </Link>
-                            </div>
+                          <div className="d-flex align-items-center justify-content-center">
+                            <Link
+                              to="#"
+                              className="btn btn-white auth-google-btn br-10 p-2 border d-inline-flex align-items-center justify-content-center w-100"
+                              style={{ maxWidth: "260px" }}
+                            >
+                              <ImageWithBasePath
+                                className="img-fluid m-1 me-2"
+                                src="assets/img/icons/google-logo.svg"
+                                alt="Google"
+                              />
+                              <span className="fs-14 fw-medium text-gray-9">Sign up with Google</span>
+                            </Link>
                           </div>
                         </div>
                       </div>
@@ -185,7 +161,7 @@ const RegisterThree = () => {
                   </form>
                 </div>
                 <div className="my-4 d-flex justify-content-center align-items-center copyright-text">
-                  <p>Copyright © 2025 DreamsPOS</p>
+                  <p>Copyright © 2025 MR Bilal</p>
                 </div>
               </div>
             </div>
