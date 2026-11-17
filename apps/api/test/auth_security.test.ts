@@ -186,7 +186,7 @@ describe("Authentication & User Profile Security Audit Tests", () => {
       vi.spyOn(prisma.user, "findUnique").mockResolvedValue(null);
       vi.spyOn(prisma.company, "findFirst").mockResolvedValue({ id: "comp-1", name: "MR Bilal" } as any);
       vi.spyOn(prisma.store, "findFirst").mockResolvedValue({ id: "store-1", name: "Store 1" } as any);
-      vi.spyOn(prisma.role, "findFirst").mockResolvedValue({ id: "role-cashier", name: "CASHIER" } as any);
+      vi.spyOn(prisma.role, "upsert").mockResolvedValue({ id: "role-cashier", name: "CASHIER" } as any);
 
       let createdData: any = null;
       vi.spyOn(prisma.user, "create").mockImplementation(async (args: any) => {
@@ -424,6 +424,184 @@ describe("Authentication & User Profile Security Audit Tests", () => {
           })
         })
       );
+    });
+  });
+
+  describe("8. Role Assignment Security & Privilege Escalation Prevention (B2)", () => {
+    it("New email registration always provisions CASHIER and never falls back to SUPER_ADMIN or STORE_MANAGER", async () => {
+      vi.spyOn(prisma.user, "findUnique").mockResolvedValue(null);
+      vi.spyOn(prisma.company, "findFirst").mockResolvedValue({ id: "comp-1" } as any);
+      vi.spyOn(prisma.store, "findFirst").mockResolvedValue({ id: "store-1" } as any);
+
+      const upsertRoleSpy = vi.spyOn(prisma.role, "upsert").mockResolvedValue({
+        id: "role-cashier-id",
+        name: "CASHIER",
+        description: "POS Cashier (default new user role)",
+        isSystem: true
+      } as any);
+
+      const createUserSpy = vi.spyOn(prisma.user, "create").mockResolvedValue({
+        id: "new-user-id",
+        email: "cashier@test.com",
+        roleId: "role-cashier-id"
+      } as any);
+
+      // Even if SUPER_ADMIN or STORE_MANAGER exist in DB, role lookup must NOT query them
+      const findFirstRoleSpy = vi.spyOn(prisma.role, "findFirst");
+
+      await authService.register({
+        name: "Cashier User",
+        email: "cashier@test.com",
+        password: "ValidPassword123!"
+      });
+
+      // Role upsert must explicitly target CASHIER
+      expect(upsertRoleSpy).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: { name: "CASHIER" },
+          create: expect.objectContaining({ name: "CASHIER", isSystem: true })
+        })
+      );
+
+      // Must never have queried SUPER_ADMIN or STORE_MANAGER fallback
+      expect(findFirstRoleSpy).not.toHaveBeenCalled();
+
+      // Created user must receive the CASHIER role ID
+      expect(createUserSpy).toHaveBeenCalledWith(
+        expect.objectContaining({
+          data: expect.objectContaining({
+            roleId: "role-cashier-id",
+            email: "cashier@test.com"
+          })
+        })
+      );
+    });
+
+    it("New Google sign-up always provisions CASHIER and never assigns SUPER_ADMIN", async () => {
+      vi.spyOn(prisma.user, "findFirst").mockResolvedValue(null);
+      vi.spyOn(prisma.user, "findUnique").mockResolvedValue(null);
+      vi.spyOn(prisma.company, "findFirst").mockResolvedValue({ id: "comp-1" } as any);
+      vi.spyOn(prisma.store, "findFirst").mockResolvedValue({ id: "store-1" } as any);
+
+      const upsertRoleSpy = vi.spyOn(prisma.role, "upsert").mockResolvedValue({
+        id: "role-cashier-id",
+        name: "CASHIER",
+        isSystem: true
+      } as any);
+
+      const createUserSpy = vi.spyOn(prisma.user, "create").mockResolvedValue({
+        id: "new-google-user",
+        email: "googleuser@test.com",
+        roleId: "role-cashier-id",
+        role: { name: "CASHIER" },
+        company: { id: "comp-1" },
+        store: { id: "store-1" },
+        createdAt: new Date(),
+        emailVerified: true,
+        isActive: true
+      } as any);
+
+      const findFirstRoleSpy = vi.spyOn(prisma.role, "findFirst");
+
+      const fakeGoogleToken = jwt.sign(
+        {
+          sub: "google-sub-fresh",
+          email: "googleuser@test.com",
+          name: "Google User"
+        },
+        "temporary-secret"
+      );
+
+      await authService.googleAuth(fakeGoogleToken);
+
+      expect(upsertRoleSpy).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: { name: "CASHIER" },
+          create: expect.objectContaining({ name: "CASHIER", isSystem: true })
+        })
+      );
+
+      expect(findFirstRoleSpy).not.toHaveBeenCalled();
+      expect(createUserSpy).toHaveBeenCalledWith(
+        expect.objectContaining({
+          data: expect.objectContaining({
+            roleId: "role-cashier-id"
+          })
+        })
+      );
+    });
+
+    it("Concurrent registrations safely resolve the same CASHIER role without elevation", async () => {
+      vi.spyOn(prisma.user, "findUnique").mockResolvedValue(null);
+      vi.spyOn(prisma.company, "findFirst").mockResolvedValue({ id: "comp-1" } as any);
+      vi.spyOn(prisma.store, "findFirst").mockResolvedValue({ id: "store-1" } as any);
+
+      const cashierRole = {
+        id: "role-cashier-id",
+        name: "CASHIER",
+        description: "POS Cashier (default new user role)",
+        isSystem: true
+      };
+
+      // Mock upsert to handle concurrent calls safely
+      const upsertRoleSpy = vi.spyOn(prisma.role, "upsert").mockResolvedValue(cashierRole as any);
+
+      const createdRoles: string[] = [];
+      vi.spyOn(prisma.user, "create").mockImplementation(async (args: any) => {
+        createdRoles.push(args.data.roleId);
+        return { id: `user-${Date.now()}`, ...args.data } as any;
+      });
+
+      // Simulate 5 simultaneous registrations
+      await Promise.all([
+        authService.register({ name: "User 1", email: "user1@test.com", password: "Password123!" }),
+        authService.register({ name: "User 2", email: "user2@test.com", password: "Password123!" }),
+        authService.register({ name: "User 3", email: "user3@test.com", password: "Password123!" }),
+        authService.register({ name: "User 4", email: "user4@test.com", password: "Password123!" }),
+        authService.register({ name: "User 5", email: "user5@test.com", password: "Password123!" })
+      ]);
+
+      // All 5 must have received the CASHIER role ID
+      expect(createdRoles).toHaveLength(5);
+      expect(createdRoles.every((r) => r === "role-cashier-id")).toBe(true);
+      expect(upsertRoleSpy).toHaveBeenCalledTimes(5);
+    });
+
+    it("User cannot inject role or store permissions via registration payload", async () => {
+      vi.spyOn(prisma.user, "findUnique").mockResolvedValue(null);
+      vi.spyOn(prisma.company, "findFirst").mockResolvedValue({ id: "legit-comp-1" } as any);
+      vi.spyOn(prisma.store, "findFirst").mockResolvedValue({ id: "legit-store-1" } as any);
+      vi.spyOn(prisma.role, "upsert").mockResolvedValue({
+        id: "role-cashier-id",
+        name: "CASHIER",
+        isSystem: true
+      } as any);
+
+      let capturedUserData: any = null;
+      vi.spyOn(prisma.user, "create").mockImplementation(async (args: any) => {
+        capturedUserData = args.data;
+        return { id: "injected-user", ...args.data } as any;
+      });
+
+      // Malicious payload attempting to inject SUPER_ADMIN roleId and foreign companyId
+      const maliciousPayload: any = {
+        name: "Hacker User",
+        email: "hacker@test.com",
+        password: "Password123!",
+        role: "SUPER_ADMIN",
+        roleId: "hacked-super-admin-role",
+        companyId: "victim-company-id",
+        storeId: "victim-store-id",
+        isSystem: true
+      };
+
+      await authService.register(maliciousPayload);
+
+      // The service must assign legitimate system-derived IDs and CASHIER role
+      expect(capturedUserData.roleId).toBe("role-cashier-id");
+      expect(capturedUserData.companyId).toBe("legit-comp-1");
+      expect(capturedUserData.storeId).toBe("legit-store-1");
+      expect(capturedUserData.role).toBeUndefined();
     });
   });
 });
