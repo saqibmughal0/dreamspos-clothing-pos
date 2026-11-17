@@ -24,6 +24,11 @@ export const config = {
     pass: process.env.SMTP_PASS || "",
     from: process.env.SMTP_FROM || process.env.EMAIL_FROM || "MR Bilal POS <noreply@mrbilal.com>"
   },
+  brevo: {
+    apiKey: process.env.BREVO_API_KEY || "",
+    senderEmail: process.env.BREVO_SENDER_EMAIL || "",
+    senderName: process.env.BREVO_SENDER_NAME || "MR Bilal POS"
+  },
   uploadsDir: path.resolve(__dirname, "../../uploads"),
   databaseUrl: process.env.DATABASE_URL
 };
