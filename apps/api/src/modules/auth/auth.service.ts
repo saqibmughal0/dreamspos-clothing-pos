@@ -309,24 +309,16 @@ export class AuthService {
       });
     }
 
-    // Newly registered accounts get restricted role (CASHIER) by default
-    let role = await prisma.role.findFirst({
-      where: { name: "CASHIER" }
-    });
-    if (!role) {
-      role = await prisma.role.findFirst({
-        where: { name: { in: ["SUPER_ADMIN", "STORE_MANAGER"] } }
-      });
-      if (!role) {
-        role = await prisma.role.create({
-          data: {
-            name: "SUPER_ADMIN",
-            description: "Super Administrator / Owner",
-            isSystem: true
-          }
-        });
+    // Newly registered accounts always get CASHIER (concurrency-safe upsert)
+    const role = await prisma.role.upsert({
+      where: { name: "CASHIER" },
+      update: {},
+      create: {
+        name: "CASHIER",
+        description: "POS Cashier (default new user role)",
+        isSystem: true
       }
-    }
+    });
 
     const passwordHash = await bcrypt.hash(input.password, 10);
     await prisma.user.create({
@@ -579,24 +571,16 @@ export class AuthService {
       });
     }
 
-    // Assign restricted default role CASHIER to new Google sign-ups
-    let role = await prisma.role.findFirst({
-      where: { name: "CASHIER" }
-    });
-    if (!role) {
-      role = await prisma.role.findFirst({
-        where: { name: { in: ["SUPER_ADMIN", "STORE_MANAGER"] } }
-      });
-      if (!role) {
-        role = await prisma.role.create({
-          data: {
-            name: "SUPER_ADMIN",
-            description: "Super Administrator / Owner",
-            isSystem: true
-          }
-        });
+    // New Google sign-ups always get CASHIER (concurrency-safe upsert)
+    const role = await prisma.role.upsert({
+      where: { name: "CASHIER" },
+      update: {},
+      create: {
+        name: "CASHIER",
+        description: "POS Cashier (default new user role)",
+        isSystem: true
       }
-    }
+    });
 
     const randomPasswordHash = await bcrypt.hash(crypto.randomBytes(32).toString("hex"), 10);
     const newUser = await prisma.user.create({
