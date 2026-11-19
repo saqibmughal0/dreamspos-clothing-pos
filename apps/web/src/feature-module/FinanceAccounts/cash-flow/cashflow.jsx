@@ -1,60 +1,50 @@
-import React from 'react'
-import TooltipIcons from '../../../core/common/tooltip-content/tooltipIcons'
-import RefreshIcon from '../../../core/common/tooltip-content/refresh'
-import CollapesIcon from '../../../core/common/tooltip-content/collapes'
-import { Link } from 'react-router-dom'
-import { CashFlowData } from '../../../core/json/cashFlowData'
+import React, { useState, useEffect, useCallback } from 'react';
+import TooltipIcons from '../../../core/common/tooltip-content/tooltipIcons';
+import RefreshIcon from '../../../core/common/tooltip-content/refresh';
+import CollapesIcon from '../../../core/common/tooltip-content/collapes';
 import Table from "../../../core/pagination/datatable";
+import CommonFooter from '../../../core/common/footer/commonFooter';
+import { apiClient } from '../../../core/apiClient';
 
 const Cashflow = () => {
+    const [dataSource, setDataSource] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
 
-    const dataSource = CashFlowData;
+    const fetchCashFlow = useCallback(() => {
+        setLoading(true);
+        setError(null);
+        apiClient.get('/finance/cash-flow')
+            .then((res) => {
+                const items = res.data?.data?.items || [];
+                setDataSource(items.map((r) => ({
+                    key: r.id,
+                    Date: new Date(r.date).toLocaleDateString('en-PK'),
+                    Bank_Account: r.account,
+                    Description: r.description,
+                    Credit: `Rs ${Number(r.credit || 0).toFixed(2)}`,
+                    Debit: `Rs ${Number(r.debit || 0).toFixed(2)}`,
+                    Payment_Method: r.paymentMethod,
+                })));
+            })
+            .catch((err) => {
+                setError(err?.response?.data?.message || err?.message || 'Failed to load cash flow');
+                setDataSource([]);
+            })
+            .finally(() => setLoading(false));
+    }, []);
+
+    useEffect(() => {
+        fetchCashFlow();
+    }, [fetchCashFlow]);
+
     const columns = [
-        {
-            title: "Date",
-            dataIndex: "Date",
-            sorter: (a, b) => a.Date.length - b.Date.length,
-        },
-        {
-            title: "Bank & Account Number",
-            dataIndex: "Bank_Account",
-            sorter: (a, b) => a.Bank_Account.length - b.Bank_Account.length,
-        },
-        {
-            title: "Credit",
-            dataIndex: "Credit",
-            sorter: (a, b) => a.Credit.length - b.Credit.length,
-        },
-        {
-            title: "Description",
-            dataIndex: "Description",
-            sorter: (a, b) => a.Description.length - b.Description.length,
-        },
-        {
-            title: "Credit",
-            dataIndex: "Credit",
-            sorter: (a, b) => a.Credit.length - b.Credit.length,
-        },
-        {
-            title: "Debit",
-            dataIndex: "Debit",
-            sorter: (a, b) => a.Debit.length - b.Debit.length,
-        },
-        {
-            title: "Account balance",
-            dataIndex: "Account_balance",
-            sorter: (a, b) => a.Account_balance.length - b.Account_balance.length,
-        },
-        {
-            title: "Total Balance ",
-            dataIndex: "Total_Balance",
-            sorter: (a, b) => a.Total_Balance.length - b.Total_Balance.length,
-        },
-        {
-            title: "Payment Method",
-            dataIndex: "Payment_Method",
-            sorter: (a, b) => a.Payment_Method.length - b.Payment_Method.length,
-        },
+        { title: "Date", dataIndex: "Date" },
+        { title: "Reference", dataIndex: "Bank_Account" },
+        { title: "Description", dataIndex: "Description" },
+        { title: "Cash In (Credit)", dataIndex: "Credit" },
+        { title: "Cash Out (Debit)", dataIndex: "Debit" },
+        { title: "Method", dataIndex: "Payment_Method" },
     ];
 
     return (
@@ -63,81 +53,35 @@ const Cashflow = () => {
                 <div className="page-header">
                     <div className="add-item d-flex">
                         <div className="page-title">
-                            <h4 className="fw-bold">Cash Flow</h4>
-                            <h6>View Your Cashflows </h6>
+                            <h4>Cash Flow</h4>
+                            <h6>Real inflows and outflows from sales, income, purchases, and expenses</h6>
                         </div>
                     </div>
                     <ul className="table-top-head">
                         <TooltipIcons />
-                        <RefreshIcon />
+                        <RefreshIcon onClick={fetchCashFlow} />
                         <CollapesIcon />
                     </ul>
                 </div>
-                {/* /product list */}
+
                 <div className="card table-list-card">
-                    <div className="card-header d-flex align-items-center justify-content-between flex-wrap row-gap-3">
-                        <div className="search-set">
-                        </div>
-                        <div className="d-flex table-dropdown my-xl-auto right-content align-items-center flex-wrap row-gap-3">
-                            <div className="dropdown">
-                                <Link
-                                    to="#"
-                                    className="dropdown-toggle btn btn-white btn-md d-inline-flex align-items-center"
-                                    data-bs-toggle="dropdown"
-                                >
-                                    Payment Method
-                                </Link>
-                                <ul className="dropdown-menu  dropdown-menu-end p-3">
-                                    <li>
-                                        <Link
-                                            to="#"
-                                            className="dropdown-item rounded-1"
-                                        >
-                                            Stripe
-                                        </Link>
-                                    </li>
-                                    <li>
-                                        <Link
-                                            to="#"
-                                            className="dropdown-item rounded-1"
-                                        >
-                                            Cash
-                                        </Link>
-                                    </li>
-                                    <li>
-                                        <Link
-                                            to="#"
-                                            className="dropdown-item rounded-1"
-                                        >
-                                            Paypal
-                                        </Link>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
                     <div className="card-body">
                         <div className="table-responsive">
-                            <Table columns={columns} dataSource={dataSource} />
+                            {loading && <div className="text-center py-5"><div className="spinner-border text-primary" /></div>}
+                            {!loading && error && <div className="alert alert-danger">{error}</div>}
+                            {!loading && !error && dataSource.length === 0 && (
+                                <div className="text-center py-5 text-muted">No cash flow transactions recorded yet.</div>
+                            )}
+                            {!loading && !error && dataSource.length > 0 && (
+                                <Table columns={columns} dataSource={dataSource} />
+                            )}
                         </div>
                     </div>
                 </div>
-                {/* /product list */}
             </div>
-            <div className="footer d-sm-flex align-items-center justify-content-between border-top bg-white p-3">
-                <p className="mb-0 text-gray-9">
-                    2014-2025 © DreamsPOS. All Right Reserved
-                </p>
-                <p>
-                    Designed &amp; Developed By{" "}
-                    <Link to="#" className="text-primary">
-                        Dreams
-                    </Link>
-                </p>
-            </div>
+            <CommonFooter />
         </div>
+    );
+};
 
-    )
-}
-
-export default Cashflow
+export default Cashflow;

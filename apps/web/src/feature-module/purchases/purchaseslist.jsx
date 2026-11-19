@@ -10,17 +10,16 @@ import RefreshIcon from "../../core/common/tooltip-content/refresh";
 import CollapesIcon from "../../core/common/tooltip-content/collapes";
 import ImportPurchases from "../../core/modals/purchases/importpurchases";
 import EditPurchases from "../../core/modals/purchases/editpurchases";
-import { purchaseslist } from "../../core/json/purchaselistdata";
 import AddPurchases from "../../core/modals/purchases/addpurchases";
 import { apiClient } from "../../core/apiClient";
 
 const PurchasesList = () => {
-  const [dataSource, setDataSource] = useState(purchaseslist);
+  const [dataSource, setDataSource] = useState([]);
 
   useEffect(() => {
     apiClient.get("/purchases")
       .then((res) => {
-        if (res.data?.success && res.data.data?.items?.length > 0) {
+        if (res.data?.success && res.data.data?.items) {
           const mapped = res.data.data.items.map((p, idx) => ({
             id: p.id,
             key: p.id || idx,

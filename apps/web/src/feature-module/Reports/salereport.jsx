@@ -7,10 +7,9 @@ import TooltipIcons from "../../core/common/tooltip-content/tooltipIcons";
 import { DatePicker } from "antd";
 import CollapesIcon from "../../core/common/tooltip-content/collapes";
 import RefreshIcon from "../../core/common/tooltip-content/refresh";
-import { salereportdata } from "../../core/json/taxreport";
 
 const SaleReport = () => {
-  const data = salereportdata;
+  const data = [];
 
   const columns = [
     {

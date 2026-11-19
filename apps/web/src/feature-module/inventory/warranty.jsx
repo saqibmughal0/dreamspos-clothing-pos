@@ -1,54 +1,112 @@
-import React, { useState } from "react";
-import { useSelector } from "react-redux";
+import React, { useState, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
 import Table from "../../core/pagination/datatable";
 import CommonFooter from "../../core/common/footer/commonFooter";
 import TooltipIcons from "../../core/common/tooltip-content/tooltipIcons";
 import RefreshIcon from "../../core/common/tooltip-content/refresh";
 import CollapesIcon from "../../core/common/tooltip-content/collapes";
-import { Period } from "../../core/common/selectOption/selectOption";
-import Select from "react-select";
-import DefaultEditor from "react-simple-wysiwyg";
-import CommonDeleteModal from "../../core/common/modal/commonDeleteModal";
+import { apiClient } from "../../core/apiClient";
+
 const Warranty = () => {
-  const dataSource = useSelector((state) => state.rootReducer.warranty_data);
+  const [dataSource, setDataSource] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [formState, setFormState] = useState({ id: null, name: "", duration: "7", durationUnit: "Days", description: "", isActive: true });
+  const [submitting, setSubmitting] = useState(false);
+  const [formError, setFormError] = useState(null);
+
+  const fetchWarranties = useCallback(() => {
+    setLoading(true);
+    setError(null);
+    apiClient.get("/catalog/warranties")
+      .then((res) => {
+        const items = res.data?.data?.items || [];
+        setDataSource(items.map((w) => ({
+          id: w.id,
+          key: w.id,
+          name: w.name,
+          description: w.description || "—",
+          duration: `${w.duration} ${w.durationUnit}`,
+          rawDuration: w.duration,
+          durationUnit: w.durationUnit,
+          status: w.isActive ? "Active" : "Inactive",
+          isActive: w.isActive,
+        })));
+      })
+      .catch((err) => {
+        setError(err?.response?.data?.message || err?.message || "Failed to load warranties");
+        setDataSource([]);
+      })
+      .finally(() => setLoading(false));
+  }, []);
+
+  useEffect(() => {
+    fetchWarranties();
+  }, [fetchWarranties]);
+
+  const handleSave = async (e, isEdit = false) => {
+    e.preventDefault();
+    if (!formState.name.trim()) {
+      setFormError("Warranty / Policy name is required.");
+      return;
+    }
+    setSubmitting(true);
+    setFormError(null);
+    try {
+      const payload = {
+        name: formState.name,
+        duration: Number(formState.duration || 0),
+        durationUnit: formState.durationUnit,
+        description: formState.description || undefined,
+        isActive: formState.isActive,
+      };
+      if (isEdit && formState.id) {
+        await apiClient.put(`/catalog/warranties/${formState.id}`, payload);
+      } else {
+        await apiClient.post("/catalog/warranties", payload);
+      }
+      setFormState({ id: null, name: "", duration: "7", durationUnit: "Days", description: "", isActive: true });
+      document.querySelector(isEdit ? "#edit-units .btn-close" : "#add-units .btn-close")?.click();
+      fetchWarranties();
+    } catch (err) {
+      setFormError(err?.response?.data?.message || err?.message || "Failed to save warranty");
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const handleDelete = async (id) => {
+    try {
+      await apiClient.delete(`/catalog/warranties/${id}`);
+      fetchWarranties();
+    } catch (err) {
+      setError(err?.response?.data?.message || err?.message || "Failed to delete warranty");
+    }
+  };
+
+  const filteredData = dataSource.filter((item) =>
+    !searchTerm.trim() || item.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   const columns = [
-    {
-      title: "Name",
-      dataIndex: "name",
-      sorter: (a, b) => a.name.length - b.name.length,
-      width: "10px",
-    },
-    {
-      title: "Description",
-      dataIndex: "description",
-      sorter: (a, b) => a.description.length - b.description.length,
-      width: "10px",
-    },
-
-    {
-      title: "Duration",
-      dataIndex: "duration",
-      sorter: (a, b) => a.duration.length - b.duration.length,
-      width: "10px",
-    },
-
+    { title: "Name", dataIndex: "name", sorter: (a, b) => a.name.localeCompare(b.name) },
+    { title: "Description", dataIndex: "description" },
+    { title: "Duration", dataIndex: "duration" },
     {
       title: "Status",
       dataIndex: "status",
       render: (text) => (
-        <span className="badge table-badge bg-success fw-medium fs-10">
+        <span className={`badge table-badge ${text === "Active" ? "bg-success" : "bg-secondary"} fw-medium fs-10`}>
           {text}
         </span>
       ),
-      sorter: (a, b) => a.status.length - b.status.length,
     },
-
     {
       title: "",
       dataIndex: "actions",
       key: "actions",
-      render: () => (
+      render: (_, record) => (
         <div className="action-table-data">
           <div className="edit-delete-action">
             <Link
@@ -56,13 +114,21 @@ const Warranty = () => {
               to="#"
               data-bs-toggle="modal"
               data-bs-target="#edit-units"
+              onClick={() => {
+                setFormError(null);
+                setFormState({
+                  id: record.id,
+                  name: record.name,
+                  duration: String(record.rawDuration),
+                  durationUnit: record.durationUnit,
+                  description: record.description === "—" ? "" : record.description,
+                  isActive: record.isActive,
+                });
+              }}
             >
               <i data-feather="edit" className="feather-edit"></i>
             </Link>
-            <Link
-              data-bs-toggle="modal" data-bs-target="#delete-modal" className="p-2"
-              to="#"
-            >
+            <Link className="p-2" to="#" onClick={() => handleDelete(record.id)}>
               <i data-feather="trash-2" className="feather-trash-2"></i>
             </Link>
           </div>
@@ -70,11 +136,6 @@ const Warranty = () => {
       ),
     },
   ];
-
-  const [values, setValue] = useState();
-  function onChange(e) {
-    setValue(e.target.value);
-  }
 
   return (
     <>
@@ -84,12 +145,12 @@ const Warranty = () => {
             <div className="add-item d-flex">
               <div className="page-title">
                 <h4 className="fw-bold">Warranties</h4>
-                <h6>Manage your warranties</h6>
+                <h6>Manage garment exchange &amp; warranty policies</h6>
               </div>
             </div>
             <ul className="table-top-head">
               <TooltipIcons />
-              <RefreshIcon />
+              <RefreshIcon onClick={fetchWarranties} />
               <CollapesIcon />
             </ul>
             <div className="page-btn">
@@ -98,245 +159,154 @@ const Warranty = () => {
                 className="btn btn-primary"
                 data-bs-toggle="modal"
                 data-bs-target="#add-units"
+                onClick={() => {
+                  setFormError(null);
+                  setFormState({ id: null, name: "", duration: "7", durationUnit: "Days", description: "", isActive: true });
+                }}
               >
-                <i className='ti ti-circle-plus me-1'></i> Add Warranty
+                <i className="ti ti-circle-plus me-1"></i>
+                Add Warranty
               </Link>
             </div>
           </div>
-          {/* /product list */}
+
           <div className="card table-list-card">
             <div className="card-header d-flex align-items-center justify-content-between flex-wrap row-gap-3">
               <div className="search-set">
-              </div>
-              <div className="d-flex table-dropdown my-xl-auto right-content align-items-center flex-wrap row-gap-3">
-               
-                <div className="dropdown me-2">
-                  <Link
-                    to="#"
-                    className="dropdown-toggle btn btn-white btn-md d-inline-flex align-items-center"
-                    data-bs-toggle="dropdown"
-                  >
-                    Status
-                  </Link>
-                  <ul className="dropdown-menu  dropdown-menu-end p-3">
-                    <li>
-                      <Link
-                        to="#"
-                        className="dropdown-item rounded-1"
-                      >
-                        Active
-                      </Link>
-                    </li>
-                    <li>
-                      <Link
-                        to="#"
-                        className="dropdown-item rounded-1"
-                      >
-                        Inactive
-                      </Link>
-                    </li>
-                  </ul>
+                <div className="search-input">
+                  <input
+                    type="text"
+                    className="form-control form-control-sm"
+                    placeholder="Search warranties..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                  />
                 </div>
               </div>
             </div>
             <div className="card-body">
               <div className="table-responsive">
-                <Table columns={columns} dataSource={dataSource} />
+                {loading && (
+                  <div className="text-center py-5">
+                    <div className="spinner-border text-primary" role="status" />
+                    <p className="mt-2 text-muted">Loading warranties...</p>
+                  </div>
+                )}
+                {!loading && error && (
+                  <div className="text-center py-5">
+                    <i className="ti ti-alert-triangle fs-40 text-danger mb-2 d-block" />
+                    <h5 className="text-danger">Could not load warranties</h5>
+                    <p className="text-muted">{error}</p>
+                    <button className="btn btn-primary btn-sm" onClick={fetchWarranties}>Retry</button>
+                  </div>
+                )}
+                {!loading && !error && filteredData.length === 0 && (
+                  <div className="text-center py-5">
+                    <i className="ti ti-certificate fs-40 text-muted mb-2 d-block" />
+                    <h5 className="text-muted">No warranties found</h5>
+                    <p className="text-muted">Add exchange or color-guarantee policies here.</p>
+                  </div>
+                )}
+                {!loading && !error && filteredData.length > 0 && (
+                  <Table columns={columns} dataSource={filteredData} />
+                )}
               </div>
             </div>
           </div>
-          {/* /product list */}
         </div>
         <CommonFooter />
       </div>
 
-      {/* Add Warranty */}
+      {/* Add Warranty Modal */}
       <div className="modal fade" id="add-units">
         <div className="modal-dialog modal-dialog-centered">
           <div className="modal-content">
-            <div className="page-wrapper-new p-0">
-              <div className="content">
-                <div className="modal-header">
-                  <div className="page-title">
-                    <h4>Add Warrranty</h4>
+            <div className="modal-header">
+              <div className="page-title"><h4>Add Warranty</h4></div>
+              <button type="button" className="close bg-danger text-white fs-16 btn-close" data-bs-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">×</span>
+              </button>
+            </div>
+            <form onSubmit={(e) => handleSave(e, false)}>
+              <div className="modal-body">
+                {formError && <div className="alert alert-danger py-2">{formError}</div>}
+                <div className="mb-3">
+                  <label className="form-label">Warranty / Policy Name<span className="text-danger ms-1">*</span></label>
+                  <input type="text" className="form-control" placeholder="e.g., 7-Day Size Exchange" value={formState.name} onChange={(e) => setFormState({ ...formState, name: e.target.value })} required />
+                </div>
+                <div className="row">
+                  <div className="col-6 mb-3">
+                    <label className="form-label">Duration<span className="text-danger ms-1">*</span></label>
+                    <input type="number" min="1" className="form-control" value={formState.duration} onChange={(e) => setFormState({ ...formState, duration: e.target.value })} required />
                   </div>
-                  <button
-                    type="button"
-                    className="close bg-danger text-white fs-16"
-                    data-bs-dismiss="modal"
-                    aria-label="Close"
-                  >
-                    <span aria-hidden="true">×</span>
-                  </button>
+                  <div className="col-6 mb-3">
+                    <label className="form-label">Period</label>
+                    <select className="form-select" value={formState.durationUnit} onChange={(e) => setFormState({ ...formState, durationUnit: e.target.value })}>
+                      <option value="Days">Days</option>
+                      <option value="Months">Months</option>
+                      <option value="Years">Years</option>
+                    </select>
+                  </div>
                 </div>
-                <div className="modal-body">
-                  <form action="warranty.html">
-                    <div className="mb-3">
-                      <label className="form-label">
-                        Warranty<span className="text-danger ms-1">*</span>
-                      </label>
-                      <input type="text" className="form-control" />
-                    </div>
-                    <div className="row">
-                      <div className="col-lg-6">
-                        <div className="mb-3">
-                          <label className="form-label">
-                            Duration<span className="text-danger ms-1">*</span>
-                          </label>
-                          <input type="text" className="form-control" />
-                        </div>
-                      </div>
-                      <div className="col-lg-6">
-                        <div className="mb-3">
-                          <label className="form-label">
-                            Period<span className="text-danger ms-1">*</span>
-                          </label>
-                          <Select
-                            classNamePrefix="react-select"
-                            options={Period}
-                            placeholder="Choose"
-                          />
-                        </div>
-                      </div>
-                      <div className="col-lg-12">
-                        <div className="mb-3">
-                          <label className="form-label">
-                            Description<span className="text-danger ms-1">*</span>
-                          </label>
-                          <DefaultEditor value={values} onChange={onChange} />
-                        </div>
-                      </div>
-                    </div>
-                    <div className="mb-0">
-                      <div className="status-toggle modal-status d-flex justify-content-between align-items-center">
-                        <span className="status-label">Status</span>
-                        <input type="checkbox" id="user2" className="check" />
-                        <label htmlFor="user2" className="checktoggle" />
-                      </div>
-                    </div>
-                  </form>
-                </div>
-                <div className="modal-footer">
-                  <button
-                    type="button"
-                    className="btn me-2 btn-secondary fs-13 fw-medium p-2 px-3 shadow-none"
-                    data-bs-dismiss="modal"
-                  >
-                    Cancel
-                  </button>
-                  <Link
-                    to="#"
-                    className="btn btn-primary fs-13 fw-medium p-2 px-3"
-                    data-bs-dismiss="modal"
-                  >
-                    Add Warranty
-                  </Link>
+                <div className="mb-3">
+                  <label className="form-label">Description</label>
+                  <textarea className="form-control" rows={2} value={formState.description} onChange={(e) => setFormState({ ...formState, description: e.target.value })} />
                 </div>
               </div>
-            </div>
+              <div className="modal-footer">
+                <button type="button" className="btn me-2 btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="submit" className="btn btn-primary" disabled={submitting}>{submitting ? "Saving..." : "Add Warranty"}</button>
+              </div>
+            </form>
           </div>
         </div>
       </div>
-      {/* /Add Warranty */}
-      {/* Edit Warranty */}
+
+      {/* Edit Warranty Modal */}
       <div className="modal fade" id="edit-units">
         <div className="modal-dialog modal-dialog-centered">
           <div className="modal-content">
-            <div className="page-wrapper-new p-0">
-              <div className="content">
-                <div className="modal-header">
-                  <div className="page-title">
-                    <h4>Edit Warrranty</h4>
+            <div className="modal-header">
+              <div className="page-title"><h4>Edit Warranty</h4></div>
+              <button type="button" className="close bg-danger text-white fs-16 btn-close" data-bs-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">×</span>
+              </button>
+            </div>
+            <form onSubmit={(e) => handleSave(e, true)}>
+              <div className="modal-body">
+                {formError && <div className="alert alert-danger py-2">{formError}</div>}
+                <div className="mb-3">
+                  <label className="form-label">Warranty / Policy Name<span className="text-danger ms-1">*</span></label>
+                  <input type="text" className="form-control" value={formState.name} onChange={(e) => setFormState({ ...formState, name: e.target.value })} required />
+                </div>
+                <div className="row">
+                  <div className="col-6 mb-3">
+                    <label className="form-label">Duration<span className="text-danger ms-1">*</span></label>
+                    <input type="number" min="1" className="form-control" value={formState.duration} onChange={(e) => setFormState({ ...formState, duration: e.target.value })} required />
                   </div>
-                  <button
-                    type="button"
-                    className="close bg-danger text-white fs-16"
-                    data-bs-dismiss="modal"
-                    aria-label="Close"
-                  >
-                    <span aria-hidden="true">×</span>
-                  </button>
+                  <div className="col-6 mb-3">
+                    <label className="form-label">Period</label>
+                    <select className="form-select" value={formState.durationUnit} onChange={(e) => setFormState({ ...formState, durationUnit: e.target.value })}>
+                      <option value="Days">Days</option>
+                      <option value="Months">Months</option>
+                      <option value="Years">Years</option>
+                    </select>
+                  </div>
                 </div>
-                <div className="modal-body">
-                  <form>
-                    <div className="mb-3">
-                      <label className="form-label">
-                        Warranty<span className="text-danger ms-1">*</span>
-                      </label>
-                      <input
-                        type="text"
-                        className="form-control"
-                        defaultValue="Replacement Warranty"
-                      />
-                    </div>
-                    <div className="row">
-                      <div className="col-lg-6">
-                        <div className="mb-3">
-                          <label className="form-label">
-                            Duration<span className="text-danger ms-1">*</span>
-                          </label>
-                          <input
-                            type="text"
-                            className="form-control"
-                            defaultValue={2}
-                          />
-                        </div>
-                      </div>
-                      <div className="col-lg-6">
-                        <div className="mb-3">
-                          <label className="form-label">
-                            Period<span className="text-danger ms-1">*</span>
-                          </label>
-                          <Select
-                            classNamePrefix="react-select"
-                            options={Period}
-                            placeholder="Choose"
-                          />
-                        </div>
-                      </div>
-                      <div className="col-lg-12">
-                        <div className="mb-3">
-                          <label className="form-label">
-                            Description<span className="text-danger ms-1">*</span>
-                          </label>
-                          <DefaultEditor value={values} onChange={onChange} />
-                        </div>
-                      </div>
-                    </div>
-                    <div className="mb-0">
-                      <div className="status-toggle modal-status d-flex justify-content-between align-items-center">
-                        <span className="status-label">Status</span>
-                        <input type="checkbox" id="user3" className="check" />
-                        <label htmlFor="user3" className="checktoggle" />
-                      </div>
-                    </div>
-                  </form>
-                </div>
-                <div className="modal-footer">
-                  <button
-                    type="button"
-                    className="btn me-2 btn-secondary fs-13 fw-medium p-2 px-3 shadow-none"
-                    data-bs-dismiss="modal"
-                  >
-                    Cancel
-                  </button>
-                  <Link
-                    to="#"
-                    className="btn btn-primary fs-13 fw-medium p-2 px-3"
-                    data-bs-dismiss="modal"
-                  >
-                    Save Changes
-                  </Link>
+                <div className="mb-3">
+                  <label className="form-label">Description</label>
+                  <textarea className="form-control" rows={2} value={formState.description} onChange={(e) => setFormState({ ...formState, description: e.target.value })} />
                 </div>
               </div>
-            </div>
+              <div className="modal-footer">
+                <button type="button" className="btn me-2 btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="submit" className="btn btn-primary" disabled={submitting}>{submitting ? "Saving..." : "Save Changes"}</button>
+              </div>
+            </form>
           </div>
         </div>
       </div>
-      {/* /Edit Warranty */}
-      <CommonDeleteModal />
     </>
-
   );
 };
 

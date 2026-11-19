@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import ImageWithBasePath from "../../core/img/imagewithbasebath";
 import { Link } from "react-router-dom";
 import Select from "react-select";
-import { inventoryreportdata } from "../../core/json/inventoryreportdata";
 import Table from "../../core/pagination/datatable";
 import { all_routes } from "../../Router/all_routes";
 import RefreshIcon from "../../core/common/tooltip-content/refresh";
@@ -16,27 +15,34 @@ const InventoryReport = () => {
 
   const route = all_routes;
 
-  const [data, setData] = useState(inventoryreportdata);
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    setLoading(true);
     apiClient.get("/reports/inventory-aging")
       .then((res) => {
-        if (res.data?.success && res.data.data?.items?.length > 0) {
+        if (res.data?.success && res.data.data?.items) {
           const mapped = res.data.data.items.map((item, idx) => ({
             id: item.id,
             key: item.id || idx,
             productName: item.name,
-            sku: item.articleCode,
-            category: item.category,
-            brand: "Dreams Apparel",
+            sku: item.articleCode || "—",
+            category: item.category || "Apparel",
+            brand: item.brand || "—",
             unit: "Pc",
-            instockQty: `${item.units} Pcs`
+            instockQty: `${item.units ?? 0} Pcs`
           }));
           setData(mapped);
+        } else {
+          setData([]);
         }
       })
-      .catch((err) => {
-        console.warn("Using default inventory report data:", err);
+      .catch(() => {
+        setData([]);
+      })
+      .finally(() => {
+        setLoading(false);
       });
   }, []);
   const [searchText] = useState("");

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { OverlayTrigger, Tooltip } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import ImageWithBasePath from "../../core/img/imagewithbasebath";
@@ -17,16 +17,42 @@ import { useDispatch, useSelector } from "react-redux";
 import { Filter, MinusCircle } from "react-feather";
 import Select from "react-select";
 import { DatePicker } from "antd";
-import { saleslist } from "../../core/json/saleslistdata";
 import Table from "../../core/pagination/datatable";
 import withReactContent from "sweetalert2-react-content";
 import Swal from "sweetalert2";
+import { apiClient } from "../../core/apiClient";
 
 const SalesList = () => {
-  const saleslistdata = saleslist;
+  const [saleslistdata, setSaleslistdata] = useState([]);
   const dispatch = useDispatch();
   const data = useSelector((state) => state.rootReducer.toggle_header);
   const [isFilterVisible, setIsFilterVisible] = useState(false);
+
+  useEffect(() => {
+    apiClient.get("/sales")
+      .then((res) => {
+        if (res.data?.success && Array.isArray(res.data.data)) {
+          setSaleslistdata(res.data.data.map((s, idx) => ({
+            id: s.id,
+            key: s.id || idx,
+            customerName: s.customer?.name || "Walk-in Customer",
+            reference: s.invoiceNumber,
+            date: new Date(s.createdAt).toLocaleDateString("en-PK"),
+            status: s.status === "COMPLETED" ? "Completed" : s.status,
+            grandTotal: `Rs ${Number(s.totalAmount || 0).toFixed(2)}`,
+            paid: `Rs ${Number(s.paidAmount || 0).toFixed(2)}`,
+            due: `Rs ${Number(s.dueAmount || 0).toFixed(2)}`,
+            paymentStatus: s.paymentStatus === "PAID" ? "Paid" : s.paymentStatus === "PARTIAL" ? "Partial" : "Unpaid",
+            biller: s.cashier?.name || "POS Cashier",
+          })));
+        } else {
+          setSaleslistdata([]);
+        }
+      })
+      .catch(() => {
+        setSaleslistdata([]);
+      });
+  }, []);
 
   const toggleFilterVisibility = () => {
     setIsFilterVisible((prevVisibility) => !prevVisibility);

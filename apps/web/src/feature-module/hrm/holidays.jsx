@@ -1,203 +1,157 @@
-import React from "react";
-import { useState } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
-import {
-  PlusCircle,
-} from "react-feather";
 import Table from "../../core/pagination/datatable.jsx";
-import AddHolidays from "../../core/modals/hrm/addholidays.jsx";
-import EditHolidays from "../../core/modals/hrm/editholidays.jsx";
-import { leavedata } from "../../core/json/leavesdata.js";
 import TooltipIcons from "../../core/common/tooltip-content/tooltipIcons.jsx";
 import RefreshIcon from "../../core/common/tooltip-content/refresh.jsx";
 import CollapesIcon from "../../core/common/tooltip-content/collapes.jsx";
 import CommonFooter from "../../core/common/footer/commonFooter.jsx";
+import { apiClient } from "../../core/apiClient";
 
 const Holidays = () => {
-  const datas = leavedata;
+  const [dataSource, setDataSource] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [form, setForm] = useState({ name: "", fromDate: "", toDate: "", description: "" });
+  const [submitting, setSubmitting] = useState(false);
 
-  const [searchText] = useState("");
+  const fetchHolidays = useCallback(() => {
+    setLoading(true);
+    setError(null);
+    apiClient.get("/hrm/holidays")
+      .then((res) => {
+        const items = res.data?.data?.items || [];
+        setDataSource(items.map((h) => ({
+          id: h.id,
+          key: h.id,
+          name: h.name,
+          date: `${new Date(h.fromDate).toLocaleDateString("en-PK")} - ${new Date(h.toDate).toLocaleDateString("en-PK")}`,
+          description: h.description || "—",
+          status: h.isActive ? "Active" : "Inactive",
+        })));
+      })
+      .catch((err) => {
+        setError(err?.response?.data?.message || err?.message || "Failed to load holidays");
+        setDataSource([]);
+      })
+      .finally(() => setLoading(false));
+  }, []);
 
+  useEffect(() => {
+    fetchHolidays();
+  }, [fetchHolidays]);
 
-  const filteredData = datas.filter((entry) => {
-    return Object.keys(entry).some((key) => {
-      return String(entry[key])
-        .toLowerCase()
-        .includes(searchText.toLowerCase());
-    });
-  });
+  const handleCreate = async (e) => {
+    e.preventDefault();
+    if (!form.name.trim() || !form.fromDate || !form.toDate) return;
+    setSubmitting(true);
+    try {
+      await apiClient.post("/hrm/holidays", form);
+      setForm({ name: "", fromDate: "", toDate: "", description: "" });
+      document.querySelector("#add-holiday .btn-close")?.click();
+      fetchHolidays();
+    } catch (err) {
+      setError(err?.response?.data?.message || err?.message || "Failed to create holiday");
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const handleDelete = async (id) => {
+    try {
+      await apiClient.delete(`/hrm/holidays/${id}`);
+      fetchHolidays();
+    } catch (err) {
+      setError(err?.response?.data?.message || err?.message || "Failed to delete holiday");
+    }
+  };
 
   const columns = [
-    {
-      title: "Name",
-      dataIndex: "name",
-      sorter: (a, b) => a.name.length - b.name.length,
-    },
-    {
-      title: "date",
-      dataIndex: "date",
-      sorter: (a, b) => a.date.length - b.date.length,
-    },
-    {
-      title: "duration",
-      dataIndex: "duration",
-      sorter: (a, b) => a.duration.length - b.duration.length,
-    },
-    {
-      title: "createdon",
-      dataIndex: "createdon",
-      sorter: (a, b) => a.createdon.length - b.createdon.length,
-    },
-
-    {
-      title: "Status",
-      dataIndex: "status",
-      render: (text) => (
-        <span className="badge badge-success d-inline-flex align-items-center badge-xs">
-          <i className="ti ti-point-filled me-1"></i>{text}
-        </span>
-      ),
-      sorter: (a, b) => a.status.length - b.status.length,
-    },
-
+    { title: "Type / Holiday", dataIndex: "name" },
+    { title: "Date", dataIndex: "date" },
+    { title: "Description", dataIndex: "description" },
+    { title: "Status", dataIndex: "status", render: (text) => <span className="badge bg-success badge-xs">{text}</span> },
     {
       title: "",
-      dataIndex: "actions",
       key: "actions",
-      render: () => (
-        <div className="action-table-data">
-          <div className="edit-delete-action">
-            <Link
-              className="me-2 p-2"
-              to="#"
-              data-bs-toggle="modal"
-              data-bs-target="#edit-department"
-            >
-              <i data-feather="edit" className="feather-edit"></i>
-            </Link>
-            <Link className="confirm-text p-2" to="#" data-bs-target="#delete-modal">
-              <i
-                data-feather="trash-2"
-                className="feather-trash-2"
-              ></i>
-            </Link>
-          </div>
-        </div>
+      render: (_, record) => (
+        <Link className="p-2 text-danger" to="#" onClick={() => handleDelete(record.id)}>
+          <i data-feather="trash-2" className="feather-trash-2" />
+        </Link>
       ),
     },
   ];
+
   return (
-    <div>
-      <div className="page-wrapper">
-        <div className="content">
-          <div className="page-header">
-            <div className="add-item d-flex">
-              <div className="page-title">
-                <h4>Holiday</h4>
-                <h6>Manage your holidays</h6>
-              </div>
-            </div>
-            <ul className="table-top-head">
-              <TooltipIcons />
-              <RefreshIcon />
-              <CollapesIcon />
-            </ul>
-            <div className="page-btn">
-              <Link
-                to="#"
-                className="btn btn-primary custom-btn"
-                data-bs-toggle="modal"
-                data-bs-target="#add-holiday"
-              >
-                <PlusCircle className="me-2 " />
-                Add Holiday
-              </Link>
+    <div className="page-wrapper">
+      <div className="content">
+        <div className="page-header">
+          <div className="add-item d-flex">
+            <div className="page-title">
+              <h4>Holidays</h4>
+              <h6>Manage store holidays</h6>
             </div>
           </div>
+          <ul className="table-top-head">
+            <TooltipIcons />
+            <RefreshIcon onClick={fetchHolidays} />
+            <CollapesIcon />
+          </ul>
+          <div className="page-btn">
+            <Link to="#" className="btn btn-primary" data-bs-toggle="modal" data-bs-target="#add-holiday">
+              <i className="ti ti-circle-plus me-1"></i> Add Holiday
+            </Link>
+          </div>
+        </div>
 
-          {/* /product list */}
-          <div className="card table-list-card">
-            <div className="card-header d-flex align-items-center justify-content-between flex-wrap row-gap-3">
-              <div className="search-set">
-              </div>
-              <div className="d-flex table-dropdown my-xl-auto right-content align-items-center flex-wrap row-gap-3">
-                <div className="dropdown me-2">
-                  <Link
-                    to="#"
-                    className="dropdown-toggle btn btn-white btn-md d-inline-flex align-items-center"
-                    data-bs-toggle="dropdown"
-                  >
-                     Status
-                  </Link>
-                  <ul className="dropdown-menu  dropdown-menu-end p-3">
-                    <li>
-                      <Link to="#" className="dropdown-item rounded-1">
-                        Active
-                      </Link>
-                    </li>
-                    <li>
-                      <Link to="#" className="dropdown-item rounded-1">
-                        Inactive
-                      </Link>
-                    </li>
-                    <li>
-                      <Link to="#" className="dropdown-item rounded-1">
-                        New Joiners
-                      </Link>
-                    </li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-            <div className="card-body pb-0">
-              {/* product list */}
-              <div className="table-responsive">
-                <Table columns={columns} dataSource={filteredData} />
-              </div>
-              {/* /product list */}
+        <div className="card table-list-card">
+          <div className="card-body">
+            <div className="table-responsive">
+              {loading && <div className="text-center py-5"><div className="spinner-border text-primary" /></div>}
+              {!loading && error && <div className="alert alert-danger">{error}</div>}
+              {!loading && !error && dataSource.length === 0 && <div className="text-center py-5 text-muted">No holidays scheduled.</div>}
+              {!loading && !error && dataSource.length > 0 && <Table columns={columns} dataSource={dataSource} />}
             </div>
           </div>
         </div>
-        <CommonFooter />
       </div>
-      <AddHolidays />
-      <EditHolidays />
-      <>
-        {/* Delete Modal */}
-        <div className="modal fade" id="delete-modal">
-          <div className="modal-dialog modal-dialog-centered">
-            <div className="modal-content p-5">
-              <div className="modal-body text-center p-0">
-                <span className="rounded-circle d-inline-flex p-2 bg-danger-transparent mb-2">
-                  <i className="ti ti-trash fs-24 text-danger" />
-                </span>
-                <h4 className="fs-20 text-gray-9 fw-bold mb-2 mt-1">
-                  Delete Holiday
-                </h4>
-                <p className="text-gray-6 mb-0 fs-16">
-                  Are you sure you want to delete holiday?
-                </p>
-                <div className="d-flex justify-content-center mt-3">
-                  <Link to="#"
-                    className="btn me-2 btn-secondary fs-13 fw-medium p-2 px-3 shadow-none"
-                    data-bs-dismiss="modal"
-                  >
-                    Cancel
-                  </Link>
-                  <Link
-                    to="#"
-                    className="btn btn-primary fs-13 fw-medium p-2 px-3" data-bs-dismiss="modal"
-                  >
-                    Yes Delete
-                  </Link>
+      <CommonFooter />
+
+      <div className="modal fade" id="add-holiday">
+        <div className="modal-dialog modal-dialog-centered">
+          <div className="modal-content">
+            <div className="modal-header">
+              <div className="page-title"><h4>Add Holiday</h4></div>
+              <button type="button" className="close bg-danger text-white fs-16 btn-close" data-bs-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+            </div>
+            <form onSubmit={handleCreate}>
+              <div className="modal-body">
+                <div className="mb-3">
+                  <label className="form-label">Holiday Name<span className="text-danger ms-1">*</span></label>
+                  <input type="text" className="form-control" placeholder="e.g., Eid-ul-Fitr" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} required />
+                </div>
+                <div className="row">
+                  <div className="col-6 mb-3">
+                    <label className="form-label">From Date</label>
+                    <input type="date" className="form-control" value={form.fromDate} onChange={(e) => setForm({ ...form, fromDate: e.target.value })} required />
+                  </div>
+                  <div className="col-6 mb-3">
+                    <label className="form-label">To Date</label>
+                    <input type="date" className="form-control" value={form.toDate} onChange={(e) => setForm({ ...form, toDate: e.target.value })} required />
+                  </div>
+                </div>
+                <div className="mb-3">
+                  <label className="form-label">Description</label>
+                  <input type="text" className="form-control" value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} />
                 </div>
               </div>
-            </div>
+              <div className="modal-footer">
+                <button type="button" className="btn me-2 btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="submit" className="btn btn-primary" disabled={submitting}>{submitting ? "Saving..." : "Add Holiday"}</button>
+              </div>
+            </form>
           </div>
         </div>
-        {/* /Delete Modal */}
-      </>
-
+      </div>
     </div>
   );
 };

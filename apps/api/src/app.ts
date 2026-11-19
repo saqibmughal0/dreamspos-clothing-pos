@@ -20,6 +20,10 @@ import { financeRouter } from "./modules/finance/finance.routes";
 import { reportsRouter } from "./modules/reports/reports.routes";
 import { settingsRouter } from "./modules/settings/settings.routes";
 import { userRouter } from "./modules/users/user.routes";
+import { catalogRouter } from "./modules/catalog/catalog.routes";
+import { promotionsRouter } from "./modules/promotions/promotions.routes";
+import { hrmRouter } from "./modules/hrm/hrm.routes";
+import { billerRouter } from "./modules/people/billers.routes";
 
 export const app = express();
 
@@ -104,6 +108,10 @@ app.use("/api/purchases", purchaseRouter);
 app.use("/api/finance", financeRouter);
 app.use("/api/reports", reportsRouter);
 app.use("/api/settings", settingsRouter);
+app.use("/api/catalog", catalogRouter);
+app.use("/api/promotions", promotionsRouter);
+app.use("/api/hrm", hrmRouter);
+app.use("/api/billers", billerRouter);
 
 // Centralized Error Handler
 app.use(errorHandler);

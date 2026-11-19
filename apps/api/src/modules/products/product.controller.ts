@@ -23,6 +23,16 @@ export class ProductController {
     }
   }
 
+  async getExpired(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const companyId = req.user!.companyId;
+      const items = await productService.getExpired(companyId);
+      res.status(200).json({ success: true, data: { items } });
+    } catch (err) {
+      next(err);
+    }
+  }
+
   async getById(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const companyId = req.user?.companyId || "default-company-id";

@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import ImageWithBasePath from "../../core/img/imagewithbasebath";
 import { Link } from "react-router-dom";
 import Select from "react-select";
-import { purchasereportdata } from "../../core/json/purchasereportdata";
 import Table from "../../core/pagination/datatable";
 import RefreshIcon from "../../core/common/tooltip-content/refresh";
 import CollapesIcon from "../../core/common/tooltip-content/collapes";
@@ -14,12 +13,12 @@ import { apiClient } from "../../core/apiClient";
 
 const PurchaseReport = () => {
 
-  const [data, setData] = useState(purchasereportdata);
+  const [data, setData] = useState([]);
 
   useEffect(() => {
     apiClient.get("/reports/purchases")
       .then((res) => {
-        if (res.data?.success && res.data.data?.items?.length > 0) {
+        if (res.data?.success && res.data.data?.items) {
           const mapped = res.data.data.items.map((p, idx) => ({
             id: p.id,
             key: p.id || idx,

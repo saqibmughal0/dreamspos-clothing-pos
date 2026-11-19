@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Select from "react-select";
-import { expensereportdata } from "../../core/json/expensereportdata";
 import Table from "../../core/pagination/datatable";
 import CommonFooter from "../../core/common/footer/commonFooter";
 import RefreshIcon from "../../core/common/tooltip-content/refresh";
@@ -11,12 +10,12 @@ import TooltipIcons from "../../core/common/tooltip-content/tooltipIcons";
 import { apiClient } from "../../core/apiClient";
 
 const ExpenseReport = () => {
-  const [data, setData] = useState(expensereportdata);
+  const [data, setData] = useState([]);
 
   useEffect(() => {
     apiClient.get("/reports/expenses")
       .then((res) => {
-        if (res.data?.success && res.data.data?.items?.length > 0) {
+        if (res.data?.success && res.data.data?.items) {
           const mapped = res.data.data.items.map((e, idx) => ({
             id: e.id,
             key: e.id || idx,

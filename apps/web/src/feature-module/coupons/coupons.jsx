@@ -1,294 +1,206 @@
-import React from "react";
-import { OverlayTrigger, Tooltip } from "react-bootstrap";
+import React, { useState, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
-import ImageWithBasePath from "../../core/img/imagewithbasebath";
-import {
-  ChevronUp,
-  RotateCcw,
-} from "feather-icons-react/build/IconComponents";
-import { useDispatch, useSelector } from "react-redux";
 import Table from "../../core/pagination/datatable";
-import { setToogleHeader } from "../../core/redux/action";
-import AddCoupons from "../../core/modals/coupons/addcoupons";
-import EditCoupons from "../../core/modals/coupons/editcoupons";
-import { CouponData } from "../../core/json/coupons";
 import CommonFooter from "../../core/common/footer/commonFooter";
-
+import TooltipIcons from "../../core/common/tooltip-content/tooltipIcons";
+import RefreshIcon from "../../core/common/tooltip-content/refresh";
+import CollapesIcon from "../../core/common/tooltip-content/collapes";
+import { apiClient } from "../../core/apiClient";
 
 const Coupons = () => {
-  const dispatch = useDispatch();
-  const data = useSelector((state) => state.rootReducer.toggle_header);
-  const dataSource = CouponData;
+  const [dataSource, setDataSource] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [form, setForm] = useState({ name: "", code: "", type: "PERCENTAGE", value: "", minPurchase: "0", maxUses: "", validUntil: "", description: "" });
+  const [submitting, setSubmitting] = useState(false);
+  const [formError, setFormError] = useState(null);
+
+  const fetchCoupons = useCallback(() => {
+    setLoading(true);
+    setError(null);
+    apiClient.get("/promotions/coupons")
+      .then((res) => {
+        const items = res.data?.data?.items || [];
+        setDataSource(items.map((c) => ({
+          id: c.id,
+          key: c.id,
+          Name: c.name,
+          Code: c.code,
+          Description: c.description || "—",
+          Type: c.type,
+          Discount: c.type === "PERCENTAGE" ? `${c.value}%` : `Rs ${c.value}`,
+          Limit: c.maxUses ? `${c.usedCount}/${c.maxUses}` : "Unlimited",
+          Valid: c.validUntil ? new Date(c.validUntil).toLocaleDateString("en-PK") : "No Expiry",
+          Status: c.isActive ? "Active" : "Inactive",
+        })));
+      })
+      .catch((err) => {
+        setError(err?.response?.data?.message || err?.message || "Failed to load coupons");
+        setDataSource([]);
+      })
+      .finally(() => setLoading(false));
+  }, []);
+
+  useEffect(() => {
+    fetchCoupons();
+  }, [fetchCoupons]);
+
+  const handleCreate = async (e) => {
+    e.preventDefault();
+    if (!form.name.trim() || !form.code.trim() || !form.value) {
+      setFormError("Name, code, and discount value are required.");
+      return;
+    }
+    setSubmitting(true);
+    setFormError(null);
+    try {
+      await apiClient.post("/promotions/coupons", {
+        name: form.name,
+        code: form.code,
+        type: form.type,
+        value: Number(form.value),
+        minPurchase: Number(form.minPurchase || 0),
+        maxUses: form.maxUses ? Number(form.maxUses) : null,
+        validUntil: form.validUntil || null,
+        description: form.description || undefined,
+      });
+      setForm({ name: "", code: "", type: "PERCENTAGE", value: "", minPurchase: "0", maxUses: "", validUntil: "", description: "" });
+      document.querySelector("#add-coupon .btn-close")?.click();
+      fetchCoupons();
+    } catch (err) {
+      setFormError(err?.response?.data?.message || err?.message || "Failed to create coupon");
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const handleDelete = async (id) => {
+    try {
+      await apiClient.delete(`/promotions/coupons/${id}`);
+      fetchCoupons();
+    } catch (err) {
+      setError(err?.response?.data?.message || err?.message || "Failed to delete coupon");
+    }
+  };
+
+  const filtered = dataSource.filter((c) =>
+    !searchTerm.trim() ||
+    c.Name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    c.Code.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   const columns = [
-    {
-      title: "Name",
-      dataIndex: "Name",
-      sorter: (a, b) => a.Name.length - b.Name.length,
-    },
-    {
-      title: "Code",
-      dataIndex: "Code",
-      render: (text) => (
-        <span className="badge purple-badge">{text}</span>
-      ),
-      sorter: (a, b) => a.Code.length - b.Code.length,
-    },
-    {
-      title: "Description",
-      dataIndex: "Description",
-      sorter: (a, b) => a.Description.length - b.Description.length,
-    },
-    {
-      title: "Type",
-      dataIndex: "Type",
-      sorter: (a, b) => a.Type.length - b.Type.length,
-    },
-    {
-      title: "Discount",
-      dataIndex: "Discount",
-      sorter: (a, b) => a.Discount.length - b.Discount.length,
-    },
-    {
-      title: "Limit",
-      dataIndex: "Limit",
-      sorter: (a, b) => a.Limit.length - b.Limit.length,
-    },
-    {
-      title: "Valid",
-      dataIndex: "Valid",
-      sorter: (a, b) => a.Valid.length - b.Valid.length,
-    },
-    
-    {
-      title: "Status",
-      dataIndex: "Status",
-      render: (text) => (
-        <span className={`badge table-badge ${text === 'Active' ? 'bg-success':'bg-danger'} fw-medium fs-10`}>
-          {text}
-        </span>
-      ),
-      sorter: (a, b) => a.Status.length - b.Status.length,
-    },
+    { title: "Name", dataIndex: "Name" },
+    { title: "Code", dataIndex: "Code", render: (text) => <span className="badge purple-badge">{text}</span> },
+    { title: "Type", dataIndex: "Type" },
+    { title: "Discount", dataIndex: "Discount" },
+    { title: "Limit", dataIndex: "Limit" },
+    { title: "Valid Until", dataIndex: "Valid" },
+    { title: "Status", dataIndex: "Status", render: (text) => <span className={`badge ${text === "Active" ? "bg-success" : "bg-secondary"} badge-xs`}>{text}</span> },
     {
       title: "",
-      dataIndex: "actions",
       key: "actions",
-      render: () => (
-        <div className="action-table-data">
-          <div className="edit-delete-action">
-            <Link
-              className="me-2 p-2"
-              to="#"
-              data-bs-toggle="modal"
-              data-bs-target="#edit-units"
-            >
-              <i data-feather="edit" className="feather-edit"></i>
-            </Link>
-            <Link data-bs-toggle="modal" data-bs-target="#delete-modal" className="p-2" to="#">
-              <i
-                data-feather="trash-2"
-                className="feather-trash-2"
-              ></i>
-            </Link>
-          </div>
-        </div>
+      render: (_, record) => (
+        <Link className="p-2 text-danger" to="#" onClick={() => handleDelete(record.id)}>
+          <i data-feather="trash-2" className="feather-trash-2" />
+        </Link>
       ),
     },
   ];
 
-  const renderTooltip = (props) => (
-    <Tooltip id="pdf-tooltip" {...props}>
-      Pdf
-    </Tooltip>
-  );
-  const renderExcelTooltip = (props) => (
-    <Tooltip id="excel-tooltip" {...props}>
-      Excel
-    </Tooltip>
-  );
-
-  const renderRefreshTooltip = (props) => (
-    <Tooltip id="refresh-tooltip" {...props}>
-      Refresh
-    </Tooltip>
-  );
-  const renderCollapseTooltip = (props) => (
-    <Tooltip id="refresh-tooltip" {...props}>
-      Collapse
-    </Tooltip>
-  );
-
-
-
   return (
-    <div>
-      <div className="page-wrapper">
-        <div className="content">
-          <div className="page-header">
-            <div className="add-item d-flex">
-              <div className="page-title">
-                <h4>Coupons</h4>
-                <h6>Manage Your Coupons</h6>
-              </div>
-            </div>
-            <ul className="table-top-head">
-              <li>
-                <OverlayTrigger placement="top" overlay={renderTooltip}>
-                  <Link>
-                    <ImageWithBasePath
-                      src="assets/img/icons/pdf.svg"
-                      alt="img"
-                    />
-                  </Link>
-                </OverlayTrigger>
-              </li>
-              <li>
-                <OverlayTrigger placement="top" overlay={renderExcelTooltip}>
-                  <Link data-bs-toggle="tooltip" data-bs-placement="top">
-                    <ImageWithBasePath
-                      src="assets/img/icons/excel.svg"
-                      alt="img"
-                    />
-                  </Link>
-                </OverlayTrigger>
-              </li>
-              <li>
-                <OverlayTrigger placement="top" overlay={renderRefreshTooltip}>
-                  <Link data-bs-toggle="tooltip" data-bs-placement="top">
-                    <RotateCcw />
-                  </Link>
-                </OverlayTrigger>
-              </li>
-              <li>
-                <OverlayTrigger placement="top" overlay={renderCollapseTooltip}>
-                  <Link
-                    data-bs-toggle="tooltip"
-                    data-bs-placement="top"
-                    id="collapse-header"
-                    className={data ? "active" : ""}
-                    onClick={() => {
-                      dispatch(setToogleHeader(!data));
-                    }}
-                  >
-                    <ChevronUp />
-                  </Link>
-                </OverlayTrigger>
-              </li>
-            </ul>
-            <div className="page-btn">
-              <Link
-                to="#"
-                className="btn btn-primary"
-                data-bs-toggle="modal"
-                data-bs-target="#add-units"
-              >
-              <i className='ti ti-circle-plus me-1'></i>
-                Add Coupons
-              </Link>
+    <div className="page-wrapper">
+      <div className="content">
+        <div className="page-header">
+          <div className="add-item d-flex">
+            <div className="page-title">
+              <h4>Coupons</h4>
+              <h6>Manage promotional discount coupons</h6>
             </div>
           </div>
-          {/* /product list */}
-          <div className="card table-list-card">
-          <div className="card-header d-flex align-items-center justify-content-between flex-wrap row-gap-3">
-            <div className="search-set">
-              
-            </div>
-            <div className="d-flex table-dropdown my-xl-auto right-content align-items-center flex-wrap row-gap-3">
-              <div className="dropdown me-2">
-                <Link
-                  to="#"
-                  className="dropdown-toggle btn btn-white btn-md d-inline-flex align-items-center"
-                  data-bs-toggle="dropdown"
-                >
-                  Type
-                </Link>
-                <ul className="dropdown-menu  dropdown-menu-end p-3">
-                  <li>
-                    <Link to="#" className="dropdown-item rounded-1">
-                      Fixed
-                    </Link>
-                  </li>
-                  <li>
-                    <Link to="#" className="dropdown-item rounded-1">
-                      Percentage
-                    </Link>
-                  </li>
-                </ul>
-              </div>
-              <div className="dropdown me-2">
-                <Link
-                  to="#"
-                  className="dropdown-toggle btn btn-white btn-md d-inline-flex align-items-center"
-                  data-bs-toggle="dropdown"
-                >
-                  Status
-                </Link>
-                <ul className="dropdown-menu  dropdown-menu-end p-3">
-                  <li>
-                    <Link to="#" className="dropdown-item rounded-1">
-                      Active
-                    </Link>
-                  </li>
-                  <li>
-                    <Link to="#" className="dropdown-item rounded-1">
-                      Inactive
-                    </Link>
-                  </li>
-                </ul>
-              </div>
-              <div className="dropdown">
-                <Link
-                  to="#"
-                  className="dropdown-toggle btn btn-white btn-md d-inline-flex align-items-center"
-                  data-bs-toggle="dropdown"
-                >
-                  Sort By : Last 7 Days
-                </Link>
-                <ul className="dropdown-menu  dropdown-menu-end p-3">
-                  <li>
-                    <Link to="#" className="dropdown-item rounded-1">
-                      Recently Added
-                    </Link>
-                  </li>
-                  <li>
-                    <Link to="#" className="dropdown-item rounded-1">
-                      Ascending
-                    </Link>
-                  </li>
-                  <li>
-                    <Link to="#" className="dropdown-item rounded-1">
-                      Desending
-                    </Link>
-                  </li>
-                  <li>
-                    <Link to="#" className="dropdown-item rounded-1">
-                      Last Month
-                    </Link>
-                  </li>
-                  <li>
-                    <Link to="#" className="dropdown-item rounded-1">
-                      Last 7 Days
-                    </Link>
-                  </li>
-                </ul>
-              </div>
-            </div>
+          <ul className="table-top-head">
+            <TooltipIcons />
+            <RefreshIcon onClick={fetchCoupons} />
+            <CollapesIcon />
+          </ul>
+          <div className="page-btn">
+            <Link to="#" className="btn btn-primary" data-bs-toggle="modal" data-bs-target="#add-coupon">
+              <i className="ti ti-circle-plus me-1"></i> Add Coupon
+            </Link>
           </div>
-
-            <div className="card-body">
-              
-              <div className="table-responsive">
-              <Table columns={columns} dataSource={dataSource} />
-              </div>
-            </div>
-          </div>
-          {/* /product list */}
         </div>
-      <CommonFooter/>
+
+        <div className="card table-list-card">
+          <div className="card-header d-flex align-items-center justify-content-between">
+            <div className="search-set">
+              <div className="search-input">
+                <input type="text" className="form-control form-control-sm" placeholder="Search coupons..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
+              </div>
+            </div>
+          </div>
+          <div className="card-body">
+            <div className="table-responsive">
+              {loading && <div className="text-center py-5"><div className="spinner-border text-primary" /></div>}
+              {!loading && error && <div className="alert alert-danger">{error}</div>}
+              {!loading && !error && filtered.length === 0 && <div className="text-center py-5 text-muted">No coupons found.</div>}
+              {!loading && !error && filtered.length > 0 && <Table columns={columns} dataSource={filtered} />}
+            </div>
+          </div>
+        </div>
       </div>
-      <AddCoupons />
-      <EditCoupons />
+      <CommonFooter />
+
+      <div className="modal fade" id="add-coupon">
+        <div className="modal-dialog modal-dialog-centered">
+          <div className="modal-content">
+            <div className="modal-header">
+              <div className="page-title"><h4>Add Coupon</h4></div>
+              <button type="button" className="close bg-danger text-white fs-16 btn-close" data-bs-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+            </div>
+            <form onSubmit={handleCreate}>
+              <div className="modal-body">
+                {formError && <div className="alert alert-danger py-2">{formError}</div>}
+                <div className="mb-3">
+                  <label className="form-label">Coupon Name<span className="text-danger ms-1">*</span></label>
+                  <input type="text" className="form-control" placeholder="e.g., Eid Sale 10%" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} required />
+                </div>
+                <div className="row">
+                  <div className="col-6 mb-3">
+                    <label className="form-label">Code<span className="text-danger ms-1">*</span></label>
+                    <input type="text" className="form-control" placeholder="EID10" value={form.code} onChange={(e) => setForm({ ...form, code: e.target.value.toUpperCase() })} required />
+                  </div>
+                  <div className="col-6 mb-3">
+                    <label className="form-label">Type</label>
+                    <select className="form-select" value={form.type} onChange={(e) => setForm({ ...form, type: e.target.value })}>
+                      <option value="PERCENTAGE">Percentage (%)</option>
+                      <option value="FIXED">Fixed (Rs)</option>
+                    </select>
+                  </div>
+                </div>
+                <div className="row">
+                  <div className="col-6 mb-3">
+                    <label className="form-label">Discount Value<span className="text-danger ms-1">*</span></label>
+                    <input type="number" min="1" step="0.01" className="form-control" value={form.value} onChange={(e) => setForm({ ...form, value: e.target.value })} required />
+                  </div>
+                  <div className="col-6 mb-3">
+                    <label className="form-label">Max Uses</label>
+                    <input type="number" min="1" className="form-control" placeholder="Unlimited" value={form.maxUses} onChange={(e) => setForm({ ...form, maxUses: e.target.value })} />
+                  </div>
+                </div>
+                <div className="mb-3">
+                  <label className="form-label">Valid Until</label>
+                  <input type="date" className="form-control" value={form.validUntil} onChange={(e) => setForm({ ...form, validUntil: e.target.value })} />
+                </div>
+              </div>
+              <div className="modal-footer">
+                <button type="button" className="btn me-2 btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="submit" className="btn btn-primary" disabled={submitting}>{submitting ? "Saving..." : "Add Coupon"}</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };

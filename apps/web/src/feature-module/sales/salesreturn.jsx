@@ -1,7 +1,6 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import ImageWithBasePath from "../../core/img/imagewithbasebath";
-import { useSelector } from "react-redux";
 import Table from "../../core/pagination/datatable";
 import EditSalesRetuens from "../../core/modals/sales/editsalesretuens";
 import TooltipIcons from "../../core/common/tooltip-content/tooltipIcons";
@@ -9,9 +8,43 @@ import RefreshIcon from "../../core/common/tooltip-content/refresh";
 import CollapesIcon from "../../core/common/tooltip-content/collapes";
 import AddSalesReturns from "../../core/modals/sales/addsalesreturns";
 import CommonDeleteModal from "../../core/common/modal/commonDeleteModal";
-const SalesReturn = () => {
+import { apiClient } from "../../core/apiClient";
 
-  const dataSource = useSelector((state) => state.rootReducer.salesreturns_data);
+const SalesReturn = () => {
+  const [dataSource, setDataSource] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    setLoading(true);
+    setError(null);
+    apiClient.get("/sales/returns")
+      .then((res) => {
+        if (res.data?.success && Array.isArray(res.data.data)) {
+          setDataSource(res.data.data.map((r, idx) => ({
+            id: r.id,
+            key: r.id || idx,
+            productname: r.items?.[0]?.product?.name || r.returnNumber,
+            img: "assets/img/products/pos-product-01.png",
+            date: new Date(r.createdAt).toLocaleDateString("en-PK"),
+            customer: r.sale?.customer?.name || "Walk-in Customer",
+            customer_image: "assets/img/users/user-01.jpg",
+            status: r.status === "COMPLETED" ? "Received" : r.status,
+            grandtotal: `Rs ${Number(r.refundAmount || 0).toFixed(2)}`,
+            paid: `Rs ${Number(r.refundAmount || 0).toFixed(2)}`,
+            due: "Rs 0.00",
+            paymentstatus: "Paid",
+          })));
+        } else {
+          setDataSource([]);
+        }
+      })
+      .catch((err) => {
+        setError(err?.response?.data?.message || err?.message || "Failed to load sales returns");
+        setDataSource([]);
+      })
+      .finally(() => setLoading(false));
+  }, []);
 
 
   const columns = [

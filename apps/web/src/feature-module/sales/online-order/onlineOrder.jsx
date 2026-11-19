@@ -1,19 +1,56 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import TooltipIcons from '../../../core/common/tooltip-content/tooltipIcons'
 import RefreshIcon from '../../../core/common/tooltip-content/refresh'
 import CollapesIcon from '../../../core/common/tooltip-content/collapes'
 import { Link } from 'react-router-dom'
 import Table from "../../../core/pagination/datatable";
 import ImageWithBasePath from '../../../core/img/imagewithbasebath'
-import { onlineOrderData } from '../../../core/json/onlineOrderData'
 import { DollarSign, Download, Edit, Eye, PlusCircle, Trash2 } from 'feather-icons-react/build/IconComponents'
 import OnlineorderModal from './onlineorderModal'
 import CommonDeleteModal from '../../../core/common/modal/commonDeleteModal'
 import CommonFooter from '../../../core/common/footer/commonFooter'
+import { apiClient } from '../../../core/apiClient'
 
 const OnlineOrder = () => {
 
-    const dataSource = onlineOrderData
+    const [dataSource, setDataSource] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+
+    const fetchOnlineOrders = () => {
+        setLoading(true);
+        setError(null);
+        apiClient.get('/sales', { params: { channel: 'ONLINE' } })
+            .then((res) => {
+                if (res.data?.success && Array.isArray(res.data.data)) {
+                    setDataSource(res.data.data.map((s, idx) => ({
+                        id: s.id,
+                        key: s.id || idx,
+                        customer: s.customer?.name || 'Walk-in Customer',
+                        reference: s.invoiceNumber,
+                        date: new Date(s.createdAt).toLocaleDateString('en-PK'),
+                        status: s.status === 'COMPLETED' ? 'Completed' : s.status,
+                        total: `Rs ${Number(s.totalAmount || 0).toFixed(2)}`,
+                        paid: `Rs ${Number(s.paidAmount || 0).toFixed(2)}`,
+                        due: `Rs ${Number(s.dueAmount || 0).toFixed(2)}`,
+                        paymentstatus: s.paymentStatus === 'PAID' ? 'Paid' : s.paymentStatus === 'PARTIAL' ? 'Partial' : 'Unpaid',
+                        biller: s.cashier?.name || 'Staff',
+                        image: 'user-01.jpg',
+                    })));
+                } else {
+                    setDataSource([]);
+                }
+            })
+            .catch((err) => {
+                setError(err?.response?.data?.message || err?.message || 'Failed to load online orders');
+                setDataSource([]);
+            })
+            .finally(() => setLoading(false));
+    };
+
+    useEffect(() => {
+        fetchOnlineOrders();
+    }, []);
 
     const columns = [
         {

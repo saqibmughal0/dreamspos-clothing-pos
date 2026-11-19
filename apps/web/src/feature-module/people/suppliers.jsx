@@ -11,28 +11,29 @@ import CollapesIcon from "../../core/common/tooltip-content/collapes";
 import { apiClient } from "../../core/apiClient";
 
 const Suppliers = () => {
-  const reduxData = useSelector((state) => state.rootReducer.supplierdata);
-  const [data, setData] = useState(reduxData);
+  const [data, setData] = useState([]);
 
   useEffect(() => {
     apiClient.get("/suppliers")
       .then((res) => {
-        if (res.data?.success && res.data.data?.items?.length > 0) {
+        if (res.data?.success && res.data.data?.items) {
           const mapped = res.data.data.items.map((s, idx) => ({
             id: s.id,
             key: s.id || idx,
             code: `SU00${idx + 1}`,
             supplierName: s.name,
             image: "assets/img/supplier/supplier-01.png",
-            email: s.email || "supplier@example.com",
-            phone: s.phone || "+1 555-0200",
-            country: "United States"
+            email: s.email || "—",
+            phone: s.phone || "—",
+            country: s.country || "Pakistan"
           }));
           setData(mapped);
+        } else {
+          setData([]);
         }
       })
-      .catch((err) => {
-        console.warn("Using default suppliers list:", err);
+      .catch(() => {
+        setData([]);
       });
   }, []);
 

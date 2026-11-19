@@ -8,6 +8,7 @@ import {
   JournalEntryCreateSchema,
   UserRole
 } from "@dreamspos/shared";
+import { financeExtendedRouter } from "./finance.extended.routes";
 
 export const financeRouter = Router();
 
@@ -25,3 +26,4 @@ financeRouter.get("/journal-entries", requireRoles([UserRole.ADMIN, UserRole.SUP
 financeRouter.post("/journal-entries", requireRoles([UserRole.ADMIN, UserRole.SUPER_ADMIN]), validateBody(JournalEntryCreateSchema), financeController.createJournalEntry);
 
 financeRouter.get("/profit-loss", requireRoles([UserRole.ADMIN, UserRole.SUPER_ADMIN, UserRole.STORE_MANAGER]), financeController.getProfitAndLoss);
+financeRouter.use("/", financeExtendedRouter);

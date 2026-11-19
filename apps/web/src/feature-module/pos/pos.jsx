@@ -10,134 +10,15 @@ import { ThermalReceiptModal } from '../../core/modals/pos-modal/ThermalReceiptM
 import { CashRegisterModal } from '../../core/modals/pos-modal/CashRegisterModal';
 import { ClothingExchangeModal } from '../../core/modals/pos-modal/ClothingExchangeModal';
 
-// Initial Single-Brand Clothing Retail Catalog (Apparel & Variants)
-const INITIAL_APPAREL_CATALOG = [
-  {
-    id: "prod-tee-01",
-    name: "Classic Crewneck Cotton Tee",
-    sku: "APP-TSH-01",
-    barcode: "890123450010",
-    categoryCode: "t-shirts",
-    categoryName: "T-Shirts & Tops",
-    sellingPrice: 24.99,
-    taxRate: 8.5,
-    stockQuantity: 190,
-    image: "assets/img/products/pos-product-01.png",
-    variants: [
-      { id: "var-tsh-blk-s", size: "S", color: "Jet Black", sku: "APP-TSH-BLK-S", barcode: "890123450101", price: 24.99, stockQty: 25 },
-      { id: "var-tsh-blk-m", size: "M", color: "Jet Black", sku: "APP-TSH-BLK-M", barcode: "890123450102", price: 24.99, stockQty: 40 },
-      { id: "var-tsh-blk-l", size: "L", color: "Jet Black", sku: "APP-TSH-BLK-L", barcode: "890123450103", price: 24.99, stockQty: 30 },
-      { id: "var-tsh-wht-m", size: "M", color: "Pure White", sku: "APP-TSH-WHT-M", barcode: "890123450104", price: 24.99, stockQty: 35 },
-      { id: "var-tsh-wht-l", size: "L", color: "Pure White", sku: "APP-TSH-WHT-L", barcode: "890123450105", price: 24.99, stockQty: 20 },
-      { id: "var-tsh-nvy-m", size: "M", color: "Navy Blue", sku: "APP-TSH-NVY-M", barcode: "890123450106", price: 24.99, stockQty: 30 }
-    ]
-  },
-  {
-    id: "prod-sht-01",
-    name: "Oxford Button-Down Long Sleeve Shirt",
-    sku: "APP-SHT-01",
-    barcode: "890123450020",
-    categoryCode: "shirts",
-    categoryName: "Shirts",
-    sellingPrice: 49.99,
-    taxRate: 8.5,
-    stockQuantity: 78,
-    image: "assets/img/products/pos-product-02.png",
-    variants: [
-      { id: "var-sht-blu-m", size: "M", color: "Sky Blue", sku: "APP-SHT-BLU-M", barcode: "890123450201", price: 49.99, stockQty: 20 },
-      { id: "var-sht-blu-l", size: "L", color: "Sky Blue", sku: "APP-SHT-BLU-L", barcode: "890123450202", price: 49.99, stockQty: 18 },
-      { id: "var-sht-wht-m", size: "M", color: "Crisp White", sku: "APP-SHT-WHT-M", barcode: "890123450203", price: 49.99, stockQty: 25 },
-      { id: "var-sht-wht-l", size: "L", color: "Crisp White", sku: "APP-SHT-WHT-L", barcode: "890123450204", price: 49.99, stockQty: 15 }
-    ]
-  },
-  {
-    id: "prod-jns-01",
-    name: "Slim Fit Stretch Denim Jeans",
-    sku: "APP-JNS-01",
-    barcode: "890123450030",
-    categoryCode: "jeans",
-    categoryName: "Jeans & Trousers",
-    sellingPrice: 69.99,
-    taxRate: 8.5,
-    stockQuantity: 99,
-    image: "assets/img/products/pos-product-03.png",
-    variants: [
-      { id: "var-jns-ind-30", size: "30", color: "Dark Indigo", sku: "APP-JNS-IND-30", barcode: "890123450301", price: 69.99, stockQty: 15 },
-      { id: "var-jns-ind-32", size: "32", color: "Dark Indigo", sku: "APP-JNS-IND-32", barcode: "890123450302", price: 69.99, stockQty: 28 },
-      { id: "var-jns-ind-34", size: "34", color: "Dark Indigo", sku: "APP-JNS-IND-34", barcode: "890123450303", price: 69.99, stockQty: 20 },
-      { id: "var-jns-blk-32", size: "32", color: "Washed Black", sku: "APP-JNS-BLK-32", barcode: "890123450304", price: 69.99, stockQty: 22 },
-      { id: "var-jns-blk-34", size: "34", color: "Washed Black", sku: "APP-JNS-BLK-34", barcode: "890123450305", price: 69.99, stockQty: 14 }
-    ]
-  },
-  {
-    id: "prod-hod-01",
-    name: "Heavyweight Fleece Pullover Hoodie",
-    sku: "APP-HOD-01",
-    barcode: "890123450040",
-    categoryCode: "hoodies",
-    categoryName: "Hoodies & Jackets",
-    sellingPrice: 59.99,
-    taxRate: 8.5,
-    stockQuantity: 112,
-    image: "assets/img/products/pos-product-04.png",
-    variants: [
-      { id: "var-hod-gry-s", size: "S", color: "Heather Grey", sku: "APP-HOD-GRY-S", barcode: "890123450401", price: 59.99, stockQty: 15 },
-      { id: "var-hod-gry-m", size: "M", color: "Heather Grey", sku: "APP-HOD-GRY-M", barcode: "890123450402", price: 59.99, stockQty: 25 },
-      { id: "var-hod-gry-l", size: "L", color: "Heather Grey", sku: "APP-HOD-GRY-L", barcode: "890123450403", price: 59.99, stockQty: 20 },
-      { id: "var-hod-blk-m", size: "M", color: "Onyx Black", sku: "APP-HOD-BLK-M", barcode: "890123450404", price: 59.99, stockQty: 30 },
-      { id: "var-hod-blk-l", size: "L", color: "Onyx Black", sku: "APP-HOD-BLK-L", barcode: "890123450405", price: 59.99, stockQty: 22 }
-    ]
-  },
-  {
-    id: "prod-sho-01",
-    name: "Chino Casual Everyday Shorts",
-    sku: "APP-SHO-01",
-    barcode: "890123450050",
-    categoryCode: "shorts",
-    categoryName: "Shorts",
-    sellingPrice: 34.99,
-    taxRate: 8.5,
-    stockQuantity: 65,
-    image: "assets/img/products/pos-product-05.png",
-    variants: [
-      { id: "var-sho-khk-30", size: "30", color: "Khaki Tan", sku: "APP-SHO-KHK-30", barcode: "890123450501", price: 34.99, stockQty: 15 },
-      { id: "var-sho-khk-32", size: "32", color: "Khaki Tan", sku: "APP-SHO-KHK-32", barcode: "890123450502", price: 34.99, stockQty: 20 },
-      { id: "var-sho-khk-34", size: "34", color: "Khaki Tan", sku: "APP-SHO-KHK-34", barcode: "890123450503", price: 34.99, stockQty: 15 },
-      { id: "var-sho-olv-32", size: "32", color: "Olive Green", sku: "APP-SHO-OLV-32", barcode: "890123450504", price: 34.99, stockQty: 15 }
-    ]
-  },
-  {
-    id: "prod-trs-01",
-    name: "Tailored Slim Fit Chino Trousers",
-    sku: "APP-TRS-01",
-    barcode: "890123450060",
-    categoryCode: "trousers",
-    categoryName: "Jeans & Trousers",
-    sellingPrice: 54.99,
-    taxRate: 8.5,
-    stockQuantity: 70,
-    image: "assets/img/products/pos-product-06.png",
-    variants: [
-      { id: "var-trs-khk-30", size: "30", color: "British Khaki", sku: "APP-TRS-KHK-30", barcode: "890123450601", price: 54.99, stockQty: 18 },
-      { id: "var-trs-khk-32", size: "32", color: "British Khaki", sku: "APP-TRS-KHK-32", barcode: "890123450602", price: 54.99, stockQty: 22 },
-      { id: "var-trs-chr-32", size: "32", color: "Charcoal Grey", sku: "APP-TRS-CHR-32", barcode: "890123450603", price: 54.99, stockQty: 16 },
-      { id: "var-trs-chr-34", size: "34", color: "Charcoal Grey", sku: "APP-TRS-CHR-34", barcode: "890123450604", price: 54.99, stockQty: 14 }
-    ]
-  }
-];
-
-const customerOptions = [
-  { value: "cust-walkin", label: "Walk-in Customer" },
-  { value: "cust-james", label: "James Anderson (VIP)" },
-  { value: "cust-sarah", label: "Sarah Connor (Member)" },
-  { value: "cust-michael", label: "Michael Scott" },
-  { value: "cust-emma", label: "Emma Watson" }
-];
+const WALK_IN_CUSTOMER = { value: null, label: "Walk-in Customer" };
 
 const Pos = () => {
   const [activeTab, setActiveTab] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
-  const [products, setProducts] = useState(INITIAL_APPAREL_CATALOG);
+  const [products, setProducts] = useState([]);
+  const [productsLoading, setProductsLoading] = useState(true);
+  const [productsError, setProductsError] = useState(null);
+  const [customerOptions, setCustomerOptions] = useState([WALK_IN_CUSTOMER]);
   const [selectedVariants, setSelectedVariants] = useState({});
   const [scanMessage, setScanMessage] = useState('');
 
@@ -185,21 +66,37 @@ const Pos = () => {
   });
 
   // Fetch live products from backend
-  useEffect(() => {
-    let isMounted = true;
+  const loadProducts = () => {
+    setProductsLoading(true);
+    setProductsError(null);
     apiClient.get('/products')
       .then((res) => {
-        if (isMounted && res.data?.success && res.data.data?.items?.length > 0) {
+        if (res.data?.success && res.data.data?.items) {
           setProducts(res.data.data.items);
+        } else {
+          setProducts([]);
         }
       })
       .catch((err) => {
-        console.warn("Using offline apparel catalog:", err.message);
-      });
+        setProductsError(err.message || "Failed to load products. Check your connection.");
+      })
+      .finally(() => setProductsLoading(false));
+  };
 
-    return () => {
-      isMounted = false;
-    };
+  useEffect(() => {
+    loadProducts();
+    // Fetch customers
+    apiClient.get('/customers')
+      .then((res) => {
+        if (res.data?.success && res.data.data?.items) {
+          const opts = res.data.data.items.map((c) => ({ value: c.id, label: c.name }));
+          setCustomerOptions([WALK_IN_CUSTOMER, ...opts]);
+        }
+      })
+      .catch(() => {
+        // Keep walk-in only on error — do not expose fake customers
+        setCustomerOptions([WALK_IN_CUSTOMER]);
+      });
   }, []);
 
   // Filter products by category and search term
@@ -376,7 +273,7 @@ const Pos = () => {
                   <div className="tab-content-wrap">
                     <div className="d-flex align-items-center justify-content-between flex-wrap mb-2 p-3 bg-white border-bottom">
                       <div className="mb-2">
-                        <h5 className="mb-1 fw-bold">Dreams Apparel POS</h5>
+                        <h5 className="mb-1 fw-bold">Point of Sale</h5>
                         <p className="text-muted fs-12 mb-0">
                           {new Date().toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' })}
                         </p>
@@ -425,7 +322,23 @@ const Pos = () => {
                     {/* Products Grid */}
                     <div className="pos-products p-3">
                       <div className="row g-3">
-                        {filteredProducts.map((prod) => {
+                        {productsLoading && (
+                          <div className="col-12 text-center py-5">
+                            <div className="spinner-border text-primary mb-2" role="status" />
+                            <p className="text-muted mt-2">Loading products…</p>
+                          </div>
+                        )}
+                        {!productsLoading && productsError && (
+                          <div className="col-12 text-center py-5">
+                            <i className="ti ti-wifi-off fs-40 text-danger mb-2 d-block" />
+                            <h5 className="text-danger">Could not load products</h5>
+                            <p className="text-muted">{productsError}</p>
+                            <button className="btn btn-primary" onClick={loadProducts}>
+                              <i className="ti ti-refresh me-1" />Retry
+                            </button>
+                          </div>
+                        )}
+                        {!productsLoading && !productsError && filteredProducts.map((prod) => {
                           const isCarted = cart.some(c => c.productId === prod.id);
                           const activeVar = selectedVariants[prod.id] || (prod.variants && prod.variants[0]);
                           const displayPrice = activeVar?.price || prod.sellingPrice;
@@ -507,10 +420,12 @@ const Pos = () => {
                           );
                         })}
 
-                        {filteredProducts.length === 0 && (
+                        {!productsLoading && !productsError && filteredProducts.length === 0 && (
                           <div className="col-12 text-center py-5">
                             <i className="ti ti-package-off fs-40 text-muted mb-2 d-block" />
-                            <h5 className="text-muted">No products found matching "{searchQuery}"</h5>
+                            <h5 className="text-muted">
+                              {searchQuery ? `No products found matching "${searchQuery}"` : "No products available"}
+                            </h5>
                           </div>
                         )}
                       </div>

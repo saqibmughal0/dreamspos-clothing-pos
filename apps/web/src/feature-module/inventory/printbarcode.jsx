@@ -1,440 +1,239 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
-import Select from "react-select";
-import ImageWithBasePath from "../../core/img/imagewithbasebath";
+import React, { useState, useEffect } from "react";
 import CommonFooter from "../../core/common/footer/commonFooter";
-import { PaperSize, Store, WareHouse } from "../../core/common/selectOption/selectOption";
-import { MinusCircle, PlusCircle } from "feather-icons-react/build/IconComponents";
-import CommonDeleteModal from "../../core/common/modal/commonDeleteModal";
 import RefreshIcon from "../../core/common/tooltip-content/refresh";
 import CollapesIcon from "../../core/common/tooltip-content/collapes";
+import { apiClient } from "../../core/apiClient";
+import { BarcodeSvg } from "../../core/common/BarcodeSvg";
+
 const PrintBarcode = () => {
+  const [warehouses, setWarehouses] = useState([]);
+  const [stores, setStores] = useState([]);
+  const [products, setProducts] = useState([]);
+  const [selectedWarehouse, setSelectedWarehouse] = useState("");
+  const [selectedStore, setSelectedStore] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedItems, setSelectedItems] = useState([]);
+  const [showStoreName, setShowStoreName] = useState(true);
+  const [showProductName, setShowProductName] = useState(true);
+  const [showPrice, setShowPrice] = useState(true);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  const [quantity, setQuantity] = useState(4);
-
-  const handleDecrement = () => {
-    if (quantity > 1) {
-      setQuantity(quantity - 1);
+  const loadData = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const [whRes, stRes, prodRes] = await Promise.all([
+        apiClient.get("/catalog/warehouses"),
+        apiClient.get("/catalog/stores"),
+        apiClient.get("/products", { params: { limit: 100 } }),
+      ]);
+      const whs = whRes.data?.data?.items || [];
+      const sts = stRes.data?.data?.items || [];
+      const prods = prodRes.data?.data?.items || [];
+      setWarehouses(whs);
+      setStores(sts);
+      setProducts(prods);
+      if (whs[0]) setSelectedWarehouse(whs[0].id);
+      if (sts[0]) setSelectedStore(sts[0].id);
+    } catch (err) {
+      setError(err?.response?.data?.message || err?.message || "Failed to load products for barcode printing.");
+    } finally {
+      setLoading(false);
     }
   };
 
-  const handleIncrement = () => {
-    setQuantity(quantity + 1);
+  useEffect(() => {
+    loadData();
+  }, []);
+
+  const addProductToQueue = (prod) => {
+    setSelectedItems((prev) => {
+      const exists = prev.find((x) => x.id === prod.id);
+      if (exists) return prev.map((x) => (x.id === prod.id ? { ...x, qty: x.qty + 1 } : x));
+      return [
+        ...prev,
+        {
+          id: prod.id,
+          name: prod.name,
+          sku: prod.sku,
+          barcode: prod.barcode || prod.sku,
+          price: Number(prod.sellingPrice || 0),
+          qty: 1,
+        },
+      ];
+    });
   };
 
+  const updateQty = (id, delta) => {
+    setSelectedItems((prev) =>
+      prev.map((x) => (x.id === id ? { ...x, qty: Math.max(1, x.qty + delta) } : x))
+    );
+  };
+
+  const removeItem = (id) => {
+    setSelectedItems((prev) => prev.filter((x) => x.id !== id));
+  };
+
+  const filteredProducts = products.filter(
+    (p) =>
+      !searchQuery.trim() ||
+      p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (p.sku || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (p.barcode || "").toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const activeStoreName = stores.find((s) => s.id === selectedStore)?.name || "MR Bilal POS";
+
   return (
-    <>
-      <div className="page-wrapper notes-page-wrapper">
-        <div className="content">
-          <div className="page-header">
-            <div className="add-item d-flex">
-              <div className="page-title">
-                <h4 className="fw-bold">Print Barcode</h4>
-                <h6>Manage your barcodes</h6>
-              </div>
-            </div>
-            <div className="d-flex align-items-center">
-              <ul className="table-top-head">
-                <RefreshIcon />
-                <CollapesIcon />
-              </ul>
+    <div className="page-wrapper notes-page-wrapper">
+      <div className="content">
+        <div className="page-header d-print-none">
+          <div className="add-item d-flex">
+            <div className="page-title">
+              <h4 className="fw-bold">Print Barcode</h4>
+              <h6>Generate and print Code128 garment hangtag barcodes</h6>
             </div>
           </div>
-          <div className="barcode-content-list">
-            <form>
-              <div className="row">
-                <div className="col-lg-6 col-12">
-                  <div className="row seacrh-barcode-item mb-1">
-                    <div className="col-sm-6 mb-3 seacrh-barcode-item-one">
-                      <label className="form-label">
-                        Warehouse<span className="text-danger ms-1">*</span>
-                      </label>
-                      <Select
-                        classNamePrefix="react-select"
-                        options={WareHouse}
-                        placeholder="Choose"
-                      />
-                    </div>
-                    <div className="col-sm-6 mb-3 seacrh-barcode-item-one">
-                      <label className="form-label">
-                        Store<span className="text-danger ms-1">*</span>
-                      </label>
-                      <Select
-                        classNamePrefix="react-select"
-                        options={Store}
-                        placeholder="Choose"
-                      />
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="row">
-                <div className="col-lg-6">
-                  <div className="mb-3 search-form seacrh-barcode-item">
-                    <div className="searchInput">
-                      <label className="form-label">
-                        Product<span className="text-danger ms-1">*</span>
-                      </label>
-                      <input
-                        type="text"
-                        id="dropdownsearchClickable"
-                        data-bs-toggle="dropdown"
-                        data-bs-auto-close="outside"
-                        className="form-control text-gray-3"
-                        placeholder="Search Product by Code"
-                      />
-                      <div className="resultBox"></div>
-                      <div className="icon">
-                        <i className="fas fa-search" />
-                      </div>
-                      <div
-                        className="dropdown-menu search-dropdown w-100 h-auto rounded-1 mt-2"
-                        aria-labelledby="dropdownsearchClickable"
-                      >
-                        <ul>
-                          <li className="fs-14 text-gray-9 mb-2">Amazon Echo Dot</li>
-                          <li className="fs-14 text-gray-9 mb-2">Armani Belt</li>
-                          <li className="fs-14 text-gray-9 mb-2">Apple Watch</li>
-                          <li className="fs-14 text-gray-9">Apple Iphone 14 Pro</li>
-                        </ul>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </form>
-            <div className="col-lg-12">
-              <div className="modal-body-table search-modal-header bg-light p-2 p-sm-4">
-                <div className="table-responsive border rounded-1 barcode-table">
-                  <table className="table  datatable mb-0">
-                    <thead>
-                      <tr>
-                        <th>Product</th>
-                        <th>SKU</th>
-                        <th>Code</th>
-                        <th>Qty</th>
-                        <th className="text-center no-sort bg-secondary-transparent" />
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr>
-                        <td>
-                          <div className="d-flex align-items-center">
-                            <Link
-                              to="#"
-                              className="avatar avatar-md me-2"
-                            >
-                              <ImageWithBasePath
-                                src="assets/img/products/stock-img-02.png"
-                                alt="product"
-                              />
-                            </Link>
-                            <Link to="#">Nike Jordan</Link>
-                          </div>
-                        </td>
-                        <td>PT002</td>
-                        <td>HG3FK</td>
-                        <td>
-                          <div className="product-quantity border-secondary-transparent">
-                            <span className="quantity-btn">
-                              <MinusCircle className="feather-search" />
-                              onClick={handleDecrement}
-                            </span>
-                            <input
-                              type="text"
-                              className="quntity-input"
-                              defaultValue={4}
-                            />
-                            <span className="quantity-btn">
-                              +
-                              <PlusCircle className="plus-circle" />
-                              onClick={handleIncrement}
-                            </span>
-                          </div>
-                        </td>
-                        <td className="action-table-data">
-                          <div className="edit-delete-action">
-                            <Link
-                              data-bs-toggle="modal"
-                              data-bs-target="#delete-modal"
-                              className="barcode-delete-icon"
-                              to="#"
-                            >
-                              <i data-feather="trash-2" className="feather-trash-2" />
-                            </Link>
-                          </div>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>
-                          <div className="d-flex align-items-center">
-                            <Link
-                              to="#"
-                              className="avatar avatar-md me-2"
-                            >
-                              <ImageWithBasePath
-                                src="assets/img/products/stock-img-03.png"
-                                alt="product"
-                              />
-                            </Link>
-                            <Link to="#">Apple Series 5 Watch</Link>
-                          </div>
-                        </td>
-                        <td>PT003</td>
-                        <td>TEUIU7</td>
-                        <td>
-                          <div className="product-quantity border-secondary-transparent">
-                            <span className="quantity-btn">
-                              <MinusCircle className="feather-search" />
-                              onClick={handleDecrement}
-                            </span>
-                            <input
-                              type="text"
-                              className="quntity-input"
-                              defaultValue={4}
-                            />
-                            <span className="quantity-btn">
-                              +
-                              <PlusCircle className="plus-circle" />
-                              onClick={handleIncrement}
-                            </span>
-                          </div>
-                        </td>
-                        <td className="action-table-data">
-                          <div className="edit-delete-action">
-                            <Link
-                              data-bs-toggle="modal"
-                              data-bs-target="#delete-modal"
-                              className="barcode-delete-icon"
-                              to="#"
-                            >
-                              <i data-feather="trash-2" className="feather-trash-2" />
-                            </Link>
-                          </div>
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            </div>
-            <div className="paper-search-size">
-              <div className="row align-items-center">
-                <div className="col-lg-6">
-                  <form className="mb-0">
-                    <label className="form-label">
-                      Paper Size<span className="text-danger ms-1">*</span>
-                    </label>
-                    <Select
-                      classNamePrefix="react-select"
-                      options={PaperSize}
-                      placeholder="Choose"
-                    />
-                  </form>
-                </div>
-                <div className="col-lg-6 pt-3">
-                  <div className="row">
-                    <div className="col-sm-4">
-                      <div className="search-toggle-list">
-                        <p>Show Store Name</p>
-                        <div className="m-0">
-                          <div className="status-toggle modal-status d-flex justify-content-between align-items-center">
-                            <input
-                              type="checkbox"
-                              id="user7"
-                              className="check"
-                              defaultChecked
-                            />
-                            <label htmlFor="user7" className="checktoggle mb-0" />
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="col-sm-4">
-                      <div className="search-toggle-list">
-                        <p>Show Product Name</p>
-                        <div className="m-0">
-                          <div className="status-toggle modal-status d-flex justify-content-between align-items-center">
-                            <input
-                              type="checkbox"
-                              id="user8"
-                              className="check"
-                              defaultChecked
-                            />
-                            <label htmlFor="user8" className="checktoggle mb-0" />
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="col-sm-4">
-                      <div className="search-toggle-list">
-                        <p>Show Price</p>
-                        <div className="m-0">
-                          <div className="status-toggle modal-status d-flex justify-content-between align-items-center">
-                            <input
-                              type="checkbox"
-                              id="user9"
-                              className="check"
-                              defaultChecked
-                            />
-                            <label htmlFor="user9" className="checktoggle mb-0">
-                              {" "}
-                            </label>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className="search-barcode-button">
-              <Link
-                to="#"
-                className="btn btn-submit btn-primary me-2 mt-0"
-                data-bs-toggle="modal"
-                data-bs-target="#prints-barcode"
-              >
-                <span>
-                  <i className="fas fa-eye me-2" />
-                </span>
-                Generate Barcode
-              </Link>
-              <Link
-                to="#"
-                className="btn btn-cancel btn-secondary fs-13 me-2"
-              >
-                <span>
-                  <i className="fas fa-power-off me-2" />
-                </span>
-                Reset Barcode
-              </Link>
-              <Link
-                to="#"
-                className="btn btn-cancel btn-danger close-btn"
-              >
-                <span>
-                  <i className="fas fa-print me-2" />
-                </span>
-                Print Barcode
-              </Link>
-            </div>
-          </div>
+          <ul className="table-top-head">
+            <RefreshIcon onClick={loadData} />
+            <CollapesIcon />
+          </ul>
         </div>
-        <CommonFooter />
-      </div>
 
+        {error && <div className="alert alert-danger d-print-none">{error}</div>}
 
-      {/* Print Barcode */}
-      <div className="modal fade" id="prints-barcode">
-        <div className="modal-dialog modal-dialog-centered stock-adjust-modal barcode-modal">
-          <div className="modal-content">
-            <div className="page-wrapper-new p-0">
-              <div className="content">
-                <div className="modal-header">
-                  <div className="page-title">
-                    <h4>Barcode</h4>
-                  </div>
+        <div className="card mb-4 d-print-none">
+          <div className="card-body">
+            <div className="row g-3 mb-3">
+              <div className="col-md-4">
+                <label className="form-label">Warehouse</label>
+                <select className="form-select" value={selectedWarehouse} onChange={(e) => setSelectedWarehouse(e.target.value)}>
+                  {warehouses.length === 0 && <option value="">No warehouses</option>}
+                  {warehouses.map((w) => <option key={w.id} value={w.id}>{w.name}</option>)}
+                </select>
+              </div>
+              <div className="col-md-4">
+                <label className="form-label">Store</label>
+                <select className="form-select" value={selectedStore} onChange={(e) => setSelectedStore(e.target.value)}>
+                  {stores.length === 0 && <option value="">MR Bilal POS</option>}
+                  {stores.map((s) => <option key={s.id} value={s.id}>{s.name}</option>)}
+                </select>
+              </div>
+              <div className="col-md-4">
+                <label className="form-label">Search Product / SKU / Barcode</label>
+                <input
+                  type="text"
+                  className="form-control"
+                  placeholder="Type product name or SKU..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                />
+              </div>
+            </div>
+
+            {!loading && products.length === 0 ? (
+              <div className="text-center py-4 text-muted">No products found in inventory. Add products first.</div>
+            ) : (
+              <div className="d-flex flex-wrap gap-2 mb-3">
+                {filteredProducts.slice(0, 12).map((p) => (
                   <button
+                    key={p.id}
                     type="button"
-                    className="close bg-danger text-white fs-16 shadow-none"
-                    data-bs-dismiss="modal"
-                    aria-label="Close"
+                    className="btn btn-sm btn-outline-primary"
+                    onClick={() => addProductToQueue(p)}
                   >
-                    <span aria-hidden="true">×</span>
+                    + {p.name} ({p.sku})
                   </button>
+                ))}
+              </div>
+            )}
+
+            {selectedItems.length > 0 && (
+              <div className="table-responsive mb-3">
+                <table className="table table-bordered align-middle mb-0">
+                  <thead className="table-light">
+                    <tr>
+                      <th>Product</th>
+                      <th>SKU</th>
+                      <th>Barcode</th>
+                      <th>Price</th>
+                      <th>Labels Qty</th>
+                      <th></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {selectedItems.map((item) => (
+                      <tr key={item.id}>
+                        <td>{item.name}</td>
+                        <td>{item.sku}</td>
+                        <td>{item.barcode}</td>
+                        <td>Rs {item.price.toFixed(2)}</td>
+                        <td>
+                          <div className="btn-group btn-group-sm">
+                            <button type="button" className="btn btn-outline-secondary" onClick={() => updateQty(item.id, -1)}>-</button>
+                            <span className="btn btn-light">{item.qty}</span>
+                            <button type="button" className="btn btn-outline-secondary" onClick={() => updateQty(item.id, 1)}>+</button>
+                          </div>
+                        </td>
+                        <td>
+                          <button type="button" className="btn btn-sm btn-outline-danger" onClick={() => removeItem(item.id)}>Remove</button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+
+            <div className="d-flex align-items-center justify-content-between flex-wrap gap-3">
+              <div className="d-flex gap-3">
+                <div className="form-check form-switch">
+                  <input className="form-check-input" type="checkbox" checked={showStoreName} onChange={(e) => setShowStoreName(e.target.checked)} id="swStore" />
+                  <label className="form-check-label" htmlFor="swStore">Store Name</label>
                 </div>
-                <div className="modal-body">
-                  <div className="d-flex justify-content-end">
-                    <Link
-                      to="#"
-                      onClick={(e) => { e.preventDefault(); window.print(); }}
-                      className="btn btn-cancel close-btn btn-danger shadow-none"
-                    >
-                      <span>
-                        <i className="fas fa-print me-2" />
-                      </span>
-                      Print Barcode
-                    </Link>
-                  </div>
-                  <div className="barcode-scan-header">
-                    <h5>Nike Jordan</h5>
-                  </div>
-                  <div className="row">
-                    <div className="col-sm-4">
-                      <div className="barcode-scanner-link text-center">
-                        <h6>Grocery Alpha</h6>
-                        <p>Nike Jordan</p>
-                        <p>Price : Rs 400</p>
-                        <div className="barscaner-img">
-                          <ImageWithBasePath
-                            src="./assets/img/barcode/barcode-01.png"
-                            alt="Barcode"
-                            className="img-fluid"
-                          />
-                        </div>
-                      </div>
-                    </div>
-                    <div className="col-sm-4">
-                      <div className="barcode-scanner-link text-center">
-                        <h6>Grocery Alpha</h6>
-                        <p>Nike Jordan</p>
-                        <p>Price : Rs 400</p>
-                        <div className="barscaner-img">
-                          <ImageWithBasePath
-                            src="./assets/img/barcode/barcode-01.png"
-                            alt="Barcode"
-                            className="img-fluid"
-                          />
-                        </div>
-                      </div>
-                    </div>
-                    <div className="col-sm-4">
-                      <div className="barcode-scanner-link text-center">
-                        <h6>Grocery Alpha</h6>
-                        <p>Nike Jordan</p>
-                        <p>Price : Rs 400</p>
-                        <div className="barscaner-img">
-                          <ImageWithBasePath
-                            src="./assets/img/barcode/barcode-01.png"
-                            alt="Barcode"
-                            className="img-fluid"
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="barcode-scan-header">
-                    <h5>Apple Series 5 Watch</h5>
-                  </div>
-                  <div className="row">
-                    <div className="col-sm-4">
-                      <div className="barcode-scanner-link text-center">
-                        <h6>Grocery Alpha</h6>
-                        <p>Apple Series 5 Watch</p>
-                        <p>Price : Rs 300</p>
-                        <div className="barscaner-img">
-                          <ImageWithBasePath
-                            src="./assets/img/barcode/barcode-02.png"
-                            alt="Barcode"
-                            className="img-fluid"
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  </div>
+                <div className="form-check form-switch">
+                  <input className="form-check-input" type="checkbox" checked={showProductName} onChange={(e) => setShowProductName(e.target.checked)} id="swProd" />
+                  <label className="form-check-label" htmlFor="swProd">Product Name</label>
                 </div>
+                <div className="form-check form-switch">
+                  <input className="form-check-input" type="checkbox" checked={showPrice} onChange={(e) => setShowPrice(e.target.checked)} id="swPrice" />
+                  <label className="form-check-label" htmlFor="swPrice">Price (Rs)</label>
+                </div>
+              </div>
+              <div className="d-flex gap-2">
+                <button type="button" className="btn btn-secondary" onClick={() => setSelectedItems([])}>Reset</button>
+                <button type="button" className="btn btn-primary" disabled={selectedItems.length === 0} onClick={() => window.print()}>
+                  <i className="ti ti-printer me-1" /> Print Barcodes
+                </button>
               </div>
             </div>
           </div>
         </div>
+
+        {/* Printable Label Grid */}
+        {selectedItems.length > 0 && (
+          <div className="row g-3">
+            {selectedItems.flatMap((item) =>
+              Array.from({ length: item.qty }).map((_, idx) => (
+                <div key={`${item.id}-${idx}`} className="col-md-3 col-sm-4 col-6">
+                  <div className="border bg-white p-3 text-center rounded">
+                    {showStoreName && <div className="fw-bold fs-12 mb-1">{activeStoreName}</div>}
+                    {showProductName && <div className="fs-13 text-truncate mb-1">{item.name}</div>}
+                    <div className="my-1 px-2">
+                      <BarcodeSvg value={item.barcode} height={44} />
+                    </div>
+                    <div className="fs-11 text-muted">{item.barcode}</div>
+                    {showPrice && <div className="fw-bold fs-14 mt-1">Rs {item.price.toLocaleString()}</div>}
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+        )}
       </div>
-      {/* /Print Barcode */}
-
-
-      <CommonDeleteModal />
-    </>
-
+      <CommonFooter />
+    </div>
   );
 };
 

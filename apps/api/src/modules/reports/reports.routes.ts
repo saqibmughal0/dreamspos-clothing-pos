@@ -1,10 +1,13 @@
 import { Router } from "express";
 import { reportsController } from "./reports.controller";
+import { reportsExtendedRouter } from "./reports.extended.routes";
 import { authenticate } from "../../middleware/auth";
 
 export const reportsRouter = Router();
 
 reportsRouter.use(authenticate);
+
+reportsRouter.use("/", reportsExtendedRouter);
 
 reportsRouter.get("/sales", reportsController.getSalesReport);
 reportsRouter.get("/returns", reportsController.getReturnsReport);

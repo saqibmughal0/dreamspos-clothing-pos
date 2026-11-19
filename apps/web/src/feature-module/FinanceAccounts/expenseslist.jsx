@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Select from "react-select";
-import { expenselist } from "../../core/json/expenselistdata";
 import Table from "../../core/pagination/datatable";
 import TooltipIcons from "../../core/common/tooltip-content/tooltipIcons";
 import RefreshIcon from "../../core/common/tooltip-content/refresh";
@@ -13,12 +12,12 @@ import { apiClient } from "../../core/apiClient";
 
 
 const ExpensesList = () => {
-  const [data, setData] = useState(expenselist);
+  const [data, setData] = useState([]);
 
   useEffect(() => {
     apiClient.get("/finance/expenses")
       .then((res) => {
-        if (res.data?.success && res.data.data?.items?.length > 0) {
+        if (res.data?.success && res.data.data?.items) {
           const mapped = res.data.data.items.map((e, idx) => ({
             id: e.id,
             key: e.id || idx,

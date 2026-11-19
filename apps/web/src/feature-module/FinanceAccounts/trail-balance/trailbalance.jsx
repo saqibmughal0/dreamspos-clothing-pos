@@ -1,179 +1,90 @@
-import React from 'react'
-import CommonFooter from '../../../core/common/footer/commonFooter'
-import { Link } from 'react-router-dom'
-import TooltipIcons from '../../../core/common/tooltip-content/tooltipIcons'
-import RefreshIcon from '../../../core/common/tooltip-content/refresh'
-import CollapesIcon from '../../../core/common/tooltip-content/collapes'
-import { DatePicker } from 'antd'
-import { Calendar } from 'feather-icons-react/build/IconComponents'
+import React, { useState, useEffect, useCallback } from 'react';
+import CommonFooter from '../../../core/common/footer/commonFooter';
+import TooltipIcons from '../../../core/common/tooltip-content/tooltipIcons';
+import RefreshIcon from '../../../core/common/tooltip-content/refresh';
+import CollapesIcon from '../../../core/common/tooltip-content/collapes';
+import Table from "../../../core/pagination/datatable";
+import { apiClient } from '../../../core/apiClient';
 
 const Trailbalance = () => {
+    const [dataSource, setDataSource] = useState([]);
+    const [totals, setTotals] = useState({ totalDebit: 0, totalCredit: 0 });
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+
+    const fetchTrialBalance = useCallback(() => {
+        setLoading(true);
+        setError(null);
+        apiClient.get('/finance/trial-balance')
+            .then((res) => {
+                const items = res.data?.data?.items || [];
+                setDataSource(items.map((a) => ({
+                    key: a.id,
+                    accountNumber: a.accountNumber,
+                    name: a.name,
+                    type: a.type,
+                    debit: `Rs ${Number(a.debit || 0).toFixed(2)}`,
+                    credit: `Rs ${Number(a.credit || 0).toFixed(2)}`,
+                })));
+                setTotals({
+                    totalDebit: res.data?.data?.totalDebit || 0,
+                    totalCredit: res.data?.data?.totalCredit || 0,
+                });
+            })
+            .catch((err) => {
+                setError(err?.response?.data?.message || err?.message || 'Failed to load trial balance');
+                setDataSource([]);
+            })
+            .finally(() => setLoading(false));
+    }, []);
+
+    useEffect(() => {
+        fetchTrialBalance();
+    }, [fetchTrialBalance]);
+
+    const columns = [
+        { title: "Account #", dataIndex: "accountNumber" },
+        { title: "Account Name", dataIndex: "name", sorter: (a, b) => a.name.localeCompare(b.name) },
+        { title: "Type", dataIndex: "type" },
+        { title: "Debit", dataIndex: "debit" },
+        { title: "Credit", dataIndex: "credit" },
+    ];
+
     return (
-        <div>
-            <div className="page-wrapper">
-                <div className="content">
-                    <div className="page-header">
-                        <div className="add-item d-flex">
-                            <div className="page-title">
-                                <h4 className="fw-bold">Trial Balance</h4>
-                                <h6>View Your Balance Sheet</h6>
-                            </div>
-                        </div>
-                        <ul className="table-top-head">
-                            <TooltipIcons />
-                            <RefreshIcon />
-                            <CollapesIcon />
-                        </ul>
-                    </div>
-                    {/* /product list */}
-                    <div className="card table-list-card bg-transparent border-0">
-                        <div className="card-header border-0 bg-white rounded-1 p-4 px-3 mb-4">
-                            <div className="row row-gap-2 align-items-end">
-                                <div className="col-sm-4">
-                                    <div className="dropdown me-2">
-                                        <label className="form-label">Choose Your Date</label>
-                                        <div className="input-groupicon trail-balance">
-                                            <Calendar className="info-img" />
-                                            <DatePicker
-                                                className="form-control datetimepicker"
-                                                placeholder="dd/mm/yyyy"
-                                            />
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="col-sm-4">
-                                    <div className="dropdown">
-                                        <label className="form-label">Store</label>
-                                        <Link
-                                            to="#"
-                                            className="dropdown-toggle btn btn-white btn-md d-inline-flex align-items-center w-100"
-                                            data-bs-toggle="dropdown"
-                                        >
-                                            Select
-                                        </Link>
-                                        <ul className="dropdown-menu  dropdown-menu-end p-3">
-                                            <li>
-                                                <Link
-                                                    to="#"
-                                                    className="dropdown-item rounded-1"
-                                                >
-                                                    Zephyr Indira
-                                                </Link>
-                                            </li>
-                                            <li>
-                                                <Link
-                                                    to="#"
-                                                    className="dropdown-item rounded-1"
-                                                >
-                                                    Quillon Elysia
-                                                </Link>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </div>
-                                <div className="col-sm-3 col-md-2">
-                                    <button className="btn btn-primary shadow-none w-100">
-                                        Submit
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="card-body">
-                            <div className="table-responsive">
-                                <table className="table datanew">
-                                    <thead>
-                                        <tr>
-                                            <th>Account Name</th>
-                                            <th>Debit</th>
-                                            <th>Credit</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td className="p-2 border-1 fw-bold text-gray-9">Assets</td>
-                                            <td className="p-2 border-1" />
-                                            <td className="p-2 border-1" />
-                                        </tr>
-                                        <tr>
-                                            <td className="p-2 border-1">Cash in register</td>
-                                            <td className="p-2 border-1">Rs 5,000</td>
-                                            <td className="p-2 border-1" />
-                                        </tr>
-                                        <tr>
-                                            <td className="p-2 border-1">Bank Accounts</td>
-                                            <td className="p-2 border-1">Rs 12,000</td>
-                                            <td className="p-2 border-1" />
-                                        </tr>
-                                        <tr>
-                                            <td className="p-2 border-1">Accounts Receivable</td>
-                                            <td className="p-2 border-1">Rs 3,000</td>
-                                            <td className="p-2 border-1" />
-                                        </tr>
-                                        <tr>
-                                            <td className="p-2 border-1">Inventory (POS stock)</td>
-                                            <td className="p-2 border-1">Rs 10,000</td>
-                                            <td className="p-2 border-1" />
-                                        </tr>
-                                        <tr className="border-bottom">
-                                            <td className="p-2 border-1 fw-bold text-gray-9">
-                                                Total Assets
-                                            </td>
-                                            <td className="p-2 border-1 fw-bold text-gray-9">Rs 37,000</td>
-                                            <td className="p-2 border-1" />
-                                        </tr>
-                                        <tr>
-                                            <td className="p-2 border-1 fw-bold text-gray-9">
-                                                Liabilities
-                                            </td>
-                                            <td className="p-2 border-1" />
-                                            <td className="p-2 border-1" />
-                                        </tr>
-                                        <tr>
-                                            <td className="p-2 border-1">Accounts Payable</td>
-                                            <td className="p-2 border-1" />
-                                            <td className="p-2 border-1">Rs 2,000</td>
-                                        </tr>
-                                        <tr>
-                                            <td className="p-2 border-1">Short-term Loans</td>
-                                            <td className="p-2 border-1" />
-                                            <td className="p-2 border-1">Rs 4,000</td>
-                                        </tr>
-                                        <tr>
-                                            <td className="p-2 border-1">Sales Tax Payable</td>
-                                            <td className="p-2 border-1" />
-                                            <td className="p-2 border-1">Rs 500</td>
-                                        </tr>
-                                        <tr>
-                                            <td className="p-2 border-1">Wages Payable</td>
-                                            <td className="p-2 border-1" />
-                                            <td className="p-2 border-1">Rs 1,200</td>
-                                        </tr>
-                                        <tr>
-                                            <td className="p-2 border-1 fw-bold text-gray-9">
-                                                Total Assets
-                                            </td>
-                                            <td className="p-2 border-1" />
-                                            <td className="p-2 border-1 fw-bold text-gray-9">Rs 20,700</td>
-                                        </tr>
-                                        <tr>
-                                            <td className="bg-secondary-transparent text-gray-9 fw-bold p-3">
-                                                Total
-                                            </td>
-                                            <td className="bg-secondary-transparent text-gray-9 fw-bold p-3">Rs 37,000</td>
-                                            <td className="bg-secondary-transparent text-gray-9 fw-bold p-3">Rs 37,000</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
+        <div className="page-wrapper">
+            <div className="content">
+                <div className="page-header">
+                    <div className="add-item d-flex">
+                        <div className="page-title">
+                            <h4>Trial Balance</h4>
+                            <h6>Total Debit: Rs {totals.totalDebit.toFixed(2)} &bull; Total Credit: Rs {totals.totalCredit.toFixed(2)}</h6>
                         </div>
                     </div>
-                    {/* /product list */}
+                    <ul className="table-top-head">
+                        <TooltipIcons />
+                        <RefreshIcon onClick={fetchTrialBalance} />
+                        <CollapesIcon />
+                    </ul>
                 </div>
-                <CommonFooter />
+
+                <div className="card table-list-card">
+                    <div className="card-body">
+                        <div className="table-responsive">
+                            {loading && <div className="text-center py-5"><div className="spinner-border text-primary" /></div>}
+                            {!loading && error && <div className="alert alert-danger">{error}</div>}
+                            {!loading && !error && dataSource.length === 0 && (
+                                <div className="text-center py-5 text-muted">No trial balance records found.</div>
+                            )}
+                            {!loading && !error && dataSource.length > 0 && (
+                                <Table columns={columns} dataSource={dataSource} />
+                            )}
+                        </div>
+                    </div>
+                </div>
             </div>
-
+            <CommonFooter />
         </div>
-    )
-}
+    );
+};
 
-export default Trailbalance
+export default Trailbalance;

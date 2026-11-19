@@ -14,17 +14,16 @@ import { Addition, ResponsiblePerson, Store, WareHouse } from "../../core/common
 import { apiClient } from "../../core/apiClient";
 
 const StockAdjustment = () => {
-  const reduxDataSource = useSelector((state) => state.rootReducer.managestockdata);
-  const [dataSource, setDataSource] = useState(reduxDataSource);
+  const [dataSource, setDataSource] = useState([]);
 
   useEffect(() => {
     apiClient.get("/inventory/adjustments")
       .then((res) => {
-        if (res.data?.success && res.data.data?.items?.length > 0) {
+        if (res.data?.success && res.data.data?.items) {
           const mapped = res.data.data.items.map((item, idx) => ({
             key: item.id || idx,
             Warehouse: item.warehouseName || "Main Warehouse",
-            Shop: "Dreams Apparel Flagship",
+            Shop: item.storeName || "MR Bilal POS",
             Product: {
               Name: item.items?.[0]?.productName || "Clothing Garment",
               Image: "assets/img/products/pos-product-01.png"
@@ -37,10 +36,12 @@ const StockAdjustment = () => {
             Quantity: `${item.items?.reduce((sum, i) => sum + i.quantity, 0) || 1} Pcs`
           }));
           setDataSource(mapped);
+        } else {
+          setDataSource([]);
         }
       })
-      .catch((err) => {
-        console.warn("Using default stock adjustments:", err);
+      .catch(() => {
+        setDataSource([]);
       });
   }, []);
 

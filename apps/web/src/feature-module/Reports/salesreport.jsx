@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import ImageWithBasePath from "../../core/img/imagewithbasebath";
 import { Link } from "react-router-dom";
 import Select from "react-select";
-import { salesreportdata } from "../../core/json/salesreportdata";
 import Table from "../../core/pagination/datatable";
 import TooltipIcons from "../../core/common/tooltip-content/tooltipIcons";
 import RefreshIcon from "../../core/common/tooltip-content/refresh";
@@ -14,18 +13,13 @@ import { apiClient } from "../../core/apiClient";
 
 
 const SalesReport = () => {
-  const [data, setData] = useState(salesreportdata);
-  const [summary, setSummary] = useState({
-    totalSales: 456000,
-    totalPaid: 256420,
-    totalUnpaid: 15245,
-    overdue: 25612
-  });
+  const [data, setData] = useState([]);
+  const [summary, setSummary] = useState({ totalSales: 0, totalPaid: 0, totalUnpaid: 0, overdue: 0 });
 
   useEffect(() => {
     apiClient.get("/reports/sales")
       .then((res) => {
-        if (res.data?.success && res.data.data?.items?.length > 0) {
+        if (res.data?.success && res.data.data) {
           const total = res.data.data.summary.totalSales || 0;
           setSummary({
             totalSales: total,
@@ -40,7 +34,7 @@ const SalesReport = () => {
             productName: `Order ${s.invoiceNumber} (${s.itemsCount} items)`,
             sku: s.invoiceNumber,
             category: "Apparel",
-            brand: "Dreams Apparel",
+            brand: "",
             soldQty: String(s.itemsCount),
             soldAmount: `Rs ${Number(s.totalAmount).toFixed(2)}`,
             instockQty: "50"
@@ -48,9 +42,7 @@ const SalesReport = () => {
           setData(mapped);
         }
       })
-      .catch((err) => {
-        console.warn("Using default sales report data:", err);
-      });
+      .catch(() => { setData([]); setSummary({ totalSales: 0, totalPaid: 0, totalUnpaid: 0, overdue: 0 }); });
   }, []);
 
   const [searchText] = useState("");
@@ -139,7 +131,7 @@ const SalesReport = () => {
                 <div className="ms-2">
                   <p className="fw-medium mb-1">Total Amount</p>
                   <div>
-                    <h3>${Number(summary.totalSales).toLocaleString()}</h3>
+                    <h3>Rs {Number(summary.totalSales).toLocaleString()}</h3>
                   </div>
                 </div>
               </div>
@@ -154,7 +146,7 @@ const SalesReport = () => {
                 <div className="ms-2">
                   <p className="fw-medium mb-1">Total Paid</p>
                   <div>
-                    <h3>${Number(summary.totalPaid).toLocaleString()}</h3>
+                    <h3>Rs {Number(summary.totalPaid).toLocaleString()}</h3>
                   </div>
                 </div>
               </div>
@@ -169,7 +161,7 @@ const SalesReport = () => {
                 <div className="ms-2">
                   <p className="fw-medium mb-1">Total Unpaid</p>
                   <div>
-                    <h3>Rs 1,52,45</h3>
+                    <h3>Rs {Number(summary.totalUnpaid).toLocaleString()}</h3>
                   </div>
                 </div>
               </div>
@@ -184,7 +176,7 @@ const SalesReport = () => {
                 <div className="ms-2">
                   <p className="fw-medium mb-1">Overdue</p>
                   <div>
-                    <h3>Rs 2,56,12</h3>
+                    <h3>Rs {Number(summary.overdue).toLocaleString()}</h3>
                   </div>
                 </div>
               </div>

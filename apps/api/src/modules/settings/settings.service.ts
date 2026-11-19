@@ -1,4 +1,4 @@
-import { prisma } from "@dreamspos/database";
+﻿import { prisma } from "@dreamspos/database";
 
 export interface ClothingBusinessSettings {
   shopName: string;
@@ -45,26 +45,26 @@ export interface ClothingBusinessSettings {
 }
 
 const DEFAULT_SETTINGS: ClothingBusinessSettings = {
-  shopName: "Dreams Apparel Flagship Store",
-  brandName: "Dreams Apparel",
+  shopName: "",
+  brandName: "",
   logo: "assets/img/logo.png",
-  email: "support@dreamsapparel.com",
-  phone: "+1 (800) 555-0199",
-  address: "742 Evergreen Terrace, Suite 100, New York, NY 10001",
-  website: "https://dreamsapparel.com",
-  taxNumber: "US-TAX-8829104",
+  email: "",
+  phone: "",
+  address: "",
+  website: "",
+  taxNumber: "",
   currency: {
-    code: "USD",
-    symbol: "$",
+    code: "PKR",
+    symbol: "Rs",
     position: "PREFIX"
   },
   tax: {
-    rate: 8.25,
+    rate: 0,
     type: "EXCLUSIVE"
   },
   receipt: {
-    headerMessage: "Welcome to Dreams Apparel — Contemporary Urban Wear",
-    footerMessage: "Thank you for shopping with us! Please keep this receipt for returns/exchanges.",
+    headerMessage: "",
+    footerMessage: "Thank you for your purchase!",
     showBarcode: true,
     showCashier: true,
     showCustomer: true
@@ -82,11 +82,11 @@ const DEFAULT_SETTINGS: ClothingBusinessSettings = {
     showVariantColor: true
   },
   policies: {
-    returnWindowDays: 14,
-    exchangeWindowDays: 30,
-    terms: "Garments eligible for return/exchange within 14 days of purchase with original receipt and hangtags intact. Intimates and final sale items excluded."
+    returnWindowDays: 7,
+    exchangeWindowDays: 14,
+    terms: ""
   }
-};
+}
 
 export class SettingsService {
   async getSettings(companyId: string): Promise<ClothingBusinessSettings> {

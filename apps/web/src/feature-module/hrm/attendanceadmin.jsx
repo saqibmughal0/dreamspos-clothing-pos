@@ -1,167 +1,142 @@
-import React from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
-import ImageWithBasePath from "../../core/img/imagewithbasebath";
-import { useSelector } from "react-redux";
-import Table from "../../core/pagination/datatable.jsx";
-import AddAttendance from "../../core/modals/hrm/addattendance.jsx";
-import EditAttendance from "../../core/modals/hrm/editattendance.jsx";
-import TooltipIcons from "../../core/common/tooltip-content/tooltipIcons.jsx";
-import RefreshIcon from "../../core/common/tooltip-content/refresh.jsx";
-import CollapesIcon from "../../core/common/tooltip-content/collapes.jsx";
-import { DatePicker } from "antd";
-import { Calendar } from "feather-icons-react/build/IconComponents/index.js";
+import Table from "../../core/pagination/datatable";
+import CommonFooter from "../../core/common/footer/commonFooter";
+import TooltipIcons from "../../core/common/tooltip-content/tooltipIcons";
+import RefreshIcon from "../../core/common/tooltip-content/refresh";
+import CollapesIcon from "../../core/common/tooltip-content/collapes";
+import { apiClient } from "../../core/apiClient";
 
 const AttendanceAdmin = () => {
-  const dataSource = useSelector((state) => state.rootReducer.attendanceadmin_data);
+  const [dataSource, setDataSource] = useState([]);
+  const [employees, setEmployees] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [form, setForm] = useState({ employeeId: "", status: "PRESENT", notes: "" });
+  const [submitting, setSubmitting] = useState(false);
+
+  const fetchData = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const [attRes, empRes] = await Promise.all([
+        apiClient.get("/hrm/attendance"),
+        apiClient.get("/hrm/employees"),
+      ]);
+      const items = attRes.data?.data?.items || [];
+      setEmployees(empRes.data?.data?.items || []);
+      setDataSource(items.map((a) => ({
+        key: a.id,
+        EMP_Name: a.employee ? `${a.employee.firstName} ${a.employee.lastName}` : "—",
+        Date: new Date(a.date).toLocaleDateString("en-PK"),
+        Clock_In: a.clockIn ? new Date(a.clockIn).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) : "—",
+        Clock_Out: a.clockOut ? new Date(a.clockOut).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) : "—",
+        Status: a.status,
+      })));
+    } catch (err) {
+      setError(err?.response?.data?.message || err?.message || "Failed to load attendance");
+      setDataSource([]);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+
+  const handleMark = async (e) => {
+    e.preventDefault();
+    if (!form.employeeId) return;
+    setSubmitting(true);
+    try {
+      await apiClient.post("/hrm/attendance", form);
+      setForm({ employeeId: "", status: "PRESENT", notes: "" });
+      document.querySelector("#mark-attendance .btn-close")?.click();
+      fetchData();
+    } catch (err) {
+      setError(err?.response?.data?.message || err?.message || "Failed to mark attendance");
+    } finally {
+      setSubmitting(false);
+    }
+  };
 
   const columns = [
-    {
-      title: "Employee",
-      dataIndex: "Employee",
-      render: (text, record) => (
-        <div className="d-flex align-items-center">
-          <Link to="#" className="avatar avatar-md me-2">
-            <ImageWithBasePath src={`assets/img/users/${record.image}`} alt="product" />
-          </Link>
-          <div>
-            <h6>
-              <Link to="#">{text}</Link>
-            </h6>
-            <span>{record.Role}</span>
-          </div>
-        </div>
-
-      ),
-      sorter: (a, b) => a.Employee.length - b.Employee.length,
-    },
-    {
-      title: "Status",
-      dataIndex: "Status",
-      render: (text) => (
-        <span className={`badge ${text === 'Present' ? "badge-success" : 'badge-danger'} d-inline-flex align-items-center badge-xs`}>
-          <i className="ti ti-point-filled me-1" />
-          {text}
-        </span>
-
-      ),
-      sorter: (a, b) => a.Status.length - b.Status.length,
-    },
-    {
-      title: "Clock In",
-      dataIndex: "Clock_In",
-      sorter: (a, b) => a.Clock_In.length - b.Clock_In.length,
-    },
-    {
-      title: "Clock Out",
-      dataIndex: "Clock_Out",
-      sorter: (a, b) => a.Clock_Out.length - b.Clock_Out.length,
-    },
-    {
-      title: "Production",
-      dataIndex: "Production",
-      sorter: (a, b) => a.Production.length - b.Production.length,
-    },
-    {
-      title: "Break",
-      dataIndex: "Break",
-      sorter: (a, b) => a.Break.length - b.Break.length,
-    },
-    {
-      title: "Overtime",
-      dataIndex: "Overtime",
-      sorter: (a, b) => a.Overtime.length - b.Overtime.length,
-    },
-    {
-      title: "Total Hours",
-      dataIndex: "Total_Hours",
-      sorter: (a, b) => a.Total_Hours.length - b.Total_Hours.length,
-    },
+    { title: "Employee", dataIndex: "EMP_Name" },
+    { title: "Date", dataIndex: "Date" },
+    { title: "Clock In", dataIndex: "Clock_In" },
+    { title: "Clock Out", dataIndex: "Clock_Out" },
+    { title: "Status", dataIndex: "Status", render: (text) => <span className={`badge ${text === "PRESENT" ? "bg-success" : "bg-warning"} badge-xs`}>{text}</span> },
   ];
 
   return (
-    <div>
-      <div className="page-wrapper">
-        <div className="content">
-          <div className="page-header">
-            <div className="add-item d-flex">
-              <div className="page-title">
-                <h4>Attendance</h4>
-                <h6>Manage your Attendance</h6>
-              </div>
-            </div>
-            <ul className="table-top-head">
-              <TooltipIcons />
-              <RefreshIcon />
-              <CollapesIcon />
-            </ul>
-          </div>
-          {/* /product list */}
-          <div className="card table-list-card">
-            <div className="card-header d-flex align-items-center justify-content-between flex-wrap row-gap-3">
-              <div className="search-set">
-              </div>
-              <div className="d-flex table-dropdown my-xl-auto right-content align-items-center flex-wrap row-gap-3">
-                <div className="me-2 date-select-small">
-                  <div className="input-addon-left position-relative">
-                    <DatePicker
-                      className="form-control datetimepicker"
-                      placeholder="dd/mm/yyyy"
-                    />
-                    <span className="cus-icon">
-                     <Calendar />
-                    </span>
-                  </div>
-                </div>
-                <div className="dropdown">
-                  <Link
-                    to="#"
-                    className="dropdown-toggle btn btn-white btn-md d-inline-flex align-items-center"
-                    data-bs-toggle="dropdown"
-                  >
-                    Select Status
-                  </Link>
-                  <ul className="dropdown-menu  dropdown-menu-end p-3">
-                    <li>
-                      <Link
-                        to="#"
-                        className="dropdown-item rounded-1"
-                      >
-                        Present
-                      </Link>
-                    </li>
-                    <li>
-                      <Link
-                        to="#"
-                        className="dropdown-item rounded-1"
-                      >
-                        Absent
-                      </Link>
-                    </li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-            <div className="card-body pb-0">
-              <div className="table-responsive">
-                <Table columns={columns} dataSource={dataSource} />
-              </div>
+    <div className="page-wrapper">
+      <div className="content">
+        <div className="page-header">
+          <div className="add-item d-flex">
+            <div className="page-title">
+              <h4>Attendance</h4>
+              <h6>Track staff attendance records</h6>
             </div>
           </div>
-          {/* /product list */}
-        </div>
-        <div className="footer d-sm-flex align-items-center justify-content-between border-top bg-white p-3">
-          <p className="mb-0">2014-2025 © DreamsPOS. All Right Reserved</p>
-          <p>
-            Designed &amp; Developed By{" "}
-            <Link to="#" className="text-primary">
-              Dreams
+          <ul className="table-top-head">
+            <TooltipIcons />
+            <RefreshIcon onClick={fetchData} />
+            <CollapesIcon />
+          </ul>
+          <div className="page-btn">
+            <Link to="#" className="btn btn-primary" data-bs-toggle="modal" data-bs-target="#mark-attendance">
+              <i className="ti ti-circle-plus me-1"></i> Mark Attendance
             </Link>
-          </p>
+          </div>
+        </div>
+
+        <div className="card table-list-card">
+          <div className="card-body">
+            <div className="table-responsive">
+              {loading && <div className="text-center py-5"><div className="spinner-border text-primary" /></div>}
+              {!loading && error && <div className="alert alert-danger">{error}</div>}
+              {!loading && !error && dataSource.length === 0 && <div className="text-center py-5 text-muted">No attendance records yet.</div>}
+              {!loading && !error && dataSource.length > 0 && <Table columns={columns} dataSource={dataSource} />}
+            </div>
+          </div>
         </div>
       </div>
+      <CommonFooter />
 
-      <AddAttendance />
-      <EditAttendance />
+      <div className="modal fade" id="mark-attendance">
+        <div className="modal-dialog modal-dialog-centered">
+          <div className="modal-content">
+            <div className="modal-header">
+              <div className="page-title"><h4>Mark Attendance</h4></div>
+              <button type="button" className="close bg-danger text-white fs-16 btn-close" data-bs-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+            </div>
+            <form onSubmit={handleMark}>
+              <div className="modal-body">
+                <div className="mb-3">
+                  <label className="form-label">Employee<span className="text-danger ms-1">*</span></label>
+                  <select className="form-select" value={form.employeeId} onChange={(e) => setForm({ ...form, employeeId: e.target.value })} required>
+                    <option value="">Select Employee</option>
+                    {employees.map((emp) => <option key={emp.id} value={emp.id}>{emp.firstName} {emp.lastName}</option>)}
+                  </select>
+                </div>
+                <div className="mb-3">
+                  <label className="form-label">Status</label>
+                  <select className="form-select" value={form.status} onChange={(e) => setForm({ ...form, status: e.target.value })}>
+                    <option value="PRESENT">Present</option>
+                    <option value="ABSENT">Absent</option>
+                    <option value="HALF_DAY">Half Day</option>
+                  </select>
+                </div>
+              </div>
+              <div className="modal-footer">
+                <button type="button" className="btn me-2 btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="submit" className="btn btn-primary" disabled={submitting}>{submitting ? "Saving..." : "Save"}</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };

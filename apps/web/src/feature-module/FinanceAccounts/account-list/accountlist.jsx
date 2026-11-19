@@ -1,19 +1,37 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import TooltipIcons from '../../../core/common/tooltip-content/tooltipIcons';
 import RefreshIcon from '../../../core/common/tooltip-content/refresh';
 import CollapesIcon from '../../../core/common/tooltip-content/collapes';
 import { PlusCircle } from 'feather-icons-react/build/IconComponents';
 import Table from "../../../core/pagination/datatable";
-import { account_list } from '../../../core/json/accountList';
-import { account_type } from '../../../core/json/accountType';
 import CommonFooter from '../../../core/common/footer/commonFooter';
 import { Link } from "react-router-dom";
 import AccountListModal from './accountListModal';
+import { apiClient } from '../../../core/apiClient';
 
 const Accountlist = () => {
+    const [dataSource, setDataSource] = useState([]);
+    const dataSource2 = [];
 
-    const dataSource = account_list;
-    const dataSource2 = account_type;
+    useEffect(() => {
+        apiClient.get('/finance/accounts')
+            .then((res) => {
+                if (res.data?.success && Array.isArray(res.data.data)) {
+                    setDataSource(res.data.data.map((a, idx) => ({
+                        key: a.id || idx,
+                        accountholder: a.name,
+                        accountno: a.accountNumber,
+                        type: a.type,
+                        openingbalance: `Rs ${Number(a.balance || 0).toFixed(2)}`,
+                        note: a.type,
+                        status: 'Active',
+                    })));
+                } else {
+                    setDataSource([]);
+                }
+            })
+            .catch(() => setDataSource([]));
+    }, []);
     const columns = [
         {
             title: "Account Holder Name",

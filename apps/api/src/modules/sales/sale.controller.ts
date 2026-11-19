@@ -59,6 +59,24 @@ export class SaleController {
     }
   }
 
+  async listReturns(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const companyId = req.user!.companyId;
+      const returns = await prisma.salesReturn.findMany({
+        where: { companyId },
+        take: 50,
+        orderBy: { createdAt: "desc" },
+        include: {
+          sale: { include: { customer: true } },
+          items: { include: { product: true } }
+        }
+      });
+      res.status(200).json({ success: true, data: returns });
+    } catch (err) {
+      next(err);
+    }
+  }
+
   async processReturn(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const companyId = req.user!.companyId;

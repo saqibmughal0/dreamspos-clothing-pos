@@ -1,64 +1,128 @@
-import React from 'react'
-import { useSelector } from 'react-redux';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
-import Table from '../../core/pagination/datatable'
+import Table from '../../core/pagination/datatable';
 import CommonFooter from '../../core/common/footer/commonFooter';
 import TooltipIcons from '../../core/common/tooltip-content/tooltipIcons';
 import RefreshIcon from '../../core/common/tooltip-content/refresh';
 import CollapesIcon from '../../core/common/tooltip-content/collapes';
-import ReactTagsInput from '../settings/reacttaginputs';
+import { apiClient } from '../../core/apiClient';
 
 const VariantAttributes = () => {
-  const dataSource = useSelector((state) => state.rootReducer.variantattributes_data);
+  const [dataSource, setDataSource] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [formState, setFormState] = useState({ id: null, name: '', values: '', isActive: true });
+  const [submitting, setSubmitting] = useState(false);
+  const [formError, setFormError] = useState(null);
+
+  const fetchAttributes = useCallback(() => {
+    setLoading(true);
+    setError(null);
+    apiClient.get('/catalog/variant-attributes')
+      .then((res) => {
+        const items = res.data?.data?.items || [];
+        setDataSource(items.map((a) => ({
+          id: a.id,
+          key: a.id,
+          variant: a.name,
+          values: a.values,
+          createdon: new Date(a.createdAt).toLocaleDateString('en-PK'),
+          status: a.isActive ? 'Active' : 'Inactive',
+          isActive: a.isActive,
+        })));
+      })
+      .catch((err) => {
+        setError(err?.response?.data?.message || err?.message || 'Failed to load variant attributes');
+        setDataSource([]);
+      })
+      .finally(() => setLoading(false));
+  }, []);
+
+  useEffect(() => {
+    fetchAttributes();
+  }, [fetchAttributes]);
+
+  const handleSave = async (e, isEdit = false) => {
+    e.preventDefault();
+    if (!formState.name.trim() || !formState.values.trim()) {
+      setFormError('Attribute name and values are required.');
+      return;
+    }
+    setSubmitting(true);
+    setFormError(null);
+    try {
+      const payload = { name: formState.name, values: formState.values, isActive: formState.isActive };
+      if (isEdit && formState.id) {
+        await apiClient.put(`/catalog/variant-attributes/${formState.id}`, payload);
+      } else {
+        await apiClient.post('/catalog/variant-attributes', payload);
+      }
+      setFormState({ id: null, name: '', values: '', isActive: true });
+      document.querySelector(isEdit ? '#edit-units .btn-close' : '#add-units .btn-close')?.click();
+      fetchAttributes();
+    } catch (err) {
+      setFormError(err?.response?.data?.message || err?.message || 'Failed to save variant attribute');
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const handleDelete = async (id) => {
+    try {
+      await apiClient.delete(`/catalog/variant-attributes/${id}`);
+      fetchAttributes();
+    } catch (err) {
+      setError(err?.response?.data?.message || err?.message || 'Failed to delete variant attribute');
+    }
+  };
+
+  const filteredData = dataSource.filter((item) =>
+    !searchTerm.trim() ||
+    item.variant.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    item.values.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   const columns = [
+    { title: 'Variant', dataIndex: 'variant', sorter: (a, b) => a.variant.localeCompare(b.variant) },
+    { title: 'Values', dataIndex: 'values' },
+    { title: 'Created On', dataIndex: 'createdon' },
     {
-      title: "Variant",
-      dataIndex: "variant",
-      sorter: (a, b) => a.variant.length - b.variant.length,
-    },
-    {
-      title: "Values",
-      dataIndex: "values",
-      sorter: (a, b) => a.values.length - b.values.length,
-    },
-
-
-    {
-      title: "Created On",
-      dataIndex: "createdon",
-      sorter: (a, b) => a.createdon.length - b.createdon.length,
-    },
-
-    {
-      title: "Status",
-      dataIndex: "status",
+      title: 'Status',
+      dataIndex: 'status',
       render: (text) => (
-        <span className="badge table-badge bg-success fw-medium fs-10">
+        <span className={`badge table-badge ${text === 'Active' ? 'bg-success' : 'bg-secondary'} fw-medium fs-10`}>
           {text}
         </span>
       ),
-      sorter: (a, b) => a.status.length - b.status.length,
     },
-
     {
       title: '',
       dataIndex: 'actions',
       key: 'actions',
-      render: () => (
+      render: (_, record) => (
         <div className="action-table-data">
           <div className="edit-delete-action">
-            <Link className="me-2 p-2" to="#" data-bs-toggle="modal" data-bs-target="#edit-units">
+            <Link
+              className="me-2 p-2"
+              to="#"
+              data-bs-toggle="modal"
+              data-bs-target="#edit-units"
+              onClick={() => {
+                setFormError(null);
+                setFormState({ id: record.id, name: record.variant, values: record.values, isActive: record.isActive });
+              }}
+            >
               <i data-feather="edit" className="feather-edit"></i>
             </Link>
-            <Link to="#" data-bs-toggle="modal" data-bs-target="#delete-modal" className="p-2"  >
-              <i data-feather="trash-2" className="feather-trash-2" ></i>
+            <Link to="#" className="p-2" onClick={() => handleDelete(record.id)}>
+              <i data-feather="trash-2" className="feather-trash-2"></i>
             </Link>
           </div>
         </div>
-      )
+      ),
     },
-  ]
+  ];
 
   return (
     <>
@@ -68,12 +132,12 @@ const VariantAttributes = () => {
             <div className="add-item d-flex">
               <div className="page-title">
                 <h4 className="fw-bold">Variant Attributes</h4>
-                <h6>Manage your variant attributes</h6>
+                <h6>Manage clothing sizes, colors, and fabric attributes</h6>
               </div>
             </div>
             <ul className="table-top-head">
               <TooltipIcons />
-              <RefreshIcon />
+              <RefreshIcon onClick={fetchAttributes} />
               <CollapesIcon />
             </ul>
             <div className="page-btn">
@@ -82,246 +146,131 @@ const VariantAttributes = () => {
                 className="btn btn-primary"
                 data-bs-toggle="modal"
                 data-bs-target="#add-units"
+                onClick={() => {
+                  setFormError(null);
+                  setFormState({ id: null, name: '', values: '', isActive: true });
+                }}
               >
-                <i className='ti ti-circle-plus me-1'></i> Add Variant
+                <i className="ti ti-circle-plus me-1"></i>
+                Add Variant
               </Link>
             </div>
           </div>
-          {/* /product list */}
+
           <div className="card table-list-card">
             <div className="card-header d-flex align-items-center justify-content-between flex-wrap row-gap-3">
               <div className="search-set">
-              </div>
-              <div className="d-flex table-dropdown my-xl-auto right-content align-items-center flex-wrap row-gap-3">
-      
-                <div className="dropdown me-2">
-                  <Link
-                    to="#"
-                    className="dropdown-toggle btn btn-white btn-md d-inline-flex align-items-center"
-                    data-bs-toggle="dropdown"
-                  >
-                    Status
-                  </Link>
-                  <ul className="dropdown-menu  dropdown-menu-end p-3">
-                    <li>
-                      <Link
-                        to="#"
-                        className="dropdown-item rounded-1"
-                      >
-                        Active
-                      </Link>
-                    </li>
-                    <li>
-                      <Link
-                        to="#"
-                        className="dropdown-item rounded-1"
-                      >
-                        Inactive
-                      </Link>
-                    </li>
-                  </ul>
+                <div className="search-input">
+                  <input
+                    type="text"
+                    className="form-control form-control-sm"
+                    placeholder="Search attributes..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                  />
                 </div>
               </div>
             </div>
             <div className="card-body">
               <div className="table-responsive">
-                <Table columns={columns} dataSource={dataSource} />
+                {loading && (
+                  <div className="text-center py-5">
+                    <div className="spinner-border text-primary" role="status" />
+                    <p className="mt-2 text-muted">Loading variant attributes...</p>
+                  </div>
+                )}
+                {!loading && error && (
+                  <div className="text-center py-5">
+                    <i className="ti ti-alert-triangle fs-40 text-danger mb-2 d-block" />
+                    <h5 className="text-danger">Could not load variant attributes</h5>
+                    <p className="text-muted">{error}</p>
+                    <button className="btn btn-primary btn-sm" onClick={fetchAttributes}>Retry</button>
+                  </div>
+                )}
+                {!loading && !error && filteredData.length === 0 && (
+                  <div className="text-center py-5">
+                    <i className="ti ti-checklist fs-40 text-muted mb-2 d-block" />
+                    <h5 className="text-muted">No variant attributes found</h5>
+                    <p className="text-muted">Add attributes like Size (S, M, L, XL) or Color (Black, White, Navy).</p>
+                  </div>
+                )}
+                {!loading && !error && filteredData.length > 0 && (
+                  <Table columns={columns} dataSource={filteredData} />
+                )}
               </div>
             </div>
           </div>
-          {/* /product list */}
         </div>
         <CommonFooter />
       </div>
-      <>
-        {/* Add Unit */}
-        <div className="modal fade" id="add-units">
-          <div className="modal-dialog modal-dialog-centered">
-            <div className="modal-content">
-              <div className="page-wrapper-new p-0">
-                <div className="content">
-                  <div className="modal-header">
-                    <div className="page-title">
-                      <h4>Add Variant</h4>
-                    </div>
-                    <button
-                      type="button"
-                      className="close bg-danger text-white fs-16"
-                      data-bs-dismiss="modal"
-                      aria-label="Close"
-                    >
-                      <span aria-hidden="true">×</span>
-                    </button>
-                  </div>
-                  <div className="modal-body custom-modal-bodys">
-                    <form>
-                      <div className="mb-3">
-                        <label className="form-label">
-                          Variant<span className="text-danger ms-1">*</span>
-                        </label>
-                        <input type="text" className="form-control" />
-                      </div>
-                      <div className="mb-3">
-                        <label className="form-label">
-                          Values<span className="text-danger ms-1">*</span>
-                        </label>
-                        <ReactTagsInput />
-                        <span className="tag-text mt-2 d-flex">
-                          Enter value separated by comma
-                        </span>
-                      </div>
-                      <div className="mb-0 mt-4">
-                        <div className="status-toggle modal-status d-flex justify-content-between align-items-center">
-                          <span className="status-label">Status</span>
-                          <input
-                            type="checkbox"
-                            id="user2"
-                            className="check"
-                            defaultChecked
-                          />
-                          <label htmlFor="user2" className="checktoggle" />
-                        </div>
-                      </div>
-                    </form>
-                  </div>
-                  <div className="modal-footer">
-                    <button
-                      type="button"
-                      className="btn me-2 btn-secondary fs-13 fw-medium p-2 px-3 shadow-none"
-                      data-bs-dismiss="modal"
-                    >
-                      Cancel
-                    </button>
-                    <Link
-                      to="#"
-                      className="btn btn-primary fs-13 fw-medium p-2 px-3"
-                      data-bs-dismiss="modal"
-                    >
-                      Add Variant
-                    </Link>
-                  </div>
+
+      {/* Add Variant Modal */}
+      <div className="modal fade" id="add-units">
+        <div className="modal-dialog modal-dialog-centered">
+          <div className="modal-content">
+            <div className="modal-header">
+              <div className="page-title"><h4>Add Variant Attribute</h4></div>
+              <button type="button" className="close bg-danger text-white fs-16 btn-close" data-bs-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">×</span>
+              </button>
+            </div>
+            <form onSubmit={(e) => handleSave(e, false)}>
+              <div className="modal-body">
+                {formError && <div className="alert alert-danger py-2">{formError}</div>}
+                <div className="mb-3">
+                  <label className="form-label">Attribute Name<span className="text-danger ms-1">*</span></label>
+                  <input type="text" className="form-control" placeholder="e.g., Size, Color" value={formState.name} onChange={(e) => setFormState({ ...formState, name: e.target.value })} required />
+                </div>
+                <div className="mb-3">
+                  <label className="form-label">Values (comma separated)<span className="text-danger ms-1">*</span></label>
+                  <input type="text" className="form-control" placeholder="e.g., S, M, L, XL, XXL" value={formState.values} onChange={(e) => setFormState({ ...formState, values: e.target.value })} required />
                 </div>
               </div>
-            </div>
+              <div className="modal-footer">
+                <button type="button" className="btn me-2 btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="submit" className="btn btn-primary" disabled={submitting}>
+                  {submitting ? 'Saving...' : 'Add Variant'}
+                </button>
+              </div>
+            </form>
           </div>
         </div>
-        {/* /Add Unit */}
-        {/* Edit Unit */}
-        <div className="modal fade" id="edit-units">
-          <div className="modal-dialog modal-dialog-centered">
-            <div className="modal-content">
-              <div className="page-wrapper-new p-0">
-                <div className="content">
-                  <div className="modal-header">
-                    <div className="page-title">
-                      <h4>Edit Variant </h4>
-                    </div>
-                    <button
-                      type="button"
-                      className="close bg-danger text-white fs-16"
-                      data-bs-dismiss="modal"
-                      aria-label="Close"
-                    >
-                      <span aria-hidden="true">×</span>
-                    </button>
-                  </div>
-                  <div className="modal-body">
-                    <form>
-                      <div className="mb-3">
-                        <label className="form-label">
-                          Variant<span className="text-danger ms-1">*</span>
-                        </label>
-                        <input
-                          type="text"
-                          className="form-control"
-                          defaultValue="Size"
-                        />
-                      </div>
-                      <div className="mb-3">
-                        <label className="form-label">
-                          Values<span className="text-danger ms-1">*</span>
-                        </label>
-                        <ReactTagsInput />
-                        <span className="tag-text mt-2 d-flex">
-                          Enter value separated by comma
-                        </span>
-                      </div>
-                      <div className="mb-0 mt-3">
-                        <div className="status-toggle modal-status d-flex justify-content-between align-items-center">
-                          <span className="status-label">Status</span>
-                          <input
-                            type="checkbox"
-                            id="user3"
-                            className="check"
-                            defaultChecked
-                          />
-                          <label htmlFor="user3" className="checktoggle" />
-                        </div>
-                      </div>
-                    </form>
-                  </div>
-                  <div className="modal-footer">
-                    <button
-                      type="button"
-                      className="btn me-2 btn-secondary fs-13 fw-medium p-2 px-3 shadow-none"
-                      data-bs-dismiss="modal"
-                    >
-                      Cancel
-                    </button>
-                    <Link
-                      to="#"
-                      className="btn btn-primary fs-13 fw-medium p-2 px-3"
-                      data-bs-dismiss="modal"
-                    >
-                      Save Changes
-                    </Link>
-                  </div>
+      </div>
+
+      {/* Edit Variant Modal */}
+      <div className="modal fade" id="edit-units">
+        <div className="modal-dialog modal-dialog-centered">
+          <div className="modal-content">
+            <div className="modal-header">
+              <div className="page-title"><h4>Edit Variant Attribute</h4></div>
+              <button type="button" className="close bg-danger text-white fs-16 btn-close" data-bs-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">×</span>
+              </button>
+            </div>
+            <form onSubmit={(e) => handleSave(e, true)}>
+              <div className="modal-body">
+                {formError && <div className="alert alert-danger py-2">{formError}</div>}
+                <div className="mb-3">
+                  <label className="form-label">Attribute Name<span className="text-danger ms-1">*</span></label>
+                  <input type="text" className="form-control" value={formState.name} onChange={(e) => setFormState({ ...formState, name: e.target.value })} required />
+                </div>
+                <div className="mb-3">
+                  <label className="form-label">Values (comma separated)<span className="text-danger ms-1">*</span></label>
+                  <input type="text" className="form-control" value={formState.values} onChange={(e) => setFormState({ ...formState, values: e.target.value })} required />
                 </div>
               </div>
-            </div>
+              <div className="modal-footer">
+                <button type="button" className="btn me-2 btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="submit" className="btn btn-primary" disabled={submitting}>
+                  {submitting ? 'Saving...' : 'Save Changes'}
+                </button>
+              </div>
+            </form>
           </div>
         </div>
-        {/* /Edit Unit */}
-        <>
-          {/* delete modal */}
-          <div className="modal fade" id="delete-modal">
-            <div className="modal-dialog modal-dialog-centered">
-              <div className="modal-content">
-                <div className="page-wrapper-new p-0">
-                  <div className="content p-5 px-3 text-center">
-                    <span className="rounded-circle d-inline-flex p-2 bg-danger-transparent mb-2">
-                      <i className="ti ti-trash fs-24 text-danger" />
-                    </span>
-                    <h4 className="fs-20 fw-bold mb-2 mt-1">Delete Variant</h4>
-                    <p className="mb-0 fs-16">
-                      Are you sure you want to delete variant?
-                    </p>
-                    <div className="modal-footer-btn mt-3 d-flex justify-content-center">
-                      <button
-                        type="button"
-                        className="btn me-2 btn-secondary fs-13 fw-medium p-2 px-3 shadow-none"
-                        data-bs-dismiss="modal"
-                      >
-                        Cancel
-                      </button>
-                      <button
-                        type="button"
-                        className="btn btn-primary fs-13 fw-medium p-2 px-3" data-bs-dismiss="modal"
-                      >
-                        Yes Delete
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </>
-
-      </>
-
+      </div>
     </>
-  )
-}
+  );
+};
 
-export default VariantAttributes
+export default VariantAttributes;

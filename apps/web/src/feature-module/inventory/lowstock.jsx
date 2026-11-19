@@ -1,7 +1,6 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import ImageWithBasePath from "../../core/img/imagewithbasebath";
-import { useSelector } from "react-redux";
 import EditLowStock from "../../core/modals/inventory/editlowstock";
 import Table from "../../core/pagination/datatable";
 import TooltipIcons from "../../core/common/tooltip-content/tooltipIcons";
@@ -9,10 +8,53 @@ import RefreshIcon from "../../core/common/tooltip-content/refresh";
 import CollapesIcon from "../../core/common/tooltip-content/collapes";
 import CommonFooter from "../../core/common/footer/commonFooter";
 import CommonDeleteModal from "../../core/common/modal/commonDeleteModal";
+import { apiClient } from "../../core/apiClient";
 
 const LowStock = () => {
+  const [lowStockData, setLowStockData] = useState([]);
+  const [outOfStockData, setOutOfStockData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  const dataSource = useSelector((state) => state.rootReducer.lowstock_data);
+  const fetchLowStock = () => {
+    setLoading(true);
+    setError(null);
+    apiClient.get("/inventory/low-stock")
+      .then((res) => {
+        if (res.data?.success && res.data.data) {
+          const { lowStockItems = [], outOfStockItems = [] } = res.data.data;
+          const mapItem = (item, idx) => ({
+            key: item.variantId || item.id || idx,
+            warehouse: "Main Warehouse",
+            store: "MR Bilal POS",
+            product: item.name,
+            img: "assets/img/products/pos-product-01.png",
+            category: item.category || "Apparel",
+            sku: item.sku || "—",
+            qty: String(item.stockQuantity),
+            qtyalert: String(item.alertQuantity),
+            status: item.status,
+          });
+          setLowStockData(lowStockItems.map(mapItem));
+          setOutOfStockData(outOfStockItems.map(mapItem));
+        } else {
+          setLowStockData([]);
+          setOutOfStockData([]);
+        }
+      })
+      .catch((err) => {
+        setError(err.message || "Failed to load low stock alerts");
+        setLowStockData([]);
+        setOutOfStockData([]);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  };
+
+  useEffect(() => {
+    fetchLowStock();
+  }, []);
 
   const columns = [
     {
@@ -193,31 +235,7 @@ const LowStock = () => {
                               to="#"
                               className="dropdown-item rounded-1"
                             >
-                              Lenovo IdeaPad 3
-                            </Link>
-                          </li>
-                          <li>
-                            <Link
-                              to="#"
-                              className="dropdown-item rounded-1"
-                            >
-                              Beats Pro{" "}
-                            </Link>
-                          </li>
-                          <li>
-                            <Link
-                              to="#"
-                              className="dropdown-item rounded-1"
-                            >
-                              Nike Jordan
-                            </Link>
-                          </li>
-                          <li>
-                            <Link
-                              to="#"
-                              className="dropdown-item rounded-1"
-                            >
-                              Apple Series 5 Watch
+                              All Warehouses
                             </Link>
                           </li>
                         </ul>
@@ -236,31 +254,7 @@ const LowStock = () => {
                               to="#"
                               className="dropdown-item rounded-1"
                             >
-                              James Kirwin
-                            </Link>
-                          </li>
-                          <li>
-                            <Link
-                              to="#"
-                              className="dropdown-item rounded-1"
-                            >
-                              Francis Chang
-                            </Link>
-                          </li>
-                          <li>
-                            <Link
-                              to="#"
-                              className="dropdown-item rounded-1"
-                            >
-                              Antonio Engle
-                            </Link>
-                          </li>
-                          <li>
-                            <Link
-                              to="#"
-                              className="dropdown-item rounded-1"
-                            >
-                              Leo Kelly
+                              All Stores
                             </Link>
                           </li>
                         </ul>
@@ -279,7 +273,7 @@ const LowStock = () => {
                               to="#"
                               className="dropdown-item rounded-1"
                             >
-                              Computers
+                              All Categories
                             </Link>
                           </li>
                           <li>
@@ -287,7 +281,7 @@ const LowStock = () => {
                               to="#"
                               className="dropdown-item rounded-1"
                             >
-                              Electronics
+                              
                             </Link>
                           </li>
                           <li>
@@ -295,7 +289,7 @@ const LowStock = () => {
                               to="#"
                               className="dropdown-item rounded-1"
                             >
-                              Shoe
+                              
                             </Link>
                           </li>
                           <li>
@@ -303,7 +297,7 @@ const LowStock = () => {
                               to="#"
                               className="dropdown-item rounded-1"
                             >
-                              Electronics
+                              
                             </Link>
                           </li>
                         </ul>
@@ -322,7 +316,7 @@ const LowStock = () => {
                               to="#"
                               className="dropdown-item rounded-1"
                             >
-                              Lenovo
+                              All Products
                             </Link>
                           </li>
                           <li>
@@ -330,7 +324,7 @@ const LowStock = () => {
                               to="#"
                               className="dropdown-item rounded-1"
                             >
-                              Beats
+                              
                             </Link>
                           </li>
                           <li>
@@ -338,7 +332,7 @@ const LowStock = () => {
                               to="#"
                               className="dropdown-item rounded-1"
                             >
-                              Nike
+                              
                             </Link>
                           </li>
                           <li>
@@ -346,7 +340,7 @@ const LowStock = () => {
                               to="#"
                               className="dropdown-item rounded-1"
                             >
-                              Apple
+                              
                             </Link>
                           </li>
                         </ul>
@@ -356,7 +350,29 @@ const LowStock = () => {
                   </div>
                   <div className="card-body">
                     <div className="table-responsive">
-                      <Table columns={columns} dataSource={dataSource} />
+                      {loading && (
+                        <div className="text-center py-5">
+                          <div className="spinner-border text-primary" role="status" />
+                          <p className="mt-2 text-muted">Checking low stock levels...</p>
+                        </div>
+                      )}
+                      {!loading && error && (
+                        <div className="text-center py-5">
+                          <i className="ti ti-alert-triangle fs-40 text-danger mb-2 d-block" />
+                          <h5 className="text-danger">Could not load stock alerts</h5>
+                          <p className="text-muted">{error}</p>
+                        </div>
+                      )}
+                      {!loading && !error && lowStockData.length === 0 && (
+                        <div className="text-center py-5">
+                          <i className="ti ti-package-off fs-40 text-success mb-2 d-block" />
+                          <h5 className="text-success">All items adequately stocked</h5>
+                          <p className="text-muted">No products have reached low stock alert thresholds.</p>
+                        </div>
+                      )}
+                      {!loading && !error && lowStockData.length > 0 && (
+                        <Table columns={columns} dataSource={lowStockData} />
+                      )}
                     </div>
                   </div>
                 </div>
@@ -389,31 +405,7 @@ const LowStock = () => {
                               to="#"
                               className="dropdown-item rounded-1"
                             >
-                              Lenovo IdeaPad 3
-                            </Link>
-                          </li>
-                          <li>
-                            <Link
-                              to="#"
-                              className="dropdown-item rounded-1"
-                            >
-                              Beats Pro{" "}
-                            </Link>
-                          </li>
-                          <li>
-                            <Link
-                              to="#"
-                              className="dropdown-item rounded-1"
-                            >
-                              Nike Jordan
-                            </Link>
-                          </li>
-                          <li>
-                            <Link
-                              to="#"
-                              className="dropdown-item rounded-1"
-                            >
-                              Apple Series 5 Watch
+                              All Warehouses
                             </Link>
                           </li>
                         </ul>
@@ -432,31 +424,7 @@ const LowStock = () => {
                               to="#"
                               className="dropdown-item rounded-1"
                             >
-                              James Kirwin
-                            </Link>
-                          </li>
-                          <li>
-                            <Link
-                              to="#"
-                              className="dropdown-item rounded-1"
-                            >
-                              Francis Chang
-                            </Link>
-                          </li>
-                          <li>
-                            <Link
-                              to="#"
-                              className="dropdown-item rounded-1"
-                            >
-                              Antonio Engle
-                            </Link>
-                          </li>
-                          <li>
-                            <Link
-                              to="#"
-                              className="dropdown-item rounded-1"
-                            >
-                              Leo Kelly
+                              All Stores
                             </Link>
                           </li>
                         </ul>
@@ -475,7 +443,7 @@ const LowStock = () => {
                               to="#"
                               className="dropdown-item rounded-1"
                             >
-                              Computers
+                              All Categories
                             </Link>
                           </li>
                           <li>
@@ -483,7 +451,7 @@ const LowStock = () => {
                               to="#"
                               className="dropdown-item rounded-1"
                             >
-                              Electronics
+                              
                             </Link>
                           </li>
                           <li>
@@ -491,7 +459,7 @@ const LowStock = () => {
                               to="#"
                               className="dropdown-item rounded-1"
                             >
-                              Shoe
+                              
                             </Link>
                           </li>
                           <li>
@@ -499,7 +467,7 @@ const LowStock = () => {
                               to="#"
                               className="dropdown-item rounded-1"
                             >
-                              Electronics
+                              
                             </Link>
                           </li>
                         </ul>
@@ -518,7 +486,7 @@ const LowStock = () => {
                               to="#"
                               className="dropdown-item rounded-1"
                             >
-                              Lenovo
+                              All Products
                             </Link>
                           </li>
                           <li>
@@ -526,7 +494,7 @@ const LowStock = () => {
                               to="#"
                               className="dropdown-item rounded-1"
                             >
-                              Beats
+                              
                             </Link>
                           </li>
                           <li>
@@ -534,7 +502,7 @@ const LowStock = () => {
                               to="#"
                               className="dropdown-item rounded-1"
                             >
-                              Nike
+                              
                             </Link>
                           </li>
                           <li>
@@ -542,7 +510,7 @@ const LowStock = () => {
                               to="#"
                               className="dropdown-item rounded-1"
                             >
-                              Apple
+                              
                             </Link>
                           </li>
                         </ul>
@@ -602,7 +570,29 @@ const LowStock = () => {
                   </div>
                   <div className="card-body">
                     <div className="table-responsive">
-                      <Table columns={columns} dataSource={dataSource} />
+                      {loading && (
+                        <div className="text-center py-5">
+                          <div className="spinner-border text-primary" role="status" />
+                          <p className="mt-2 text-muted">Checking out of stock items...</p>
+                        </div>
+                      )}
+                      {!loading && error && (
+                        <div className="text-center py-5">
+                          <i className="ti ti-alert-triangle fs-40 text-danger mb-2 d-block" />
+                          <h5 className="text-danger">Could not load out of stock items</h5>
+                          <p className="text-muted">{error}</p>
+                        </div>
+                      )}
+                      {!loading && !error && outOfStockData.length === 0 && (
+                        <div className="text-center py-5">
+                          <i className="ti ti-circle-check fs-40 text-success mb-2 d-block" />
+                          <h5 className="text-success">No items out of stock</h5>
+                          <p className="text-muted">Every active product has inventory available.</p>
+                        </div>
+                      )}
+                      {!loading && !error && outOfStockData.length > 0 && (
+                        <Table columns={columns} dataSource={outOfStockData} />
+                      )}
                     </div>
                   </div>
                 </div>
