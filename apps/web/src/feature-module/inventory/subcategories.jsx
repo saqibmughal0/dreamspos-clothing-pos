@@ -1,86 +1,132 @@
-import React, { useState } from "react";
-import ImageWithBasePath from "../../core/img/imagewithbasebath";
+import React, { useState, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
-import { useSelector } from "react-redux";
 import Table from "../../core/pagination/datatable";
-import CommonFooter from "../../core/common/footer/commonFooter";
 import TooltipIcons from "../../core/common/tooltip-content/tooltipIcons";
 import RefreshIcon from "../../core/common/tooltip-content/refresh";
 import CollapesIcon from "../../core/common/tooltip-content/collapes";
-import {  X } from "feather-icons-react/build/IconComponents";
-import { Category } from "../../core/common/selectOption/selectOption";
-import DefaultEditor from "react-simple-wysiwyg";
-import Select from "react-select";
-import CommonDeleteModal from "../../core/common/modal/commonDeleteModal";
+import CommonFooter from "../../core/common/footer/commonFooter";
+import { apiClient } from "../../core/apiClient";
 
 const SubCategories = () => {
-  const dataSource = useSelector((state) => state.rootReducer.subcategory_data);
+  const [dataSource, setDataSource] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [formState, setFormState] = useState({ id: null, categoryId: "", name: "", code: "", description: "" });
+  const [submitting, setSubmitting] = useState(false);
+  const [formError, setFormError] = useState(null);
+
+  const fetchData = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const [subRes, catRes] = await Promise.all([
+        apiClient.get("/catalog/subcategories"),
+        apiClient.get("/catalog/categories")
+      ]);
+      const items = subRes.data?.data?.items || [];
+      setCategories(catRes.data?.data?.items || []);
+      setDataSource(items.map((s) => ({
+        id: s.id,
+        key: s.id,
+        categoryId: s.categoryId,
+        category: s.category?.name || "—",
+        parentcategory: s.category?.name || "—",
+        subcategory: s.name,
+        categorycode: s.code,
+        description: s.description || "—",
+        status: "Active",
+      })));
+    } catch (err) {
+      setError(err?.response?.data?.message || err?.message || "Failed to load sub-categories");
+      setDataSource([]);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+
+  const handleSave = async (e, isEdit = false) => {
+    e.preventDefault();
+    if (!formState.categoryId || !formState.name.trim()) {
+      setFormError("Parent category and sub-category name are required.");
+      return;
+    }
+    setSubmitting(true);
+    setFormError(null);
+    try {
+      const payload = {
+        categoryId: formState.categoryId,
+        name: formState.name,
+        code: formState.code || undefined,
+        description: formState.description || undefined,
+      };
+      if (isEdit && formState.id) {
+        await apiClient.put(`/catalog/subcategories/${formState.id}`, payload);
+      } else {
+        await apiClient.post("/catalog/subcategories", payload);
+      }
+      setFormState({ id: null, categoryId: "", name: "", code: "", description: "" });
+      document.querySelector(isEdit ? "#edit-subcategory .btn-close" : "#add-subcategory .btn-close")?.click();
+      fetchData();
+    } catch (err) {
+      setFormError(err?.response?.data?.message || err?.message || "Failed to save sub-category");
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const handleDelete = async (id) => {
+    try {
+      await apiClient.delete(`/catalog/subcategories/${id}`);
+      fetchData();
+    } catch (err) {
+      setError(err?.response?.data?.message || err?.message || "Failed to delete sub-category");
+    }
+  };
+
+  const filteredData = dataSource.filter((item) =>
+    !searchTerm.trim() ||
+    item.subcategory.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    item.category.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   const columns = [
-    {
-      title: "Image",
-      dataIndex: "logo",
-      render: (text, record) => (
-        <span className="productimgname">
-          <Link to="#" className="product-img stock-img">
-            <ImageWithBasePath alt="" src={record.img} />
-          </Link>
-        </span>
-      ),
-      sorter: (a, b) => a.category.length - b.category.length,
-    },
-    {
-      title: "Sub Category",
-      dataIndex: "parentcategory",
-      sorter: (a, b) => a.parentcategory.length - b.parentcategory.length,
-    },
-    {
-      title: "Category",
-      dataIndex: "category",
-      sorter: (a, b) => a.category.length - b.category.length,
-    },
-
-    {
-      title: "Category Code",
-      dataIndex: "categorycode",
-      sorter: (a, b) => a.categorycode.length - b.categorycode.length,
-    },
-    {
-      title: "Description",
-      dataIndex: "description",
-      sorter: (a, b) => a.description.length - b.description.length,
-    },
-    {
-      title: "Status",
-      dataIndex: "status",
-      render: (text) => (
-        <span className="badge bg-success fw-medium fs-10">
-          {text}
-        </span>
-      ),
-      sorter: (a, b) => a.createdby.length - b.createdby.length,
-    },
-
+    { title: "Category", dataIndex: "category", sorter: (a, b) => a.category.localeCompare(b.category) },
+    { title: "Sub Category", dataIndex: "subcategory", sorter: (a, b) => a.subcategory.localeCompare(b.subcategory) },
+    { title: "Category Code", dataIndex: "categorycode" },
+    { title: "Description", dataIndex: "description" },
     {
       title: "",
       dataIndex: "actions",
       key: "actions",
-      render: () => (
+      render: (_, record) => (
         <div className="action-table-data">
           <div className="edit-delete-action">
             <Link
               className="me-2 p-2"
               to="#"
               data-bs-toggle="modal"
-              data-bs-target="#edit-category"
+              data-bs-target="#edit-subcategory"
+              onClick={() => {
+                setFormError(null);
+                setFormState({
+                  id: record.id,
+                  categoryId: record.categoryId,
+                  name: record.subcategory,
+                  code: record.categorycode || "",
+                  description: record.description === "—" ? "" : record.description,
+                });
+              }}
             >
-              <i data-feather="edit" className="feather-edit"></i>
+              <i data-feather="edit" className="feather-edit" />
             </Link>
-            <Link data-bs-toggle="modal" data-bs-target="#delete-modal" className="p-2" to="#">
-              <i
-                data-feather="trash-2"
-                className="feather-trash-2"
-              ></i>
+            <Link className="p-2" to="#" onClick={() => handleDelete(record.id)}>
+              <i data-feather="trash-2" className="feather-trash-2" />
             </Link>
           </div>
         </div>
@@ -88,25 +134,20 @@ const SubCategories = () => {
     },
   ];
 
-  const [values, setValue] = useState();
-  function onChange(e) {
-    setValue(e.target.value);
-  }
-
   return (
-    <>
+    <div>
       <div className="page-wrapper">
         <div className="content">
           <div className="page-header">
             <div className="add-item d-flex">
               <div className="page-title">
                 <h4 className="fw-bold">Sub Category</h4>
-                <h6>Manage your sub categories</h6>
+                <h6>Manage your clothing sub-categories</h6>
               </div>
             </div>
             <ul className="table-top-head">
               <TooltipIcons />
-              <RefreshIcon />
+              <RefreshIcon onClick={fetchData} />
               <CollapesIcon />
             </ul>
             <div className="page-btn">
@@ -114,322 +155,199 @@ const SubCategories = () => {
                 to="#"
                 className="btn btn-primary"
                 data-bs-toggle="modal"
-                data-bs-target="#add-category"
+                data-bs-target="#add-subcategory"
+                onClick={() => {
+                  setFormError(null);
+                  setFormState({ id: null, categoryId: categories[0]?.id || "", name: "", code: "", description: "" });
+                }}
               >
-               <i className='ti ti-circle-plus me-1'></i>  Add Sub Category
+                <i className="ti ti-circle-plus me-1"></i>
+                Add Sub Category
               </Link>
             </div>
           </div>
-          {/* /product list */}
+
           <div className="card table-list-card">
             <div className="card-header d-flex align-items-center justify-content-between flex-wrap row-gap-3">
               <div className="search-set">
-
-              </div>
-              <div className="d-flex table-dropdown my-xl-auto right-content align-items-center flex-wrap row-gap-3">
-                <div className="dropdown me-2">
-                  <Link
-                    to="#"
-                    className="dropdown-toggle btn btn-white btn-md d-inline-flex align-items-center"
-                    data-bs-toggle="dropdown"
-                  >
-                    Category
-                  </Link>
-                  <ul className="dropdown-menu  dropdown-menu-end p-3">
-                    <li>
-                      <Link to="#" className="dropdown-item rounded-1">
-                        Computers
-                      </Link>
-                    </li>
-                    <li>
-                      <Link to="#" className="dropdown-item rounded-1">
-                        Electronics
-                      </Link>
-                    </li>
-                    <li>
-                      <Link to="#" className="dropdown-item rounded-1">
-                        Shoe
-                      </Link>
-                    </li>
-                    <li>
-                      <Link to="#" className="dropdown-item rounded-1">
-                        Electronics
-                      </Link>
-                    </li>
-                  </ul>
+                <div className="search-input">
+                  <input
+                    type="text"
+                    className="form-control form-control-sm"
+                    placeholder="Search sub-categories..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                  />
                 </div>
-
-                <div className="dropdown me-2">
-                  <Link
-                    to="#"
-                    className="dropdown-toggle btn btn-white btn-md d-inline-flex align-items-center"
-                    data-bs-toggle="dropdown"
-                  >
-                    Status
-                  </Link>
-                  <ul className="dropdown-menu  dropdown-menu-end p-3">
-                    <li>
-                      <Link
-                        to="#"
-                        className="dropdown-item rounded-1"
-                      >
-                        Active
-                      </Link>
-                    </li>
-                    <li>
-                      <Link
-                        to="#"
-                        className="dropdown-item rounded-1"
-                      >
-                        Inactive
-                      </Link>
-                    </li>
-                  </ul>
-                </div>
-
               </div>
             </div>
             <div className="card-body">
-              <div className="table-responsive sub-category-table">
-                <Table columns={columns} dataSource={dataSource} />
+              <div className="table-responsive">
+                {loading && (
+                  <div className="text-center py-5">
+                    <div className="spinner-border text-primary" role="status" />
+                    <p className="mt-2 text-muted">Loading sub-categories...</p>
+                  </div>
+                )}
+                {!loading && error && (
+                  <div className="text-center py-5">
+                    <i className="ti ti-alert-triangle fs-40 text-danger mb-2 d-block" />
+                    <h5 className="text-danger">Could not load sub-categories</h5>
+                    <p className="text-muted">{error}</p>
+                    <button className="btn btn-primary btn-sm" onClick={fetchData}>Retry</button>
+                  </div>
+                )}
+                {!loading && !error && filteredData.length === 0 && (
+                  <div className="text-center py-5">
+                    <i className="ti ti-category-2 fs-40 text-muted mb-2 d-block" />
+                    <h5 className="text-muted">No sub-categories found</h5>
+                    <p className="text-muted">Create a category first, then add sub-categories here.</p>
+                  </div>
+                )}
+                {!loading && !error && filteredData.length > 0 && (
+                  <Table columns={columns} dataSource={filteredData} />
+                )}
               </div>
             </div>
           </div>
-          {/* /product list */}
         </div>
         <CommonFooter />
       </div>
-      <>
-        {/* Add Category */}
-        <div className="modal fade" id="add-category">
-          <div className="modal-dialog modal-dialog-centered">
-            <div className="modal-content">
-              <div className="page-wrapper-new p-0">
-                <div className="content">
-                  <div className="modal-header">
-                    <div className="page-title">
-                      <h4>Add Sub Category</h4>
-                    </div>
-                    <button
-                      type="button"
-                      className="close bg-danger text-white fs-16"
-                      data-bs-dismiss="modal"
-                      aria-label="Close"
-                    >
-                      <span aria-hidden="true">×</span>
-                    </button>
-                  </div>
-                  <div className="modal-body">
-                    <form>
-                      <div className="mb-3">
-                        <div className="add-image-upload">
-                          <div className="add-image">
-                            <span className="fw-normal">
-                              <i
-                                data-feather="plus-circle"
-                                className="plus-down-add"
-                              />{" "}
-                              Add Image
-                            </span>
-                          </div>
-                          <div className="new-employee-field">
-                            <div className="mb-0">
-                              <div className="image-upload mb-2">
-                                <input type="file" />
-                                <div className="image-uploads">
-                                  <h4 className="fs-13 fw-medium">Upload Image</h4>
-                                </div>
-                              </div>
-                              <span>JPEG, PNG up to 2 MB</span>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="mb-3">
-                        <label className="form-label">
-                          Category<span className="text-danger ms-1">*</span>
-                        </label>
-                        <Select
-                          classNamePrefix="react-select"
-                          options={Category}
-                          placeholder="Choose"
-                        />
-                      </div>
-                      <div className="mb-3">
-                        <label className="form-label">
-                          Sub Category<span className="text-danger ms-1">*</span>
-                        </label>
-                        <input type="text" className="form-control" />
-                      </div>
-                      <div className="mb-3">
-                        <label className="form-label">
-                          Category Code<span className="text-danger ms-1">*</span>
-                        </label>
-                        <input type="text" className="form-control" />
-                      </div>
-                      <div className="mb-3">
-                        <label className="form-label">
-                          Description<span className="text-danger ms-1">*</span>
-                        </label>
-                        <DefaultEditor value={values} onChange={onChange} />
-                      </div>
-                      <div className="mb-0">
-                        <div className="status-toggle modal-status d-flex justify-content-between align-items-center">
-                          <span className="status-label">Status</span>
-                          <input
-                            type="checkbox"
-                            id="user2"
-                            className="check"
-                            defaultChecked
-                          />
-                          <label htmlFor="user2" className="checktoggle" />
-                        </div>
-                      </div>
-                    </form>
-                  </div>
-                  <div className="modal-footer">
-                    <button
-                      type="button"
-                      className="btn me-2 btn-secondary fs-13 fw-medium p-2 px-3 shadow-none"
-                      data-bs-dismiss="modal"
-                    >
-                      Cancel
-                    </button>
-                    <Link
-                      to="#"
-                      className="btn btn-primary fs-13 fw-medium p-2 px-3"
-                    >
-                      Create Subcategory
-                    </Link>
-                  </div>
+
+      {/* Add SubCategory Modal */}
+      <div className="modal fade" id="add-subcategory">
+        <div className="modal-dialog modal-dialog-centered">
+          <div className="modal-content">
+            <div className="modal-header">
+              <div className="page-title"><h4>Add Sub Category</h4></div>
+              <button type="button" className="close bg-danger text-white fs-16 btn-close" data-bs-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">×</span>
+              </button>
+            </div>
+            <form onSubmit={(e) => handleSave(e, false)}>
+              <div className="modal-body">
+                {formError && <div className="alert alert-danger py-2">{formError}</div>}
+                <div className="mb-3">
+                  <label className="form-label">Parent Category<span className="text-danger ms-1">*</span></label>
+                  <select
+                    className="form-select"
+                    value={formState.categoryId}
+                    onChange={(e) => setFormState({ ...formState, categoryId: e.target.value })}
+                    required
+                  >
+                    <option value="">Select Category</option>
+                    {categories.map((c) => (
+                      <option key={c.id} value={c.id}>{c.name}</option>
+                    ))}
+                  </select>
+                </div>
+                <div className="mb-3">
+                  <label className="form-label">Sub Category Name<span className="text-danger ms-1">*</span></label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    value={formState.name}
+                    onChange={(e) => setFormState({ ...formState, name: e.target.value })}
+                    required
+                  />
+                </div>
+                <div className="mb-3">
+                  <label className="form-label">Code</label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    value={formState.code}
+                    onChange={(e) => setFormState({ ...formState, code: e.target.value })}
+                  />
+                </div>
+                <div className="mb-3">
+                  <label className="form-label">Description</label>
+                  <textarea
+                    className="form-control"
+                    rows={2}
+                    value={formState.description}
+                    onChange={(e) => setFormState({ ...formState, description: e.target.value })}
+                  />
                 </div>
               </div>
-            </div>
+              <div className="modal-footer">
+                <button type="button" className="btn me-2 btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="submit" className="btn btn-primary" disabled={submitting}>
+                  {submitting ? "Saving..." : "Add Sub Category"}
+                </button>
+              </div>
+            </form>
           </div>
         </div>
-        {/* /Add Category */}
-        {/* Edit Category */}
-        <div className="modal fade" id="edit-category">
-          <div className="modal-dialog modal-dialog-centered">
-            <div className="modal-content">
-              <div className="page-wrapper-new p-0">
-                <div className="content">
-                  <div className="modal-header">
-                    <div className="page-title">
-                      <h4>Edit Sub Category</h4>
-                    </div>
-                    <button
-                      type="button"
-                      className="close bg-danger text-white fs-16"
-                      data-bs-dismiss="modal"
-                      aria-label="Close"
-                    >
-                      <span aria-hidden="true">×</span>
-                    </button>
-                  </div>
-                  <div className="modal-body">
-                    <form>
-                      <div className="mb-3">
-                        <div className="add-image-upload">
-                          <div className="add-image p-1 border-solid">
-                            <ImageWithBasePath src="assets/img/products/laptop.png" alt="image" />
-                            <Link to="#">
-                              <X className="x-square-add image-close remove-product fs-12 text-white bg-danger rounded-1" />
-                            </Link>
-                          </div>
-                          <div className="new-employee-field">
-                            <div className="mb-0">
-                              <div className="image-upload mb-2">
-                                <input type="file" />
-                                <div className="image-uploads">
-                                  <h4 className="fs-13 fw-medium">Change Image</h4>
-                                </div>
-                              </div>
-                              <span>JPEG, PNG up to 2 MB</span>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="mb-3">
-                        <label className="form-label">
-                          Category<span className="text-danger ms-1">*</span>
-                        </label>
-                        <Select
-                          classNamePrefix="react-select"
-                          options={Category}
-                          placeholder="Choose"
-                        />
-                      </div>
-                      <div className="mb-3">
-                        <label className="form-label">
-                          Sub Category<span className="text-danger ms-1">*</span>
-                        </label>
-                        <input
-                          type="text"
-                          className="form-control"
-                          defaultValue="Laptop"
-                        />
-                      </div>
-                      <div className="mb-3">
-                        <label className="form-label">
-                          Category Code<span className="text-danger ms-1">*</span>
-                        </label>
-                        <input
-                          type="text"
-                          className="form-control"
-                          defaultValue="CT001"
-                        />
-                      </div>
-                      <div className="mb-3">
-                        <label className="form-label">
-                          Description<span className="text-danger ms-1">*</span>
-                        </label>
-                        <textarea
-                          className="form-control"
-                          defaultValue={"Efficient Productivity"}
-                        />
-                      </div>
-                      <div className="mb-0">
-                        <div className="status-toggle modal-status d-flex justify-content-between align-items-center">
-                          <span className="status-label">Status</span>
-                          <input
-                            type="checkbox"
-                            id="user3"
-                            className="check"
-                            defaultChecked
-                          />
-                          <label htmlFor="user3" className="checktoggle" />
-                        </div>
-                      </div>
-                    </form>
-                  </div>
-                  <div className="modal-footer">
-                    <button
-                      type="button"
-                      className="btn me-2 btn-secondary fs-13 fw-medium p-2 px-3 shadow-none"
-                      data-bs-dismiss="modal"
-                    >
-                      Cancel
-                    </button>
-                    <Link
-                      to="#"
-                      className="btn btn-primary fs-13 fw-medium p-2 px-3"
-                    >
-                      Add Sub Category
-                    </Link>
-                  </div>
+      </div>
+
+      {/* Edit SubCategory Modal */}
+      <div className="modal fade" id="edit-subcategory">
+        <div className="modal-dialog modal-dialog-centered">
+          <div className="modal-content">
+            <div className="modal-header">
+              <div className="page-title"><h4>Edit Sub Category</h4></div>
+              <button type="button" className="close bg-danger text-white fs-16 btn-close" data-bs-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">×</span>
+              </button>
+            </div>
+            <form onSubmit={(e) => handleSave(e, true)}>
+              <div className="modal-body">
+                {formError && <div className="alert alert-danger py-2">{formError}</div>}
+                <div className="mb-3">
+                  <label className="form-label">Parent Category<span className="text-danger ms-1">*</span></label>
+                  <select
+                    className="form-select"
+                    value={formState.categoryId}
+                    onChange={(e) => setFormState({ ...formState, categoryId: e.target.value })}
+                    required
+                  >
+                    <option value="">Select Category</option>
+                    {categories.map((c) => (
+                      <option key={c.id} value={c.id}>{c.name}</option>
+                    ))}
+                  </select>
+                </div>
+                <div className="mb-3">
+                  <label className="form-label">Sub Category Name<span className="text-danger ms-1">*</span></label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    value={formState.name}
+                    onChange={(e) => setFormState({ ...formState, name: e.target.value })}
+                    required
+                  />
+                </div>
+                <div className="mb-3">
+                  <label className="form-label">Code</label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    value={formState.code}
+                    onChange={(e) => setFormState({ ...formState, code: e.target.value })}
+                  />
+                </div>
+                <div className="mb-3">
+                  <label className="form-label">Description</label>
+                  <textarea
+                    className="form-control"
+                    rows={2}
+                    value={formState.description}
+                    onChange={(e) => setFormState({ ...formState, description: e.target.value })}
+                  />
                 </div>
               </div>
-            </div>
+              <div className="modal-footer">
+                <button type="button" className="btn me-2 btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="submit" className="btn btn-primary" disabled={submitting}>
+                  {submitting ? "Saving..." : "Save Changes"}
+                </button>
+              </div>
+            </form>
           </div>
         </div>
-        {/* /Edit Category */}
-        <CommonDeleteModal />
-      </>
-
-    </>
-
-
+      </div>
+    </div>
   );
 };
 

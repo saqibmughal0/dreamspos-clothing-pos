@@ -226,20 +226,20 @@ export class AuthService {
   }
 
   async register(input: RegisterInput) {
-    const normalizedEmail = input.email.trim().toLowerCase();
-    const normalizedName = input.name.trim();
-
-    if (!normalizedName) {
+    if (!input || typeof input.name !== "string" || !input.name.trim()) {
       throw new BadRequestError("Name is required");
     }
 
-    if (!normalizedEmail || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalizedEmail)) {
+    if (typeof input.email !== "string" || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(input.email.trim().toLowerCase())) {
       throw new BadRequestError("A valid email address is required");
     }
 
-    if (!input.password || input.password.length < 6) {
+    if (typeof input.password !== "string" || input.password.length < 6) {
       throw new BadRequestError("Password must be at least 6 characters long");
     }
+
+    const normalizedEmail = input.email.trim().toLowerCase();
+    const normalizedName = input.name.trim();
 
     const existing = await prisma.user.findUnique({
       where: { email: normalizedEmail }

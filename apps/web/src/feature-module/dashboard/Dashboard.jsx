@@ -15,44 +15,69 @@ import { apiClient } from "../../core/apiClient";
 const Dashboard = () => {
   const route = all_routes;
   const [metrics, setMetrics] = useState({
-    totalSales: 385656.50,
-    totalPurchases: 4385.00,
-    totalExpenses: 400.00,
-    netProfit: 12500.00,
-    customersCount: 100,
-    productsCount: 110,
-    lowStockCount: 5
+    totalSales: 0,
+    totalPurchases: 0,
+    totalExpenses: 0,
+    netProfit: 0,
+    customersCount: 0,
+    productsCount: 0,
+    lowStockCount: 0,
+    todayOrders: 0
+  });
+
+  const [error, setError] = useState(null);
+  const [recentProducts, setRecentProducts] = useState([]);
+  const [chartData, setChartData] = useState({
+    categories: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+    sales: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    purchase: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
   });
 
   useEffect(() => {
-    apiClient.get("/dashboard/summary")
-      .then((res) => {
-        if (res.data?.success && res.data.data) {
-          setMetrics(prev => ({
-            ...prev,
-            totalSales: res.data.data.totalSales || prev.totalSales,
-            totalPurchases: res.data.data.totalPurchases || prev.totalPurchases,
-            totalExpenses: res.data.data.totalExpenses || prev.totalExpenses,
-            netProfit: res.data.data.netProfit || prev.netProfit,
-            customersCount: res.data.data.customersCount || prev.customersCount,
-            productsCount: res.data.data.productsCount || prev.productsCount,
-            lowStockCount: res.data.data.lowStockCount || prev.lowStockCount
-          }));
+    setError(null);
+    Promise.all([
+      apiClient.get("/dashboard/summary"),
+      apiClient.get("/dashboard/overview", { params: { period: "1Y" } }),
+      apiClient.get("/products", { params: { limit: 5 } })
+    ])
+      .then(([summaryRes, overviewRes, productsRes]) => {
+        if (summaryRes.data?.success && summaryRes.data.data) {
+          setMetrics({
+            totalSales: Number(summaryRes.data.data.totalSales ?? 0),
+            totalPurchases: Number(summaryRes.data.data.totalPurchases ?? 0),
+            totalExpenses: Number(summaryRes.data.data.totalExpenses ?? 0),
+            netProfit: Number(summaryRes.data.data.netProfit ?? 0),
+            customersCount: Number(summaryRes.data.data.customersCount ?? 0),
+            productsCount: Number(summaryRes.data.data.productsCount ?? 0),
+            lowStockCount: Number(summaryRes.data.data.lowStockCount ?? 0),
+            todayOrders: Number(summaryRes.data.data.todayOrders ?? 0)
+          });
+        }
+        if (overviewRes.data?.success && overviewRes.data.data?.salesAndPurchaseChart) {
+          const c = overviewRes.data.data.salesAndPurchaseChart;
+          setChartData({
+            categories: c.categories || [],
+            sales: c.sales || [],
+            purchase: (c.purchase || []).map((v) => -Math.abs(Number(v || 0)))
+          });
+        }
+        if (productsRes.data?.success && productsRes.data.data?.items) {
+          setRecentProducts(productsRes.data.data.items.slice(0, 5));
         }
       })
       .catch((err) => {
-        console.warn("Using default dashboard metrics:", err);
+        setError(err?.message || "Failed to load dashboard data.");
       });
   }, []);
-  const [chartOptions] = useState({
+  const chartOptions = {
     series: [
       {
         name: "Sales",
-        data: [130, 210, 300, 290, 150, 50, 210, 280, 105],
+        data: chartData.sales,
       },
       {
         name: "Purchase",
-        data: [-150, -90, -50, -180, -50, -70, -100, -90, -105],
+        data: chartData.purchase,
       },
     ],
     colors: ["#28C76F", "#EA5455"],
@@ -87,29 +112,14 @@ const Dashboard = () => {
     dataLabels: {
       enabled: false,
     },
-    yaxis: {
-      min: -200,
-      max: 400,
-      tickAmount: 5,
-    },
     xaxis: {
-      categories: [
-        "Jan",
-        "Feb",
-        "Mar",
-        "Apr",
-        "May",
-        "Jun",
-        "Jul",
-        "Aug",
-        "Sep",
-      ],
+      categories: chartData.categories,
     },
     legend: { show: false },
     fill: {
       opacity: 1,
     },
-  });
+  };
 
   const [currentUser] = useState(() => {
     try {
@@ -235,8 +245,8 @@ const Dashboard = () => {
             <div className="col-xl-3 col-sm-6 col-12 d-flex">
               <div className="dash-count das2 bg-dark">
                 <div className="dash-counts">
-                  <h4>150</h4>
-                  <h5>Purchase Invoice</h5>
+                  <h4>{metrics.lowStockCount}</h4>
+                  <h5>Low Stock Items</h5>
                 </div>
                 <div className="dash-imgs">
                   <ImageWithBasePath
@@ -250,8 +260,8 @@ const Dashboard = () => {
             <div className="col-xl-3 col-sm-6 col-12 d-flex">
               <div className="dash-count das3">
                 <div className="dash-counts">
-                  <h4>170</h4>
-                  <h5>Sales Invoice</h5>
+                  <h4>{metrics.todayOrders}</h4>
+                  <h5>Orders Today</h5>
                 </div>
                 <div className="dash-imgs">
                   <File />
@@ -343,74 +353,25 @@ const Dashboard = () => {
                         </tr>
                       </thead>
                       <tbody>
-                        <tr>
-                          <td>1</td>
-                          <td className="d-flex align-items-center">
-                            <Link
-                              to={route.productlist}
-                              className="avatar avatar-lg me-2"
-                            >
-                              <ImageWithBasePath
-                                src="assets/img/products/stock-img-01.png"
-                                alt="product"
-                              />
-                            </Link>
-                            <Link to={route.productlist} className="fw-bold">
-                              Lenevo 3rd Generation
-                            </Link>
-                          </td>
-                          <td>Rs 12500</td>
-                        </tr>
-                        <tr>
-                          <td>2</td>
-                          <td className="d-flex align-items-center">
-                            <Link
-                              to={route.productlist}
-                              className="avatar avatar-lg me-2"
-                            >
-                              <ImageWithBasePath
-                                src="assets/img/products/stock-img-06.png"
-                                alt="product"
-                              />
-                            </Link>
-                            <Link to={route.productlist} className="fw-bold">Bold V3.2</Link>
-                          </td>
-                          <td>Rs 1600</td>
-                        </tr>
-                        <tr>
-                          <td>3</td>
-                          <td className="d-flex align-items-center">
-                            <Link
-                              to={route.productlist}
-                              className="avatar avatar-lg me-2"
-                            >
-                              <ImageWithBasePath
-                                src="assets/img/products/stock-img-02.png"
-                                alt="product"
-                              />
-                            </Link>
-                            <Link to={route.productlist} className="fw-bold">Nike Jordan</Link>
-                          </td>
-                          <td>Rs 2000</td>
-                        </tr>
-                        <tr>
-                          <td>4</td>
-                          <td className="d-flex align-items-center">
-                            <Link
-                              to={route.productlist}
-                              className="avatar avatar-lg me-2"
-                            >
-                              <ImageWithBasePath
-                                src="assets/img/products/stock-img-03.png"
-                                alt="product"
-                              />
-                            </Link>
-                            <Link to={route.productlist} className="fw-bold">
-                              Apple Series 5 Watch
-                            </Link>
-                          </td>
-                          <td>Rs 800</td>
-                        </tr>
+                        {recentProducts.length === 0 ? (
+                          <tr>
+                            <td colSpan={3} className="text-center py-4 text-muted">
+                              {error ? error : "No products added yet."}
+                            </td>
+                          </tr>
+                        ) : (
+                          recentProducts.map((p, idx) => (
+                            <tr key={p.id || idx}>
+                              <td>{idx + 1}</td>
+                              <td className="d-flex align-items-center">
+                                <Link to={route.productlist} className="fw-bold">
+                                  {p.name}
+                                </Link>
+                              </td>
+                              <td>Rs {Number(p.sellingPrice || 0).toLocaleString()}</td>
+                            </tr>
+                          ))
+                        )}
                       </tbody>
                     </table>
                   </div>
@@ -442,213 +403,8 @@ const Dashboard = () => {
                   </thead>
                   <tbody>
                     <tr>
-                      <td>
-                        <label className="checkboxs">
-                          <input type="checkbox" />
-                          <span className="checkmarks" />
-                        </label>
-                      </td>
-                      <td>
-                        <div className="d-flex align-items-center">
-                          <Link to="#" className="avatar avatar-lg me-2">
-                            <ImageWithBasePath
-                              src="assets/img/products/expire-product-01.png"
-                              alt="product"
-                            />
-                          </Link>
-                          <Link to="#" className="fw-bold">Red Premium Handy </Link>
-                        </div>
-                      </td>
-                      <td>
-                        PT006
-                      </td>
-                      <td>17 Jan 2023</td>
-                      <td>29 Mar 2023</td>
-                      <td className="action-table-data">
-                        <div className="edit-delete-action">
-                          <Link className="me-2 p-2" to="#">
-                            <i data-feather="edit" className="feather-edit" />
-                          </Link>
-                          <Link
-                            className=" confirm-text p-2"
-                            to="#"
-                            
-                          >
-                            <i
-                              data-feather="trash-2"
-                              className="feather-trash-2"
-                            />
-                          </Link>
-                        </div>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>
-                        <label className="checkboxs">
-                          <input type="checkbox" />
-                          <span className="checkmarks" />
-                        </label>
-                      </td>
-                      <td>
-                        <div className="d-flex align-items-center">
-                          <Link to="#" className="avatar avatar-lg me-2">
-                            <ImageWithBasePath
-                              src="assets/img/products/expire-product-02.png"
-                              alt="product"
-                            />
-                          </Link>
-                          <Link to="#" className="fw-bold">Iphone 14 Pro</Link>
-                        </div>
-                      </td>
-                      <td>
-                        PT007
-                      </td>
-                      <td>22 Feb 2023</td>
-                      <td>04 Apr 2023</td>
-                      <td className="action-table-data">
-                        <div className="edit-delete-action">
-                          <Link className="me-2 p-2" to="#">
-                            <i data-feather="edit" className="feather-edit" />
-                          </Link>
-                          <Link
-                            className="confirm-text p-2"
-                            to="#"
-                            
-                          >
-                            <i
-                              data-feather="trash-2"
-                              className="feather-trash-2"
-                            />
-                          </Link>
-                        </div>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>
-                        <label className="checkboxs">
-                          <input type="checkbox" />
-                          <span className="checkmarks" />
-                        </label>
-                      </td>
-                      <td>
-                        <div className="d-flex align-items-center">
-                          <Link to="#" className="avatar avatar-lg me-2">
-                            <ImageWithBasePath
-                              src="assets/img/products/expire-product-03.png"
-                              alt="product"
-                            />
-                          </Link>
-                          <Link to="#" className="fw-bold">Black Slim 200 </Link>
-                        </div>
-                      </td>
-                      <td>
-                        PT008
-                      </td>
-                      <td>18 Mar 2023</td>
-                      <td>13 May 2023</td>
-                      <td className="action-table-data">
-                        <div className="edit-delete-action">
-                          <Link className="me-2 p-2" to="#">
-                            <i data-feather="edit" className="feather-edit" />
-                          </Link>
-                          <Link
-                            className=" confirm-text p-2"
-                            to="#"
-                            
-                          >
-                            <i
-                              data-feather="trash-2"
-                              className="feather-trash-2"
-                            />
-                          </Link>
-                        </div>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>
-                        <label className="checkboxs">
-                          <input type="checkbox" />
-                          <span className="checkmarks" />
-                        </label>
-                      </td>
-                      <td>
-                        <div className="d-flex align-items-center">
-                          <Link to="#" className="avatar avatar-lg me-2">
-                            <ImageWithBasePath
-                              src="assets/img/products/expire-product-04.png"
-                              alt="product"
-                            />
-                          </Link>
-                          <Link to="#" className="fw-bold">Woodcraft Sandal</Link>
-                        </div>
-                      </td>
-                      <td>
-                        PT009
-                      </td>
-                      <td>29 Mar 2023</td>
-                      <td>27 May 2023</td>
-                      <td className="action-table-data">
-                        <div className="edit-delete-action">
-                          <Link className="me-2 p-2" to="#">
-                            <i data-feather="edit" className="feather-edit" />
-                          </Link>
-                          <Link
-                            className=" confirm-text p-2"
-                            to="#"
-                            
-                          >
-                            <i
-                              data-feather="trash-2"
-                              className="feather-trash-2"
-                            />
-                          </Link>
-                        </div>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>
-                        <label className="checkboxs">
-                          <input type="checkbox" />
-                          <span className="checkmarks" />
-                        </label>
-                      </td>
-                      <td>
-                        <div className="d-flex align-items-center">
-                          <Link to="#" className="avatar avatar-lg me-2">
-                            <ImageWithBasePath
-                              src="assets/img/products/stock-img-03.png"
-                              alt="product"
-                            />
-                          </Link>
-                          <Link to="#" className="fw-bold">Apple Series 5 Watch </Link>
-                        </div>
-                      </td>
-                      <td>
-                        PT010
-                      </td>
-                      <td>24 Mar 2023</td>
-                      <td>26 May 2023</td>
-                      <td className="action-table-data">
-                        <div className="edit-delete-action">
-                          <Link
-                            className="me-2 p-2"
-                            to="#"
-                            data-bs-toggle="modal"
-                            data-bs-target="#edit-units"
-                          >
-                            <i data-feather="edit" className="feather-edit" />
-                          </Link>
-                          <Link
-                            className=" confirm-text p-2"
-                            to="#"
-                            
-                          >
-                            <i
-                              data-feather="trash-2"
-                              className="feather-trash-2"
-                            />
-                          </Link>
-                        </div>
+                      <td colSpan={6} className="text-center py-4 text-muted">
+                        No expired products.
                       </td>
                     </tr>
                   </tbody>

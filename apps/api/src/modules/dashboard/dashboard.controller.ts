@@ -33,6 +33,17 @@ export class DashboardController {
       next(err);
     }
   }
+
+  async getOverview(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const companyId = req.user?.companyId || "default-company-id";
+      const { period, startDate, endDate } = req.query as { period?: string; startDate?: string; endDate?: string };
+      const data = await dashboardService.getOverview(companyId, period || "1Y", startDate, endDate);
+      res.status(200).json({ success: true, data });
+    } catch (err) {
+      next(err);
+    }
+  }
 }
 
 export const dashboardController = new DashboardController();

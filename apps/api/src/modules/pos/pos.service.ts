@@ -1,4 +1,4 @@
-import { prisma } from "@dreamspos/database";
+﻿import { prisma } from "@dreamspos/database";
 import { PosCheckoutInput } from "@dreamspos/shared";
 import { addMoney, subMoney, mulMoney, roundMoney } from "../../utils/decimal";
 
@@ -312,8 +312,8 @@ export class PosService {
     return {
       companyName: sale.company.name,
       storeName: sale.store.name,
-      storeAddress: sale.store.address || "Main Street Outlet",
-      storePhone: sale.store.phone || "+1 800 555 0101",
+      storeAddress: sale.store.address || "",
+      storePhone: sale.store.phone || "",
       invoiceNumber: sale.invoiceNumber,
       date: sale.createdAt.toLocaleDateString(),
       time: sale.createdAt.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),

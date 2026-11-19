@@ -4,7 +4,6 @@ import RefreshIcon from '../../../core/common/tooltip-content/refresh'
 import CollapesIcon from '../../../core/common/tooltip-content/collapes'
 import { DollarSign, Download, Edit, Eye, PlusCircle, Printer, Trash2 } from 'feather-icons-react/build/IconComponents'
 import Table from "../../../core/pagination/datatable";
-import { onlineOrderData } from '../../../core/json/onlineOrderData'
 import { Link } from 'react-router-dom'
 import ImageWithBasePath from '../../../core/img/imagewithbasebath'
 import OnlineorderModal from '../online-order/onlineorderModal'
@@ -15,20 +14,24 @@ import { ThermalReceiptModal } from '../../../core/modals/pos-modal/ThermalRecei
 
 const PosOrder = () => {
 
-    const [dataSource, setDataSource] = useState(onlineOrderData);
+    const [dataSource, setDataSource] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
     const [selectedSaleForPrint, setSelectedSaleForPrint] = useState(null);
     const [showReceiptModal, setShowReceiptModal] = useState(false);
 
     const fetchSales = async () => {
+        setLoading(true);
+        setError(null);
         try {
-            const res = await apiClient.get('/sales');
-            if (res.data?.success && res.data.data?.length > 0) {
+            const res = await apiClient.get('/sales', { params: { channel: 'POS' } });
+            if (res.data?.success && Array.isArray(res.data.data)) {
                 const mapped = res.data.data.map((s, idx) => ({
                     id: s.id,
                     key: s.id || idx,
                     customer: s.customer?.name || "Walk-in Customer",
                     reference: s.invoiceNumber,
-                    date: new Date(s.createdAt).toLocaleDateString(),
+                    date: new Date(s.createdAt).toLocaleDateString('en-PK'),
                     status: s.status === 'COMPLETED' ? 'Completed' : 'Pending',
                     total: `Rs ${Number(s.totalAmount).toFixed(2)}`,
                     paid: `Rs ${Number(s.paidAmount).toFixed(2)}`,
@@ -39,9 +42,14 @@ const PosOrder = () => {
                     rawSale: s
                 }));
                 setDataSource(mapped);
+            } else {
+                setDataSource([]);
             }
         } catch (err) {
-            console.warn("Using offline sample orders:", err);
+            setError(err?.response?.data?.message || err?.message || "Failed to load POS orders");
+            setDataSource([]);
+        } finally {
+            setLoading(false);
         }
     };
 

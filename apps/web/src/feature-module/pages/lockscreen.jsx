@@ -1,10 +1,12 @@
 import React from "react";
+import { useSelector } from "react-redux";
 import ImageWithBasePath from "../../core/img/imagewithbasebath";
 import { Link } from "react-router-dom";
 import { all_routes } from "../../Router/all_routes";
 
 const Lockscreen = () => {
   const route = all_routes;
+  const userName = useSelector((state) => state.auth?.user?.name || "Store User");
   return (
     <>
     <ImageWithBasePath src="assets/img/bg/lock-screen-bg.png" alt="bg" className="lock-screen-bg position-absolute img-fluid d-sm-none d-md-none d-lg-flex" />
@@ -26,7 +28,7 @@ const Lockscreen = () => {
                     className="img-fluid"
                     alt="User-Img"
                   />
-                  <h5>John Smilga</h5>
+                  <h5>{userName}</h5>
                 </div>
                 <form action="#">
                   <div className="input-blocks">

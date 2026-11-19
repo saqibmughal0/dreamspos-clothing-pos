@@ -16,17 +16,16 @@ import CommonDeleteModal from "../../core/common/modal/commonDeleteModal";
 import { apiClient } from "../../core/apiClient";
 
 const StockTransfer = () => {
-  const reduxDataSource = useSelector((state) => state.rootReducer.stocktransferdata);
-  const [dataSource, setDataSource] = useState(reduxDataSource);
+  const [dataSource, setDataSource] = useState([]);
 
   useEffect(() => {
     apiClient.get("/inventory/transfers")
       .then((res) => {
-        if (res.data?.success && res.data.data?.items?.length > 0) {
+        if (res.data?.success && res.data.data?.items) {
           const mapped = res.data.data.items.map((item, idx) => ({
             key: item.id || idx,
             fromWarehouse: item.fromWarehouseName || "Central Warehouse",
-            toWarehouse: item.toWarehouseName || "Downtown Store",
+            toWarehouse: item.toWarehouseName || "Main Store",
             noOfProducts: item.itemCount || 1,
             quantityTransferred: `${item.itemCount || 1} Pcs`,
             Refrence: item.transferNumber,
@@ -35,10 +34,12 @@ const StockTransfer = () => {
             status: item.status || "Completed"
           }));
           setDataSource(mapped);
+        } else {
+          setDataSource([]);
         }
       })
-      .catch((err) => {
-        console.warn("Using default stock transfers:", err);
+      .catch(() => {
+        setDataSource([]);
       });
   }, []);
 

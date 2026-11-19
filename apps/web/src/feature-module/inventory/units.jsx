@@ -1,55 +1,108 @@
-import React from "react";
-import { useSelector } from "react-redux";
+import React, { useState, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
 import Table from "../../core/pagination/datatable";
 import TooltipIcons from "../../core/common/tooltip-content/tooltipIcons";
 import RefreshIcon from "../../core/common/tooltip-content/refresh";
 import CollapesIcon from "../../core/common/tooltip-content/collapes";
 import CommonFooter from "../../core/common/footer/commonFooter";
-import CommonDeleteModal from "../../core/common/modal/commonDeleteModal";
+import { apiClient } from "../../core/apiClient";
 
 export const Units = () => {
-  const dataSource = useSelector((state) => state.rootReducer.unit_data);
+  const [dataSource, setDataSource] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [formState, setFormState] = useState({ id: null, name: "", shortName: "", allowDecimal: false });
+  const [submitting, setSubmitting] = useState(false);
+  const [formError, setFormError] = useState(null);
 
+  const fetchUnits = useCallback(() => {
+    setLoading(true);
+    setError(null);
+    apiClient.get("/catalog/units")
+      .then((res) => {
+        const items = res.data?.data?.items || [];
+        setDataSource(items.map((u) => ({
+          id: u.id,
+          key: u.id,
+          unit: u.name,
+          shortname: u.shortName,
+          allowDecimal: u.allowDecimal,
+          noofproducts: String(u._count?.products || 0),
+          createdon: new Date(u.createdAt).toLocaleDateString("en-PK"),
+          status: "Active",
+        })));
+      })
+      .catch((err) => {
+        setError(err?.response?.data?.message || err?.message || "Failed to load units");
+        setDataSource([]);
+      })
+      .finally(() => setLoading(false));
+  }, []);
+
+  useEffect(() => {
+    fetchUnits();
+  }, [fetchUnits]);
+
+  const handleSave = async (e, isEdit = false) => {
+    e.preventDefault();
+    if (!formState.name.trim() || !formState.shortName.trim()) {
+      setFormError("Unit name and short name are required.");
+      return;
+    }
+    setSubmitting(true);
+    setFormError(null);
+    try {
+      const payload = {
+        name: formState.name,
+        shortName: formState.shortName,
+        allowDecimal: formState.allowDecimal,
+      };
+      if (isEdit && formState.id) {
+        await apiClient.put(`/catalog/units/${formState.id}`, payload);
+      } else {
+        await apiClient.post("/catalog/units", payload);
+      }
+      setFormState({ id: null, name: "", shortName: "", allowDecimal: false });
+      document.querySelector(isEdit ? "#edit-units .btn-close" : "#add-units .btn-close")?.click();
+      fetchUnits();
+    } catch (err) {
+      setFormError(err?.response?.data?.message || err?.message || "Failed to save unit");
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const handleDelete = async (id) => {
+    try {
+      await apiClient.delete(`/catalog/units/${id}`);
+      fetchUnits();
+    } catch (err) {
+      setError(err?.response?.data?.message || err?.message || "Cannot delete unit");
+    }
+  };
+
+  const filteredData = dataSource.filter((item) =>
+    !searchTerm.trim() ||
+    item.unit.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    item.shortname.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   const columns = [
-    {
-      title: "Unit",
-      dataIndex: "unit",
-      sorter: (a, b) => a.unit.length - b.unit.length,
-    },
-    {
-      title: "Short Name",
-      dataIndex: "shortname",
-      sorter: (a, b) => a.shortname.length - b.shortname.length,
-    },
-
-    {
-      title: "No of Products",
-      dataIndex: "noofproducts",
-      sorter: (a, b) => a.noofproducts.length - b.noofproducts.length,
-    },
-    {
-      title: "Created Date",
-      dataIndex: "createdon",
-      sorter: (a, b) => a.createdon.length - b.createdon.length,
-    },
+    { title: "Unit", dataIndex: "unit", sorter: (a, b) => a.unit.localeCompare(b.unit) },
+    { title: "Short Name", dataIndex: "shortname", sorter: (a, b) => a.shortname.localeCompare(b.shortname) },
+    { title: "No of Products", dataIndex: "noofproducts" },
+    { title: "Created Date", dataIndex: "createdon" },
     {
       title: "Status",
       dataIndex: "status",
-      render: (text) => (
-        <span className="badge table-badge bg-success fw-medium fs-10">
-          {text}
-        </span>
-      ),
-      sorter: (a, b) => a.status.length - b.status.length,
+      render: (text) => <span className="badge table-badge bg-success fw-medium fs-10">{text}</span>,
     },
-
     {
       title: "",
       dataIndex: "actions",
       key: "actions",
-      render: () => (
+      render: (_, record) => (
         <div className="action-table-data">
           <div className="edit-delete-action">
             <Link
@@ -57,14 +110,20 @@ export const Units = () => {
               to="#"
               data-bs-toggle="modal"
               data-bs-target="#edit-units"
+              onClick={() => {
+                setFormError(null);
+                setFormState({
+                  id: record.id,
+                  name: record.unit,
+                  shortName: record.shortname,
+                  allowDecimal: Boolean(record.allowDecimal),
+                });
+              }}
             >
               <i data-feather="edit" className="feather-edit"></i>
             </Link>
-            <Link data-bs-toggle="modal" data-bs-target="#delete-modal" className="p-2" to="#">
-              <i
-                data-feather="trash-2"
-                className="feather-trash-2"
-              ></i>
+            <Link className="p-2" to="#" onClick={() => handleDelete(record.id)}>
+              <i data-feather="trash-2" className="feather-trash-2"></i>
             </Link>
           </div>
         </div>
@@ -80,12 +139,12 @@ export const Units = () => {
             <div className="add-item d-flex">
               <div className="page-title">
                 <h4 className="fw-bold">Units</h4>
-                <h6>Manage your units</h6>
+                <h6>Manage your measurement units (Piece, Suit, Meter, etc.)</h6>
               </div>
             </div>
             <ul className="table-top-head">
               <TooltipIcons />
-              <RefreshIcon />
+              <RefreshIcon onClick={fetchUnits} />
               <CollapesIcon />
             </ul>
             <div className="page-btn">
@@ -94,273 +153,156 @@ export const Units = () => {
                 className="btn btn-primary"
                 data-bs-toggle="modal"
                 data-bs-target="#add-units"
+                onClick={() => {
+                  setFormError(null);
+                  setFormState({ id: null, name: "", shortName: "", allowDecimal: false });
+                }}
               >
-               <i className='ti ti-circle-plus me-1'></i> Add Unit
+                <i className="ti ti-circle-plus me-1"></i>
+                Add Unit
               </Link>
             </div>
           </div>
-          {/* /product list */}
+
           <div className="card table-list-card">
             <div className="card-header d-flex align-items-center justify-content-between flex-wrap row-gap-3">
               <div className="search-set">
-              </div>
-              <div className="d-flex table-dropdown my-xl-auto right-content align-items-center flex-wrap row-gap-3">
-                
-               
-                <div className="dropdown me-2">
-                  <Link
-                    to="#"
-                    className="dropdown-toggle btn btn-white btn-md d-inline-flex align-items-center"
-                    data-bs-toggle="dropdown"
-                  >
-                    Status
-                  </Link>
-                  <ul className="dropdown-menu  dropdown-menu-end p-3">
-                    <li>
-                      <Link
-                        to="#"
-                        className="dropdown-item rounded-1"
-                      >
-                        Active
-                      </Link>
-                    </li>
-                    <li>
-                      <Link
-                        to="#"
-                        className="dropdown-item rounded-1"
-                      >
-                        Inactive
-                      </Link>
-                    </li>
-                    <li>
-                      <Link
-                        to="#"
-                        className="dropdown-item rounded-1"
-                      >
-                        Shoe
-                      </Link>
-                    </li>
-                    <li>
-                      <Link
-                        to="#"
-                        className="dropdown-item rounded-1"
-                      >
-                        Electronics
-                      </Link>
-                    </li>
-                  </ul>
-                </div>
-                <div className="dropdown">
-                  <Link
-                    to="#"
-                    className="dropdown-toggle btn btn-white btn-md d-inline-flex align-items-center"
-                    data-bs-toggle="dropdown"
-                  >
-                    Sort By : Last 7 Days
-                  </Link>
-                  <ul className="dropdown-menu  dropdown-menu-end p-3">
-                    <li>
-                      <Link
-                        to="#"
-                        className="dropdown-item rounded-1"
-                      >
-                        Recently Added
-                      </Link>
-                    </li>
-                    <li>
-                      <Link
-                        to="#"
-                        className="dropdown-item rounded-1"
-                      >
-                        Ascending
-                      </Link>
-                    </li>
-                    <li>
-                      <Link
-                        to="#"
-                        className="dropdown-item rounded-1"
-                      >
-                        Desending
-                      </Link>
-                    </li>
-                    <li>
-                      <Link
-                        to="#"
-                        className="dropdown-item rounded-1"
-                      >
-                        Last Month
-                      </Link>
-                    </li>
-                    <li>
-                      <Link
-                        to="#"
-                        className="dropdown-item rounded-1"
-                      >
-                        Last 7 Days
-                      </Link>
-                    </li>
-                  </ul>
+                <div className="search-input">
+                  <input
+                    type="text"
+                    className="form-control form-control-sm"
+                    placeholder="Search units..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                  />
                 </div>
               </div>
             </div>
             <div className="card-body">
               <div className="table-responsive">
-                <Table columns={columns} dataSource={dataSource} />
+                {loading && (
+                  <div className="text-center py-5">
+                    <div className="spinner-border text-primary" role="status" />
+                    <p className="mt-2 text-muted">Loading units...</p>
+                  </div>
+                )}
+                {!loading && error && (
+                  <div className="text-center py-5">
+                    <i className="ti ti-alert-triangle fs-40 text-danger mb-2 d-block" />
+                    <h5 className="text-danger">Could not load units</h5>
+                    <p className="text-muted">{error}</p>
+                    <button className="btn btn-primary btn-sm" onClick={fetchUnits}>Retry</button>
+                  </div>
+                )}
+                {!loading && !error && filteredData.length === 0 && (
+                  <div className="text-center py-5">
+                    <i className="ti ti-ruler fs-40 text-muted mb-2 d-block" />
+                    <h5 className="text-muted">No units found</h5>
+                    <p className="text-muted">Add units such as Piece (Pc), Suit (Suit), or Meter (m).</p>
+                  </div>
+                )}
+                {!loading && !error && filteredData.length > 0 && (
+                  <Table columns={columns} dataSource={filteredData} />
+                )}
               </div>
             </div>
           </div>
-          {/* /product list */}
         </div>
         <CommonFooter />
       </div>
 
-      {/* Add Unit */}
+      {/* Add Unit Modal */}
       <div className="modal fade" id="add-units">
         <div className="modal-dialog modal-dialog-centered">
           <div className="modal-content">
-            <div className="page-wrapper-new p-0">
-              <div className="content">
-                <div className="modal-header">
-                  <div className="page-title">
-                    <h4>Add Unit</h4>
-                  </div>
-                  <button
-                    type="button"
-                    className="close bg-danger text-white fs-16"
-                    data-bs-dismiss="modal"
-                    aria-label="Close"
-                  >
-                    <span aria-hidden="true">×</span>
-                  </button>
+            <div className="modal-header">
+              <div className="page-title"><h4>Add Unit</h4></div>
+              <button type="button" className="close bg-danger text-white fs-16 btn-close" data-bs-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">×</span>
+              </button>
+            </div>
+            <form onSubmit={(e) => handleSave(e, false)}>
+              <div className="modal-body">
+                {formError && <div className="alert alert-danger py-2">{formError}</div>}
+                <div className="mb-3">
+                  <label className="form-label">Unit Name<span className="text-danger ms-1">*</span></label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    placeholder="e.g., Piece"
+                    value={formState.name}
+                    onChange={(e) => setFormState({ ...formState, name: e.target.value })}
+                    required
+                  />
                 </div>
-                <div className="modal-body">
-                  <form>
-                    <div className="mb-3">
-                      <label className="form-label">
-                        Unit<span className="text-danger ms-1">*</span>
-                      </label>
-                      <input type="text" className="form-control" />
-                    </div>
-                    <div className="mb-3">
-                      <label className="form-label">
-                        Short Name<span className="text-danger ms-1">*</span>
-                      </label>
-                      <input type="text" className="form-control" />
-                    </div>
-                    <div className="mb-0">
-                      <div className="status-toggle modal-status d-flex justify-content-between align-items-center">
-                        <span className="status-label">Status</span>
-                        <input
-                          type="checkbox"
-                          id="user2"
-                          className="check"
-                          defaultChecked
-                        />
-                        <label htmlFor="user2" className="checktoggle" />
-                      </div>
-                    </div>
-                  </form>
-                </div>
-                <div className="modal-footer">
-                  <button
-                    type="button"
-                    className="btn me-2 btn-secondary fs-13 fw-medium p-2 px-3 shadow-none"
-                    data-bs-dismiss="modal"
-                  >
-                    Cancel
-                  </button>
-                  <Link
-                    to="#"
-                    className="btn btn-primary fs-13 fw-medium p-2 px-3"
-                    data-bs-dismiss="modal"
-                  >
-                    Add Unit
-                  </Link>
+                <div className="mb-3">
+                  <label className="form-label">Short Name<span className="text-danger ms-1">*</span></label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    placeholder="e.g., Pc"
+                    value={formState.shortName}
+                    onChange={(e) => setFormState({ ...formState, shortName: e.target.value })}
+                    required
+                  />
                 </div>
               </div>
-            </div>
+              <div className="modal-footer">
+                <button type="button" className="btn me-2 btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="submit" className="btn btn-primary" disabled={submitting}>
+                  {submitting ? "Saving..." : "Add Unit"}
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       </div>
-      {/* /Add Unit */}
-      {/* Edit Unit */}
+
+      {/* Edit Unit Modal */}
       <div className="modal fade" id="edit-units">
         <div className="modal-dialog modal-dialog-centered">
           <div className="modal-content">
-            <div className="page-wrapper-new p-0">
-              <div className="content">
-                <div className="modal-header">
-                  <div className="page-title">
-                    <h4>Edit Unit</h4>
-                  </div>
-                  <button
-                    type="button"
-                    className="close bg-danger text-white fs-16"
-                    data-bs-dismiss="modal"
-                    aria-label="Close"
-                  >
-                    <span aria-hidden="true">×</span>
-                  </button>
+            <div className="modal-header">
+              <div className="page-title"><h4>Edit Unit</h4></div>
+              <button type="button" className="close bg-danger text-white fs-16 btn-close" data-bs-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">×</span>
+              </button>
+            </div>
+            <form onSubmit={(e) => handleSave(e, true)}>
+              <div className="modal-body">
+                {formError && <div className="alert alert-danger py-2">{formError}</div>}
+                <div className="mb-3">
+                  <label className="form-label">Unit Name<span className="text-danger ms-1">*</span></label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    value={formState.name}
+                    onChange={(e) => setFormState({ ...formState, name: e.target.value })}
+                    required
+                  />
                 </div>
-                <div className="modal-body">
-                  <form>
-                    <div className="mb-3">
-                      <label className="form-label">
-                        Unit<span className="text-danger ms-1">*</span>
-                      </label>
-                      <input
-                        type="text"
-                        className="form-control"
-                        defaultValue="Kilograms"
-                      />
-                    </div>
-                    <div className="mb-3">
-                      <label className="form-label">
-                        Short Name<span className="text-danger ms-1">*</span>
-                      </label>
-                      <input
-                        type="text"
-                        className="form-control"
-                        defaultValue="kg"
-                      />
-                    </div>
-                    <div className="mb-0">
-                      <div className="status-toggle modal-status d-flex justify-content-between align-items-center">
-                        <span className="status-label">Status</span>
-                        <input
-                          type="checkbox"
-                          id="user3"
-                          className="check"
-                          defaultChecked
-                        />
-                        <label htmlFor="user3" className="checktoggle" />
-                      </div>
-                    </div>
-                  </form>
-                </div>
-                <div className="modal-footer">
-                  <button
-                    type="button"
-                    className="btn me-2 btn-secondary fs-13 fw-medium p-2 px-3 shadow-none"
-                    data-bs-dismiss="modal"
-                  >
-                    Cancel
-                  </button>
-                  <Link
-                    to="#"
-                    className="btn btn-primary fs-13 fw-medium p-2 px-3"
-                    data-bs-dismiss="modal"
-                  >
-                    Save Changes
-                  </Link>
+                <div className="mb-3">
+                  <label className="form-label">Short Name<span className="text-danger ms-1">*</span></label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    value={formState.shortName}
+                    onChange={(e) => setFormState({ ...formState, shortName: e.target.value })}
+                    required
+                  />
                 </div>
               </div>
-            </div>
+              <div className="modal-footer">
+                <button type="button" className="btn me-2 btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="submit" className="btn btn-primary" disabled={submitting}>
+                  {submitting ? "Saving..." : "Save Changes"}
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       </div>
-      {/* /Edit Unit */}
-      <CommonDeleteModal />
     </>
   );
 };
+export default Units;

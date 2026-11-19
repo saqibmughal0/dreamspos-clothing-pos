@@ -9,6 +9,7 @@ export const productRouter = Router();
 productRouter.use(authenticate);
 
 productRouter.get("/", productController.list);
+productRouter.get("/expired", productController.getExpired);
 productRouter.get("/barcodes", productController.getBarcodeLabels);
 productRouter.get("/export", productController.exportProducts);
 productRouter.post("/import", requireRoles([UserRole.ADMIN, UserRole.SUPER_ADMIN, UserRole.STORE_MANAGER]), productController.importProducts);

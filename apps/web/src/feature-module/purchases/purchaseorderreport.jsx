@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 
 import Table from "../../core/pagination/datatable";
@@ -6,11 +6,36 @@ import CommonFooter from "../../core/common/footer/commonFooter";
 import TooltipIcons from "../../core/common/tooltip-content/tooltipIcons";
 import RefreshIcon from "../../core/common/tooltip-content/refresh";
 import CollapesIcon from "../../core/common/tooltip-content/collapes";
-import { purchasereportdata } from "../../core/json/purchasereportdata";
+import { apiClient } from "../../core/apiClient";
 
 const PurchaseOrderReport = () => {
 
-  const dataSource = purchasereportdata;
+  const [dataSource, setDataSource] = useState([]);
+
+  useEffect(() => {
+    apiClient.get("/purchases")
+      .then((res) => {
+        if (res.data?.success && res.data.data?.items) {
+          const rows = [];
+          for (const p of res.data.data.items) {
+            for (const item of p.items || []) {
+              rows.push({
+                key: item.id,
+                productName: item.productName || p.purchaseNumber,
+                productAmount: `Rs ${Number(item.totalCost || 0).toFixed(2)}`,
+                purchasedQty: item.quantity,
+                instockQty: item.receivedQty,
+                img: "assets/img/products/pos-product-01.png",
+              });
+            }
+          }
+          setDataSource(rows);
+        } else {
+          setDataSource([]);
+        }
+      })
+      .catch(() => setDataSource([]));
+  }, []);
 
   const columns = [
     {

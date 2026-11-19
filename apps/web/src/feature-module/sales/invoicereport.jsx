@@ -1,7 +1,6 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Table from "../../core/pagination/datatable";
-import { invoicereportdata } from "../../core/json/invoicereportdata";
 import TooltipIcons from "../../core/common/tooltip-content/tooltipIcons";
 import RefreshIcon from "../../core/common/tooltip-content/refresh";
 import CollapesIcon from "../../core/common/tooltip-content/collapes";
@@ -10,10 +9,46 @@ import ImageWithBasePath from "../../core/img/imagewithbasebath";
 import { Eye, Trash2 } from "feather-icons-react/build/IconComponents";
 import { all_routes } from "../../Router/all_routes";
 import CommonDeleteModal from "../../core/common/modal/commonDeleteModal";
+import { apiClient } from "../../core/apiClient";
 
 const Invoice = () => {
-  const data = invoicereportdata;
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const route = all_routes;
+
+  const fetchInvoices = () => {
+    setLoading(true);
+    setError(null);
+    apiClient.get("/sales")
+      .then((res) => {
+        if (res.data?.success && Array.isArray(res.data.data)) {
+          setData(res.data.data.map((s, idx) => ({
+            id: s.id,
+            key: s.id || idx,
+            invoiceno: s.invoiceNumber,
+            customer: s.customer?.name || "Walk-in Customer",
+            duedate: new Date(s.createdAt).toLocaleDateString("en-PK"),
+            amount: `Rs ${Number(s.totalAmount || 0).toFixed(2)}`,
+            paid: `Rs ${Number(s.paidAmount || 0).toFixed(2)}`,
+            amountdue: `Rs ${Number(s.dueAmount || 0).toFixed(2)}`,
+            status: s.paymentStatus === "PAID" ? "Paid" : s.paymentStatus === "PARTIAL" ? "Partial" : "Unpaid",
+            image: "user-01.jpg",
+          })));
+        } else {
+          setData([]);
+        }
+      })
+      .catch((err) => {
+        setError(err?.response?.data?.message || err?.message || "Failed to load invoices");
+        setData([]);
+      })
+      .finally(() => setLoading(false));
+  };
+
+  useEffect(() => {
+    fetchInvoices();
+  }, []);
   const columns = [
     {
       title: "Invoice No",

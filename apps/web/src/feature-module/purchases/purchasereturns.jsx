@@ -6,18 +6,17 @@ import TooltipIcons from "../../core/common/tooltip-content/tooltipIcons";
 import RefreshIcon from "../../core/common/tooltip-content/refresh";
 import CollapesIcon from "../../core/common/tooltip-content/collapes";
 
-import { purchasesreturn } from "../../core/json/purchasereturn";
 import AddPurchaseReturn from "../../core/modals/purchases/addpurchasereturn";
 import EditPurchaseReturns from "../../core/modals/purchases/editpurchasereturns";
 import { apiClient } from "../../core/apiClient";
 
 const PurchaseReturns = () => {
-  const [dataSource, setDataSource] = useState(purchasesreturn);
+  const [dataSource, setDataSource] = useState([]);
 
   useEffect(() => {
     apiClient.get("/purchases/returns")
       .then((res) => {
-        if (res.data?.success && res.data.data?.items?.length > 0) {
+        if (res.data?.success && res.data.data?.items) {
           const mapped = res.data.data.items.map((r, idx) => ({
             id: r.id,
             key: r.id || idx,

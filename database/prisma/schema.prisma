@@ -35,6 +35,26 @@ model Company {
   accounts          Account[]
   journalEntries    JournalEntry[]
   settings          Setting[]
+  variantAttributes VariantAttribute[]
+  warranties        Warranty[]
+  incomeCategories  IncomeCategory[]
+  incomes           Income[]
+  moneyTransfers    MoneyTransfer[]
+  quotations        Quotation[]
+  coupons           Coupon[]
+  giftCards         GiftCard[]
+  discountPlans     DiscountPlan[]
+  discounts         Discount[]
+  departments       Department[]
+  designations      Designation[]
+  shifts            Shift[]
+  employees         Employee[]
+  attendances       Attendance[]
+  leaveTypes        LeaveType[]
+  leaveRequests     LeaveRequest[]
+  holidays          Holiday[]
+  payrolls          Payroll[]
+  billers           Biller[]
 
   @@map("companies")
 }
@@ -234,9 +254,11 @@ model Product {
   taxType       String   @default("EXCLUSIVE") @map("tax_type")
   alertQuantity Int      @default(10) @map("alert_quantity")
   description   String?  @db.Text
-  image         String?
-  images        String?  @db.Text
-  isActive      Boolean  @default(true) @map("is_active")
+  image            String?
+  images           String?   @db.Text
+  manufacturedDate DateTime? @map("manufactured_date")
+  expiryDate       DateTime? @map("expiry_date")
+  isActive         Boolean   @default(true) @map("is_active")
   createdAt     DateTime @default(now()) @map("created_at")
   updatedAt     DateTime @updatedAt @map("updated_at")
 
@@ -770,4 +792,371 @@ model AuditLog {
   user       User?    @relation(fields: [userId], references: [id])
 
   @@map("audit_logs")
+}
+
+model VariantAttribute {
+  id        String   @id @default(uuid())
+  companyId String   @map("company_id")
+  name      String
+  values    String   @db.Text
+  isActive  Boolean  @default(true) @map("is_active")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  company Company @relation(fields: [companyId], references: [id])
+
+  @@map("variant_attributes")
+}
+
+model Warranty {
+  id           String   @id @default(uuid())
+  companyId    String   @map("company_id")
+  name         String
+  duration     Int
+  durationUnit String   @default("Months") @map("duration_unit")
+  description  String?  @db.Text
+  isActive     Boolean  @default(true) @map("is_active")
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  company Company @relation(fields: [companyId], references: [id])
+
+  @@map("warranties")
+}
+
+model IncomeCategory {
+  id          String   @id @default(uuid())
+  companyId   String   @map("company_id")
+  name        String
+  code        String
+  description String?
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  company Company  @relation(fields: [companyId], references: [id])
+  incomes Income[]
+
+  @@map("income_categories")
+}
+
+model Income {
+  id              String   @id @default(uuid())
+  companyId       String   @map("company_id")
+  categoryId      String   @map("category_id")
+  incomeNumber    String   @map("income_number")
+  amount          Decimal  @db.Decimal(14, 4)
+  paymentMethod   String   @map("payment_method")
+  referenceNumber String?  @map("reference_number")
+  date            DateTime @default(now())
+  notes           String?  @db.Text
+  createdAt       DateTime @default(now()) @map("created_at")
+
+  company  Company        @relation(fields: [companyId], references: [id])
+  category IncomeCategory @relation(fields: [categoryId], references: [id])
+
+  @@unique([companyId, incomeNumber])
+  @@map("incomes")
+}
+
+model MoneyTransfer {
+  id              String   @id @default(uuid())
+  companyId       String   @map("company_id")
+  fromAccountId   String   @map("from_account_id")
+  toAccountId     String   @map("to_account_id")
+  referenceNumber String   @map("reference_number")
+  amount          Decimal  @db.Decimal(14, 4)
+  date            DateTime @default(now())
+  notes           String?  @db.Text
+  createdAt       DateTime @default(now()) @map("created_at")
+
+  company Company @relation(fields: [companyId], references: [id])
+
+  @@unique([companyId, referenceNumber])
+  @@map("money_transfers")
+}
+
+model Quotation {
+  id              String    @id @default(uuid())
+  companyId       String    @map("company_id")
+  storeId         String    @map("store_id")
+  customerId      String?   @map("customer_id")
+  quotationNumber String    @map("quotation_number")
+  subtotal        Decimal   @db.Decimal(14, 4)
+  discountAmount  Decimal   @default(0.0000) @map("discount_amount") @db.Decimal(14, 4)
+  taxAmount       Decimal   @default(0.0000) @map("tax_amount") @db.Decimal(14, 4)
+  totalAmount     Decimal   @map("total_amount") @db.Decimal(14, 4)
+  status          String    @default("PENDING")
+  validUntil      DateTime? @map("valid_until")
+  notes           String?   @db.Text
+  convertedSaleId String?   @map("converted_sale_id")
+  createdAt       DateTime  @default(now()) @map("created_at")
+
+  company Company         @relation(fields: [companyId], references: [id])
+  items   QuotationItem[]
+
+  @@unique([companyId, quotationNumber])
+  @@map("quotations")
+}
+
+model QuotationItem {
+  id             String  @id @default(uuid())
+  quotationId    String  @map("quotation_id")
+  productId      String  @map("product_id")
+  variantId      String? @map("variant_id")
+  quantity       Decimal @db.Decimal(14, 4)
+  unitPrice      Decimal @map("unit_price") @db.Decimal(14, 4)
+  discountAmount Decimal @default(0.0000) @map("discount_amount") @db.Decimal(14, 4)
+  taxAmount      Decimal @default(0.0000) @map("tax_amount") @db.Decimal(14, 4)
+  totalPrice     Decimal @map("total_price") @db.Decimal(14, 4)
+
+  quotation Quotation @relation(fields: [quotationId], references: [id], onDelete: Cascade)
+
+  @@map("quotation_items")
+}
+
+model Coupon {
+  id          String    @id @default(uuid())
+  companyId   String    @map("company_id")
+  name        String
+  code        String
+  type        String    @default("PERCENTAGE")
+  value       Decimal   @db.Decimal(14, 4)
+  minPurchase Decimal   @default(0.0000) @map("min_purchase") @db.Decimal(14, 4)
+  maxUses     Int?      @map("max_uses")
+  usedCount   Int       @default(0) @map("used_count")
+  validFrom   DateTime? @map("valid_from")
+  validUntil  DateTime? @map("valid_until")
+  description String?   @db.Text
+  isActive    Boolean   @default(true) @map("is_active")
+  createdAt   DateTime  @default(now()) @map("created_at")
+
+  company Company @relation(fields: [companyId], references: [id])
+
+  @@unique([companyId, code])
+  @@map("coupons")
+}
+
+model GiftCard {
+  id             String    @id @default(uuid())
+  companyId      String    @map("company_id")
+  customerId     String?   @map("customer_id")
+  cardNumber     String    @map("card_number")
+  initialBalance Decimal   @map("initial_balance") @db.Decimal(14, 4)
+  currentBalance Decimal   @map("current_balance") @db.Decimal(14, 4)
+  issuedDate     DateTime  @default(now()) @map("issued_date")
+  expiryDate     DateTime? @map("expiry_date")
+  status         String    @default("ACTIVE")
+  createdAt      DateTime  @default(now()) @map("created_at")
+
+  company Company @relation(fields: [companyId], references: [id])
+
+  @@unique([companyId, cardNumber])
+  @@map("gift_cards")
+}
+
+model DiscountPlan {
+  id              String   @id @default(uuid())
+  companyId       String   @map("company_id")
+  name            String
+  targetCustomers String   @default("ALL") @map("target_customers")
+  isActive        Boolean  @default(true) @map("is_active")
+  createdAt       DateTime @default(now()) @map("created_at")
+
+  company   Company    @relation(fields: [companyId], references: [id])
+  discounts Discount[]
+
+  @@map("discount_plans")
+}
+
+model Discount {
+  id         String    @id @default(uuid())
+  companyId  String    @map("company_id")
+  planId     String?   @map("plan_id")
+  name       String
+  type       String    @default("PERCENTAGE")
+  value      Decimal   @db.Decimal(14, 4)
+  validFrom  DateTime? @map("valid_from")
+  validUntil DateTime? @map("valid_until")
+  isActive   Boolean   @default(true) @map("is_active")
+  createdAt  DateTime  @default(now()) @map("created_at")
+
+  company Company       @relation(fields: [companyId], references: [id])
+  plan    DiscountPlan? @relation(fields: [planId], references: [id])
+
+  @@map("discounts")
+}
+
+model Department {
+  id          String   @id @default(uuid())
+  companyId   String   @map("company_id")
+  name        String
+  code        String?
+  description String?
+  isActive    Boolean  @default(true) @map("is_active")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  company   Company    @relation(fields: [companyId], references: [id])
+  employees Employee[]
+
+  @@map("departments")
+}
+
+model Designation {
+  id          String   @id @default(uuid())
+  companyId   String   @map("company_id")
+  name        String
+  description String?
+  isActive    Boolean  @default(true) @map("is_active")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  company   Company    @relation(fields: [companyId], references: [id])
+  employees Employee[]
+
+  @@map("designations")
+}
+
+model Shift {
+  id           String   @id @default(uuid())
+  companyId    String   @map("company_id")
+  name         String
+  startTime    String   @map("start_time")
+  endTime      String   @map("end_time")
+  breakMinutes Int      @default(0) @map("break_minutes")
+  isActive     Boolean  @default(true) @map("is_active")
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  company   Company    @relation(fields: [companyId], references: [id])
+  employees Employee[]
+
+  @@map("shifts")
+}
+
+model Employee {
+  id            String   @id @default(uuid())
+  companyId     String   @map("company_id")
+  departmentId  String?  @map("department_id")
+  designationId String?  @map("designation_id")
+  shiftId       String?  @map("shift_id")
+  empCode       String   @map("emp_code")
+  firstName     String   @map("first_name")
+  lastName      String   @map("last_name")
+  email         String?
+  phone         String?
+  basicSalary   Decimal  @default(0.0000) @map("basic_salary") @db.Decimal(14, 4)
+  joinDate      DateTime @default(now()) @map("join_date")
+  status        String   @default("ACTIVE")
+  createdAt     DateTime @default(now()) @map("created_at")
+
+  company     Company        @relation(fields: [companyId], references: [id])
+  department  Department?    @relation(fields: [departmentId], references: [id])
+  designation Designation?   @relation(fields: [designationId], references: [id])
+  shift       Shift?         @relation(fields: [shiftId], references: [id])
+  attendances Attendance[]
+  leaves      LeaveRequest[]
+  payrolls    Payroll[]
+
+  @@unique([companyId, empCode])
+  @@map("employees")
+}
+
+model Attendance {
+  id         String    @id @default(uuid())
+  companyId  String    @map("company_id")
+  employeeId String    @map("employee_id")
+  date       DateTime
+  clockIn    DateTime? @map("clock_in")
+  clockOut   DateTime? @map("clock_out")
+  status     String    @default("PRESENT")
+  notes      String?
+  createdAt  DateTime  @default(now()) @map("created_at")
+
+  company  Company  @relation(fields: [companyId], references: [id])
+  employee Employee @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+
+  @@map("attendances")
+}
+
+model LeaveType {
+  id          String   @id @default(uuid())
+  companyId   String   @map("company_id")
+  name        String
+  daysAllowed Int      @default(12) @map("days_allowed")
+  isPaid      Boolean  @default(true) @map("is_paid")
+  isActive    Boolean  @default(true) @map("is_active")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  company Company        @relation(fields: [companyId], references: [id])
+  leaves  LeaveRequest[]
+
+  @@map("leave_types")
+}
+
+model LeaveRequest {
+  id          String   @id @default(uuid())
+  companyId   String   @map("company_id")
+  employeeId  String   @map("employee_id")
+  leaveTypeId String   @map("leave_type_id")
+  startDate   DateTime @map("start_date")
+  endDate     DateTime @map("end_date")
+  days        Int
+  reason      String?  @db.Text
+  status      String   @default("PENDING")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  company   Company   @relation(fields: [companyId], references: [id])
+  employee  Employee  @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  leaveType LeaveType @relation(fields: [leaveTypeId], references: [id])
+
+  @@map("leave_requests")
+}
+
+model Holiday {
+  id          String   @id @default(uuid())
+  companyId   String   @map("company_id")
+  name        String
+  fromDate    DateTime @map("from_date")
+  toDate      DateTime @map("to_date")
+  description String?
+  isActive    Boolean  @default(true) @map("is_active")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  company Company @relation(fields: [companyId], references: [id])
+
+  @@map("holidays")
+}
+
+model Payroll {
+  id          String    @id @default(uuid())
+  companyId   String    @map("company_id")
+  employeeId  String    @map("employee_id")
+  month       Int
+  year        Int
+  basicSalary Decimal   @map("basic_salary") @db.Decimal(14, 4)
+  allowances  Decimal   @default(0.0000) @db.Decimal(14, 4)
+  deductions  Decimal   @default(0.0000) @db.Decimal(14, 4)
+  netSalary   Decimal   @map("net_salary") @db.Decimal(14, 4)
+  status      String    @default("PENDING")
+  paidAt      DateTime? @map("paid_at")
+  createdAt   DateTime  @default(now()) @map("created_at")
+
+  company  Company  @relation(fields: [companyId], references: [id])
+  employee Employee @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+
+  @@map("payrolls")
+}
+
+model Biller {
+  id          String   @id @default(uuid())
+  companyId   String   @map("company_id")
+  name        String
+  companyName String?  @map("company_name")
+  email       String?
+  phone       String?
+  address     String?  @db.Text
+  city        String?
+  country     String?  @default("Pakistan")
+  taxNumber   String?  @map("tax_number")
+  isActive    Boolean  @default(true) @map("is_active")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  company Company @relation(fields: [companyId], references: [id])
+
+  @@map("billers")
 }

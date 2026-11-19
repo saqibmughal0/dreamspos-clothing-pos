@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import ImageWithBasePath from "../../core/img/imagewithbasebath";
 import Select from "react-select";
 import { Link } from "react-router-dom";
@@ -6,17 +6,45 @@ import { Link } from "react-router-dom";
 // import "react-datepicker/dist/react-datepicker.css";
 import { Edit, Trash2 } from "react-feather";
 import Table from "../../core/pagination/datatable";
-import { useSelector } from "react-redux";
+import { apiClient } from "../../core/apiClient";
 import CommonFooter from "../../core/common/footer/commonFooter";
 import TooltipIcons from "../../core/common/tooltip-content/tooltipIcons";
 import RefreshIcon from "../../core/common/tooltip-content/refresh";
 import CollapesIcon from "../../core/common/tooltip-content/collapes";
 import { MinusCircle, PlusCircle, Search } from "feather-icons-react/build/IconComponents";
 import CommonDeleteModal from "../../core/common/modal/commonDeleteModal";
-import { ResponsiblePerson, Shop, Store, WareHouse } from "../../core/common/selectOption/selectOption";
+import { ResponsiblePerson, Shop, WareHouse } from "../../core/common/selectOption/selectOption";
 
 const Managestock = () => {
-  const dataSource = useSelector((state) => state.rootReducer.managestockdata);
+  const [dataSource, setDataSource] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    apiClient.get("/inventory/valuation")
+      .then((res) => {
+        if (res.data?.success && res.data.data?.items) {
+          const today = new Date().toLocaleDateString("en-PK");
+          setDataSource(res.data.data.items.map((item, idx) => ({
+            key: item.id || idx,
+            Warehouse: "Main Warehouse",
+            Shop: "MR Bilal POS",
+            Product: { Name: item.name, Image: "assets/img/products/pos-product-01.png" },
+            Date: today,
+            Person: { Name: "Inventory Manager", Image: "assets/img/users/user-08.jpg" },
+            Quantity: `${item.quantity} Pcs`,
+            articleCode: item.articleCode || "",
+            sku: item.sku || "",
+            costPrice: item.costPrice,
+            sellingPrice: item.sellingPrice,
+          })));
+        } else {
+          setDataSource([]);
+        }
+      })
+      .catch(() => setError("Failed to load inventory data."))
+      .finally(() => setLoading(false));
+  }, []);
 
   const columns = [
     {
@@ -154,28 +182,7 @@ const Managestock = () => {
                   >
                     Warehouse
                   </Link>
-                  <ul className="dropdown-menu  dropdown-menu-end p-3">
-                    <li>
-                      <Link to="#" className="dropdown-item rounded-1">
-                        Lavish Warehouse
-                      </Link>
-                    </li>
-                    <li>
-                      <Link to="#" className="dropdown-item rounded-1">
-                        Quaint Warehouse{" "}
-                      </Link>
-                    </li>
-                    <li>
-                      <Link to="#" className="dropdown-item rounded-1">
-                        Traditional Warehouse
-                      </Link>
-                    </li>
-                    <li>
-                      <Link to="#" className="dropdown-item rounded-1">
-                        Cool Warehouse
-                      </Link>
-                    </li>
-                  </ul>
+                  <ul className="dropdown-menu dropdown-menu-end p-3"></ul>
                 </div>
                 <div className="dropdown me-2">
                   <Link
@@ -185,28 +192,7 @@ const Managestock = () => {
                   >
                     Store
                   </Link>
-                  <ul className="dropdown-menu  dropdown-menu-end p-3">
-                    <li>
-                      <Link to="#" className="dropdown-item rounded-1">
-                        Electro Mart
-                      </Link>
-                    </li>
-                    <li>
-                      <Link to="#" className="dropdown-item rounded-1">
-                        Quantum Gadgets
-                      </Link>
-                    </li>
-                    <li>
-                      <Link to="#" className="dropdown-item rounded-1">
-                        Prime Bazaar
-                      </Link>
-                    </li>
-                    <li>
-                      <Link to="#" className="dropdown-item rounded-1">
-                        Gadget World
-                      </Link>
-                    </li>
-                  </ul>
+                  <ul className="dropdown-menu dropdown-menu-end p-3"></ul>
                 </div>
                 <div className="dropdown">
                   <Link
@@ -216,35 +202,27 @@ const Managestock = () => {
                   >
                     Product
                   </Link>
-                  <ul className="dropdown-menu  dropdown-menu-end p-3">
-                    <li>
-                      <Link to="#" className="dropdown-item rounded-1">
-                        Lenovo IdeaPad 3
-                      </Link>
-                    </li>
-                    <li>
-                      <Link to="#" className="dropdown-item rounded-1">
-                        Beats Pro{" "}
-                      </Link>
-                    </li>
-                    <li>
-                      <Link to="#" className="dropdown-item rounded-1">
-                        Nike Jordan
-                      </Link>
-                    </li>
-                    <li>
-                      <Link to="#" className="dropdown-item rounded-1">
-                        Apple Series 5 Watch
-                      </Link>
-                    </li>
-                  </ul>
+                  <ul className="dropdown-menu dropdown-menu-end p-3"></ul>
                 </div>
               </div>
             </div>
 
             <div className="card-body">
               <div className="custom-datatable-filter table-responsive">
-                <Table columns={columns} dataSource={dataSource} />
+                {loading && (
+                  <div className="text-center py-5">
+                    <div className="spinner-border text-primary" role="status" />
+                    <p className="text-muted mt-2">Loading inventory…</p>
+                  </div>
+                )}
+                {!loading && error && (
+                  <div className="text-center py-5">
+                    <i className="ti ti-database-off fs-40 text-danger d-block mb-2" />
+                    <h5 className="text-danger">Could not load inventory</h5>
+                    <p className="text-muted">{error}</p>
+                  </div>
+                )}
+                {!loading && !error && <Table columns={columns} dataSource={dataSource} />}
               </div>
             </div>
           </div>
@@ -409,7 +387,7 @@ const Managestock = () => {
                         type="text"
                         className="form-control"
                         placeholder="Select Product"
-                        defaultValue="Nike Jordan"
+                        defaultValue=""
                       />
                       <Search className="feather-search" />
                     </div>
@@ -440,11 +418,11 @@ const Managestock = () => {
                                       alt="product"
                                     />
                                   </Link>
-                                  <Link to="#">Nike Jordan</Link>
+                                  <Link to="#">—</Link>
                                 </div>
                               </td>
-                              <td>PT002</td>
-                              <td>Nike</td>
+                              <td>—</td>
+                              <td>—</td>
                               <td>
                                 <div className="product-quantity bg-gray-transparent border-0">
                                   <span className="quantity-btn">

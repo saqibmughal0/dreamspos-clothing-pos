@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 
-import { expensecategory } from "../../core/json/expensecategory";
 import Table from "../../core/pagination/datatable";
 import TextEditor from "../inventory/texteditor";
 import TooltipIcons from "../../core/common/tooltip-content/tooltipIcons";
@@ -11,25 +10,27 @@ import { PlusCircle } from "feather-icons-react/build/IconComponents";
 import { apiClient } from "../../core/apiClient";
 
 const ExpenseCategory = () => {
-  const [data, setData] = useState(expensecategory);
+  const [data, setData] = useState([]);
 
   useEffect(() => {
     apiClient.get("/finance/expense-categories")
       .then((res) => {
-        if (res.data?.success && res.data.data?.length > 0) {
+        if (res.data?.success && Array.isArray(res.data.data)) {
           const mapped = res.data.data.map((c, idx) => ({
             id: c.id,
             key: c.id || idx,
             status: "Active",
             categoryName: c.name,
-            description: c.description || c.code || "Clothing Retail Category",
+            description: c.description || c.code || "Expense Category",
             isSelected: false
           }));
           setData(mapped);
+        } else {
+          setData([]);
         }
       })
-      .catch((err) => {
-        console.warn("Using default expense categories:", err);
+      .catch(() => {
+        setData([]);
       });
   }, []);
   const columns = [

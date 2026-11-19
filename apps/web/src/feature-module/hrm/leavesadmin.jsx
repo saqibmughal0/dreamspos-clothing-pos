@@ -1,541 +1,193 @@
-import React from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
-import { Calendar } from "feather-icons-react/build/IconComponents";
 import Table from "../../core/pagination/datatable";
-import { DatePicker } from "antd";
 import TooltipIcons from "../../core/common/tooltip-content/tooltipIcons";
 import RefreshIcon from "../../core/common/tooltip-content/refresh";
 import CollapesIcon from "../../core/common/tooltip-content/collapes";
-import TextEditor from "../inventory/texteditor";
-import Select from "react-select"
-import { leavesadmindata } from "../../core/json/leavesadmin";
 import CommonFooter from "../../core/common/footer/commonFooter";
+import { apiClient } from "../../core/apiClient";
 
 const LeavesAdmin = () => {
+  const [dataSource, setDataSource] = useState([]);
+  const [employees, setEmployees] = useState([]);
+  const [leaveTypes, setLeaveTypes] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [form, setForm] = useState({ employeeId: "", leaveTypeId: "", startDate: "", endDate: "", days: "1", reason: "" });
+  const [submitting, setSubmitting] = useState(false);
 
-  const dataSource = leavesadmindata;
+  const fetchData = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const [lvRes, empRes, ltRes] = await Promise.all([
+        apiClient.get("/hrm/leaves"),
+        apiClient.get("/hrm/employees"),
+        apiClient.get("/hrm/leave-types"),
+      ]);
+      const items = lvRes.data?.data?.items || [];
+      setEmployees(empRes.data?.data?.items || []);
+      setLeaveTypes(ltRes.data?.data?.items || []);
+      setDataSource(items.map((l) => ({
+        id: l.id,
+        key: l.id,
+        empname: l.employee ? `${l.employee.firstName} ${l.employee.lastName}` : "—",
+        type: l.leaveType?.name || "—",
+        fromdate: new Date(l.startDate).toLocaleDateString("en-PK"),
+        todate: new Date(l.endDate).toLocaleDateString("en-PK"),
+        days: `${l.days} Day(s)`,
+        status: l.status,
+      })));
+    } catch (err) {
+      setError(err?.response?.data?.message || err?.message || "Failed to load leaves");
+      setDataSource([]);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
-  // const [isFilterVisible, setIsFilterVisible] = useState(false);
-  // const toggleFilterVisibility = () => {
-  //     setIsFilterVisible((prevVisibility) => !prevVisibility);
-  // };
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
 
-  // const oldandlatestvalue = [
-  //     { value: 'date', label: 'Sort by Date' },
-  //     { value: 'newest', label: 'Newest' },
-  //     { value: 'oldest', label: 'Oldest' },
-  // ];
+  const handleCreate = async (e) => {
+    e.preventDefault();
+    if (!form.employeeId || !form.leaveTypeId || !form.startDate || !form.endDate) return;
+    setSubmitting(true);
+    try {
+      await apiClient.post("/hrm/leaves", { ...form, days: Number(form.days || 1) });
+      setForm({ employeeId: "", leaveTypeId: "", startDate: "", endDate: "", days: "1", reason: "" });
+      document.querySelector("#add-leave .btn-close")?.click();
+      fetchData();
+    } catch (err) {
+      setError(err?.response?.data?.message || err?.message || "Failed to apply leave");
+    } finally {
+      setSubmitting(false);
+    }
+  };
 
-  const employee = [
-    { value: 'Choose Employee', label: 'Choose Employee' },
-    { value: 'Mitchum Daniel', label: 'Mitchum Daniel' },
-    { value: 'Susan Lopez', label: 'Susan Lopez' },
-    { value: 'Robert Grossman', label: 'Robert Grossman' },
-    { value: 'Janet Hembre', label: 'Janet Hembre' },
-  ];
-  const leavetype = [
-    { value: 'Choose Type', label: 'Choose Type' },
-    { value: 'Sick Leave', label: 'Sick Leave' },
-    { value: 'Maternity', label: 'Maternity' },
-    { value: 'Vacation', label: 'Vacation' },
-  ];
-  const leavetype2 = [
-    { value: 'Full Day', label: 'Full Day' },
-    { value: 'Half Day', label: 'Half Day' },
-  ];
-  // const leavestatus = [
-  //     { value: 'Choose Status', label: 'Choose Status' },
-  //     { value: 'Approved', label: 'Approved' },
-  //     { value: 'Rejected', label: 'Rejected' },
-  // ];
-
+  const handleStatus = async (id, status) => {
+    try {
+      await apiClient.patch(`/hrm/leaves/${id}/status`, { status });
+      fetchData();
+    } catch (err) {
+      setError(err?.response?.data?.message || err?.message || "Failed to update leave status");
+    }
+  };
 
   const columns = [
-    {
-      title: "Emp Name",
-      dataIndex: "empname",
-      sorter: (a, b) => a.empname.length - b.empname.length,
-    },
-    {
-      title: "Emp Id",
-      dataIndex: "empid",
-      sorter: (a, b) => a.empid.length - b.empid.length,
-    },
-    {
-      title: "Type",
-      dataIndex: "type",
-      sorter: (a, b) => a.type.length - b.type.length,
-    },
-    {
-      title: "From Date",
-      dataIndex: "fromdate",
-      sorter: (a, b) => a.fromdate.length - b.fromdate.length,
-    },
-    {
-      title: "To Date",
-      dataIndex: "todate",
-      sorter: (a, b) => a.todate.length - b.todate.length,
-    },
-    {
-      title: "Days/Hours",
-      dataIndex: "days/hours",
-      sorter: (a, b) => a.days.length - b.days.length,
-    },
-    {
-      title: "Shift",
-      dataIndex: "shift",
-      sorter: (a, b) => a.shift.length - b.shift.length,
-    },
-    {
-      title: "Applied On",
-      dataIndex: "appliedon",
-      sorter: (a, b) => a.appliedon.length - b.appliedon.length,
-    },
+    { title: "Employee", dataIndex: "empname" },
+    { title: "Type", dataIndex: "type" },
+    { title: "From Date", dataIndex: "fromdate" },
+    { title: "To Date", dataIndex: "todate" },
+    { title: "Days", dataIndex: "days" },
     {
       title: "Status",
       dataIndex: "status",
       render: (text) => (
-        <span className={`badge  ${ text === 'Approved' ? 'badge-success' : 'badge-danger'} d-inline-flex align-items-center badge-xs`}>
-          <i className="ti ti-point-filled me-1" />
+        <span className={`badge ${text === "APPROVED" ? "bg-success" : text === "REJECTED" ? "bg-danger" : "bg-warning"} badge-xs`}>
           {text}
         </span>
       ),
-      sorter: (a, b) => a.status.length - b.status.length,
     },
     {
-      title: "",
-      dataIndex: "actions",
+      title: "Actions",
       key: "actions",
-      render: () => (
-        <td className="action-table-data justify-content-end">
-          <div className="edit-delete-action">
-            <Link className="me-2 p-2" to="#" data-bs-toggle="modal" data-bs-target="#edit-leave">
-              <i data-feather="edit" className="feather-edit"></i>
-            </Link>
-            <Link className="confirm-text p-2" to="#" data-bs-toggle="modal" data-bs-target="#delete-modal">
-              <i data-feather="trash-2" className="feather-trash-2"></i>
-            </Link>
+      render: (_, record) =>
+        record.status === "PENDING" ? (
+          <div className="d-flex gap-1">
+            <button type="button" className="btn btn-sm btn-outline-success" onClick={() => handleStatus(record.id, "APPROVED")}>Approve</button>
+            <button type="button" className="btn btn-sm btn-outline-danger" onClick={() => handleStatus(record.id, "REJECTED")}>Reject</button>
           </div>
-
-        </td>
-      ),
+        ) : null,
     },
   ];
+
   return (
-    <div>
-      <div className="page-wrapper">
-        <div className="content">
-          <div className="page-header">
-            <div className="add-item d-flex">
-              <div className="page-title">
-                <h4>Leaves</h4>
-                <h6>Manage your Leaves</h6>
-              </div>
-            </div>
-            <ul className="table-top-head">
-              <TooltipIcons />
-              <RefreshIcon />
-              <CollapesIcon />
-            </ul>
-            <div className="page-btn">
-              <Link
-                to="#"
-                className="btn btn-primary"
-                data-bs-toggle="modal"
-                data-bs-target="#add-leave"
-              >
-                Apply Leave
-              </Link>
+    <div className="page-wrapper">
+      <div className="content">
+        <div className="page-header">
+          <div className="add-item d-flex">
+            <div className="page-title">
+              <h4>Leaves</h4>
+              <h6>Manage employee leave requests</h6>
             </div>
           </div>
-
-          {/* /product list */}
-          <div className="card table-list-card">
-            <div className="card-header d-flex align-items-center justify-content-between flex-wrap row-gap-3">
-              <div className="search-set">
-
-              </div>
-              <div className="d-flex table-dropdown my-xl-auto right-content align-items-center flex-wrap row-gap-3">
-                <div className="me-2 date-select-small">
-                  <div className="input-addon-right position-relative">
-
-                    <DatePicker
-                      className="form-control datetimepicker"
-                    // placeholder="dd/mm/yyyy"
-                    />
-                    <Calendar className="info-img" />
-                  </div>
-                </div>
-                <div className="dropdown">
-                  <Link
-                    to="#"
-                    className="dropdown-toggle btn btn-white btn-md d-inline-flex align-items-center"
-                    data-bs-toggle="dropdown"
-                  >
-                    Select Status
-                  </Link>
-                  <ul className="dropdown-menu  dropdown-menu-end p-3">
-                    <li>
-                      <Link to="#" className="dropdown-item rounded-1">
-                        Approved
-                      </Link>
-                    </li>
-                    <li>
-                      <Link to="#" className="dropdown-item rounded-1">
-                        Rejected
-                      </Link>
-                    </li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-
-            <div className="card-body pb-0">
-              <div className="table-responsive">
-                <Table columns={columns} dataSource={dataSource} />
-              </div>
-            </div>
-            {/* /Filter */}
+          <ul className="table-top-head">
+            <TooltipIcons />
+            <RefreshIcon onClick={fetchData} />
+            <CollapesIcon />
+          </ul>
+          <div className="page-btn">
+            <Link to="#" className="btn btn-primary" data-bs-toggle="modal" data-bs-target="#add-leave">
+              <i className="ti ti-circle-plus me-1"></i> Apply Leave
+            </Link>
           </div>
         </div>
-        <CommonFooter />
-        {/* /product list */}
+
+        <div className="card table-list-card">
+          <div className="card-body">
+            <div className="table-responsive">
+              {loading && <div className="text-center py-5"><div className="spinner-border text-primary" /></div>}
+              {!loading && error && <div className="alert alert-danger">{error}</div>}
+              {!loading && !error && dataSource.length === 0 && <div className="text-center py-5 text-muted">No leave requests found.</div>}
+              {!loading && !error && dataSource.length > 0 && <Table columns={columns} dataSource={dataSource} />}
+            </div>
+          </div>
+        </div>
       </div>
-      <>
-        {/* Add Leave */}
-        <div className="modal fade" id="add-leave">
-          <div className="modal-dialog modal-dialog-centered">
-            <div className="modal-content">
-              <div className="modal-header">
-                <div className="page-title">
-                  <h4>Apply Leave</h4>
-                </div>
-                <button
-                  type="button"
-                  className="close"
-                  data-bs-dismiss="modal"
-                  aria-label="Close"
-                >
-                  <span aria-hidden="true">×</span>
-                </button>
-              </div>
-              <form >
-                <div className="modal-body">
-                  <div className="row">
-                    <div className="col-lg-12">
-                      <div className="mb-3">
-                        <label className="form-label">
-                          Employee <span className="text-danger">*</span>
-                        </label>
-                        <Select
-                          classNamePrefix="react-select"
-                          options={employee}
-                          placeholder="Choose"
-                        />
-                      </div>
-                    </div>
-                    <div className="col-lg-12">
-                      <div className="mb-3">
-                        <label className="form-label">
-                          Leave Type <span className="text-danger">*</span>
-                        </label>
-                        <Select
-                          classNamePrefix="react-select"
-                          options={leavetype}
-                          placeholder="Choose"
-                        />
-                      </div>
-                    </div>
-                    <div className="col-lg-12">
-                      <div className="row">
-                        <div className="col-lg-6">
-                          <div className="mb-3">
-                            <label className="form-label">
-                              From <span className="text-danger"> *</span>
-                            </label>
-                            <div className="input-addon-right position-relative">
-                              <DatePicker
-                                className="form-control datetimepicker"
-                                placeholder="dd/mm/yyyy"
-                              />
-                              <Calendar className="info-img" />
-                            </div>
-                          </div>
-                        </div>
-                        <div className="col-lg-6">
-                          <div className="mb-3">
-                            <label className="form-label">
-                              To <span className="text-danger"> *</span>
-                            </label>
-                            <div className="input-addon-right position-relative">
-                              <DatePicker
-                                className="form-control datetimepicker"
-                                placeholder="dd/mm/yyyy"
-                              />
-                              <Calendar className="info-img" />
-                            </div>
-                          </div>
-                        </div>
-                        <div className="col-lg-6">
-                          <div className="mb-3">
-                            <div className="input-addon-right position-relative">
-                              <DatePicker
-                                className="form-control datetimepicker"
-                                placeholder="dd/mm/yyyy"
-                              />
-                              <Calendar className="info-img" />
-                            </div>
-                          </div>
-                        </div>
-                        <div className="col-lg-6">
-                          <div className="mb-3">
-                            <Select
-                              classNamePrefix="react-select"
-                              options={leavetype2}
-                              placeholder="Choose"
-                            />
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="col-lg-12">
-                      <div className="bg-light rounded p-3 pb-0">
-                        <div className="row">
-                          <div className="col-lg-6">
-                            <div className="mb-3">
-                              <label className="form-label">No of Days</label>
-                              <input
-                                type="text"
-                                className="form-control bg-light "
-                                readOnly=""
-                              />
-                            </div>
-                          </div>
-                          <div className="col-lg-6">
-                            <div className="mb-3">
-                              <label className="form-label">Remaining Leaves</label>
-                              <input
-                                type="text"
-                                className="form-control bg-light "
-                                readOnly=""
-                              />
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="col-lg-12">
-                      <div className="summer-description-box mb-0">
-                        <label className="form-label">Reason</label>
-                        <TextEditor />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div className="modal-footer">
-                  <button
-                    type="button"
-                    className="btn btn-secondary me-2"
-                    data-bs-dismiss="modal"
-                  >
-                    Cancel
-                  </button>
-                  <Link to="#" className="btn btn-primary" data-bs-dismiss="modal">
-                    Submit
-                  </Link>
-                </div>
-              </form>
-            </div>
-          </div>
-        </div>
-        {/* /Add Leave */}
-        {/* Edit Leave */}
-        <div className="modal fade" id="edit-leave">
-          <div className="modal-dialog modal-dialog-centered">
-            <div className="modal-content">
-              <div className="modal-header">
-                <div className="page-title">
-                  <h4>Edit Leave</h4>
-                </div>
-                <button
-                  type="button"
-                  className="close"
-                  data-bs-dismiss="modal"
-                  aria-label="Close"
-                >
-                  <span aria-hidden="true">×</span>
-                </button>
-              </div>
-              <form >
-                <div className="modal-body">
-                  <div className="row">
-                    <div className="col-lg-12">
-                      <div className="mb-3">
-                        <label className="form-label">
-                          Employee <span className="text-danger">*</span>
-                        </label>
-                        <Select
-                          classNamePrefix="react-select"
-                          options={employee}
-                          placeholder="Choose"
-                        />
-                      </div>
-                    </div>
-                    <div className="col-lg-12">
-                      <div className="mb-3">
-                        <label className="form-label">
-                          Leave Type <span className="text-danger">*</span>
-                        </label>
-                        <Select
-                          classNamePrefix="react-select"
-                          options={leavetype}
-                          placeholder="Choose"
-                        />
-                      </div>
-                    </div>
-                    <div className="col-lg-12">
-                      <div className="row">
-                        <div className="col-lg-6">
-                          <div className="mb-3">
-                            <label className="form-label">
-                              From <span className="text-danger"> *</span>
-                            </label>
-                            <div className="input-addon-right position-relative">
-                              <DatePicker
-                                className="form-control datetimepicker"
-                                placeholder="dd/mm/yyyy"
-                              />
-                              <Calendar className="info-img" />
-                            </div>
-                          </div>
-                        </div>
-                        <div className="col-lg-6">
-                          <div className="mb-3">
-                            <label className="form-label">
-                              To <span className="text-danger"> *</span>
-                            </label>
-                            <div className="input-addon-right position-relative">
-                              <DatePicker
-                                className="form-control datetimepicker"
-                                placeholder="dd/mm/yyyy"
-                              />
-                              <Calendar className="info-img" />
-                            </div>
-                          </div>
-                        </div>
-                        <div className="col-lg-6">
-                          <div className="mb-3">
-                            <div className="input-addon-right position-relative">
-                              <DatePicker
-                                className="form-control datetimepicker"
-                                placeholder="dd/mm/yyyy"
-                              />
-                              <Calendar className="info-img" />
-                            </div>
-                          </div>
-                        </div>
-                        <div className="col-lg-6">
-                          <div className="mb-3">
-                            <Select
-                              classNamePrefix="react-select"
-                              options={leavetype2}
-                              placeholder="Choose"
-                            />
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="col-lg-12">
-                      <div className="bg-light rounded p-3 pb-0">
-                        <div className="row">
-                          <div className="col-lg-6">
-                            <div className="mb-3">
-                              <label className="form-label">No of Days</label>
-                              <input
-                                type="text"
-                                className="form-control bg-light "
-                                defaultValue={"01"}
-                                readOnly=""
-                              />
-                            </div>
-                          </div>
-                          <div className="col-lg-6">
-                            <div className="mb-3">
-                              <label className="form-label">Remaining Leaves</label>
-                              <input
-                                type="text"
-                                className="form-control bg-light "
-                                defaultValue={"08"}
-                                readOnly=""
-                              />
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="col-lg-12">
-                      <div className="summer-description-box mb-0">
-                        <label className="form-label">Reason</label>
-                        <TextEditor />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div className="modal-footer">
-                  <button
-                    type="button"
-                    className="btn btn-secondary me-2"
-                    data-bs-dismiss="modal"
-                  >
-                    Cancel
-                  </button>
-                  <Link to="#" className="btn btn-primary" data-bs-dismiss="modal">
-                    Save Changes
-                  </Link>
-                </div>
-              </form>
-            </div>
-          </div>
-        </div>
-        {/* /Edit Leave */}
-        {/* delete modal */}
-        <div className="modal fade" id="delete-modal">
-          <div className="modal-dialog modal-dialog-centered">
-            <div className="modal-content">
-              <div className="page-wrapper-new p-0">
-                <div className="content p-5 px-3 text-center">
-                  <span className="rounded-circle d-inline-flex p-2 bg-danger-transparent mb-2">
-                    <i className="ti ti-trash fs-24 text-danger" />
-                  </span>
-                  <h4 className="fs-20 text-gray-9 fw-bold mb-2 mt-1">
-                    Delete Leave
-                  </h4>
-                  <p className="text-gray-6 mb-0 fs-16">
-                    Are you sure you want to delete leave?
-                  </p>
-                  <div className="modal-footer-btn mt-3 d-flex justify-content-center">
-                    <button
-                      type="button"
-                      className="btn me-2 btn-secondary fs-13 fw-medium p-2 px-3 shadow-none"
-                      data-bs-dismiss="modal"
-                    >
-                      Cancel
-                    </button>
-                    <Link
-                      to="#"
-                      className="btn btn-submit fs-13 fw-medium p-2 px-3" data-bs-dismiss="modal"
-                    >
-                      Yes Delete
-                    </Link>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        {/* /delete modal */}
-      </>
+      <CommonFooter />
 
+      <div className="modal fade" id="add-leave">
+        <div className="modal-dialog modal-dialog-centered">
+          <div className="modal-content">
+            <div className="modal-header">
+              <div className="page-title"><h4>Apply Leave</h4></div>
+              <button type="button" className="close bg-danger text-white fs-16 btn-close" data-bs-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+            </div>
+            <form onSubmit={handleCreate}>
+              <div className="modal-body">
+                <div className="mb-3">
+                  <label className="form-label">Employee<span className="text-danger ms-1">*</span></label>
+                  <select className="form-select" value={form.employeeId} onChange={(e) => setForm({ ...form, employeeId: e.target.value })} required>
+                    <option value="">Select Employee</option>
+                    {employees.map((emp) => <option key={emp.id} value={emp.id}>{emp.firstName} {emp.lastName}</option>)}
+                  </select>
+                </div>
+                <div className="mb-3">
+                  <label className="form-label">Leave Type<span className="text-danger ms-1">*</span></label>
+                  <select className="form-select" value={form.leaveTypeId} onChange={(e) => setForm({ ...form, leaveTypeId: e.target.value })} required>
+                    <option value="">Select Leave Type</option>
+                    {leaveTypes.map((lt) => <option key={lt.id} value={lt.id}>{lt.name}</option>)}
+                  </select>
+                </div>
+                <div className="row">
+                  <div className="col-6 mb-3">
+                    <label className="form-label">Start Date</label>
+                    <input type="date" className="form-control" value={form.startDate} onChange={(e) => setForm({ ...form, startDate: e.target.value })} required />
+                  </div>
+                  <div className="col-6 mb-3">
+                    <label className="form-label">End Date</label>
+                    <input type="date" className="form-control" value={form.endDate} onChange={(e) => setForm({ ...form, endDate: e.target.value })} required />
+                  </div>
+                </div>
+                <div className="mb-3">
+                  <label className="form-label">Days</label>
+                  <input type="number" min="1" className="form-control" value={form.days} onChange={(e) => setForm({ ...form, days: e.target.value })} required />
+                </div>
+                <div className="mb-3">
+                  <label className="form-label">Reason</label>
+                  <input type="text" className="form-control" value={form.reason} onChange={(e) => setForm({ ...form, reason: e.target.value })} />
+                </div>
+              </div>
+              <div className="modal-footer">
+                <button type="button" className="btn me-2 btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="submit" className="btn btn-primary" disabled={submitting}>{submitting ? "Submitting..." : "Submit Leave"}</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };

@@ -18,33 +18,55 @@ import { Download } from "react-feather";
 import { apiClient } from "../../core/apiClient";
 
 const ProductList = () => {
-  const reduxDataSource = useSelector((state) => state.rootReducer.product_list);
-  const [dataSource, setDataSource] = useState(reduxDataSource);
+  const [dataSource, setDataSource] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("ALL");
+  const [selectedBrand, setSelectedBrand] = useState("ALL");
   const dispatch = useDispatch();
   const data = useSelector((state) => state.rootReducer.toggle_header);
 
+  const categories = Array.from(new Set(dataSource.map((d) => d.category).filter((c) => c && c !== "—")));
+  const brands = Array.from(new Set(dataSource.map((d) => d.brand).filter((b) => b && b !== "—")));
+  const filteredData = dataSource.filter((item) => {
+    const q = searchTerm.trim().toLowerCase();
+    const matchesSearch = !q || item.product.toLowerCase().includes(q) || item.sku.toLowerCase().includes(q);
+    const matchesCat = selectedCategory === "ALL" || item.category === selectedCategory;
+    const matchesBrand = selectedBrand === "ALL" || item.brand === selectedBrand;
+    return matchesSearch && matchesCat && matchesBrand;
+  });
+
   useEffect(() => {
+    setLoading(true);
+    setError(null);
     apiClient.get("/products")
       .then((res) => {
-        if (res.data?.success && res.data.data?.items?.length > 0) {
+        if (res.data?.success && res.data.data?.items) {
           const mapped = res.data.data.items.map((p, idx) => ({
             id: p.id,
             key: p.id || idx,
-            sku: p.sku,
+            sku: p.sku || "—",
             product: p.name,
             productImage: p.image || "assets/img/products/pos-product-01.png",
             category: p.categoryName || "Apparel",
-            brand: "Dreams Apparel",
-            price: `Rs ${Number(p.sellingPrice).toFixed(2)}`,
+            brand: p.brandName || "—",
+            price: `Rs ${Number(p.sellingPrice || 0).toFixed(2)}`,
             unit: p.unitName || "pc",
-            qty: `${p.stockQuantity ?? 50} Pcs`,
+            qty: `${p.stockQuantity ?? 0} Pcs`,
             createdby: "Admin"
           }));
           setDataSource(mapped);
+        } else {
+          setDataSource([]);
         }
       })
       .catch((err) => {
-        console.warn("Using default product list:", err);
+        setError(err.message || "Failed to load product list");
+        setDataSource([]);
+      })
+      .finally(() => {
+        setLoading(false);
       });
   }, []);
 
@@ -116,13 +138,13 @@ const ProductList = () => {
     {
       title: "Action",
       dataIndex: "action",
-      render: () => (
+      render: (_, record) => (
         <div className="action-table-data">
           <div className="edit-delete-action">
-            <Link className="me-2 p-2" to={route.productdetails}>
+            <Link className="me-2 p-2" to={`${route.productdetails}?id=${record.id}`}>
               <Eye className="feather-view" />
             </Link>
-            <Link className="me-2 p-2" to={route.editproduct}>
+            <Link className="me-2 p-2" to={`${route.editproduct}?id=${record.id}`}>
               <Edit className="feather-edit" />
             </Link>
             <Link
@@ -235,231 +257,37 @@ const ProductList = () => {
           <div className="card table-list-card">
             <div className="card-header d-flex align-items-center justify-content-between flex-wrap row-gap-3">
               <div className="search-set">
+                <div className="search-input">
+                  <input
+                    type="text"
+                    placeholder="Search by SKU or product name..."
+                    className="form-control form-control-sm formsearch"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                  />
+                </div>
               </div>
               <div className="d-flex table-dropdown my-xl-auto right-content align-items-center flex-wrap row-gap-3">
-                <div className="dropdown me-2">
-                  <Link
-                    to="#"
-                    className="dropdown-toggle btn btn-white btn-md d-inline-flex align-items-center"
-                    data-bs-toggle="dropdown"
-                  >
-                    Product
-                  </Link>
-                  <ul className="dropdown-menu  dropdown-menu-end p-3">
-                    <li>
-                      <Link
-                        to="#"
-                        className="dropdown-item rounded-1"
-                      >
-                        Lenovo IdeaPad 3
-                      </Link>
-                    </li>
-                    <li>
-                      <Link
-                        to="#"
-                        className="dropdown-item rounded-1"
-                      >
-                        Beats Pro{" "}
-                      </Link>
-                    </li>
-                    <li>
-                      <Link
-                        to="#"
-                        className="dropdown-item rounded-1"
-                      >
-                        Nike Jordan
-                      </Link>
-                    </li>
-                    <li>
-                      <Link
-                        to="#"
-                        className="dropdown-item rounded-1"
-                      >
-                        Apple Series 5 Watch
-                      </Link>
-                    </li>
-                  </ul>
-                </div>
-                <div className="dropdown me-2">
-                  <Link
-                    to="#"
-                    className="dropdown-toggle btn btn-white btn-md d-inline-flex align-items-center"
-                    data-bs-toggle="dropdown"
-                  >
-                    Created By
-                  </Link>
-                  <ul className="dropdown-menu  dropdown-menu-end p-3">
-                    <li>
-                      <Link
-                        to="#"
-                        className="dropdown-item rounded-1"
-                      >
-                        James Kirwin
-                      </Link>
-                    </li>
-                    <li>
-                      <Link
-                        to="#"
-                        className="dropdown-item rounded-1"
-                      >
-                        Francis Chang
-                      </Link>
-                    </li>
-                    <li>
-                      <Link
-                        to="#"
-                        className="dropdown-item rounded-1"
-                      >
-                        Antonio Engle
-                      </Link>
-                    </li>
-                    <li>
-                      <Link
-                        to="#"
-                        className="dropdown-item rounded-1"
-                      >
-                        Leo Kelly
-                      </Link>
-                    </li>
-                  </ul>
-                </div>
-                <div className="dropdown me-2">
-                  <Link
-                    to="#"
-                    className="dropdown-toggle btn btn-white btn-md d-inline-flex align-items-center"
-                    data-bs-toggle="dropdown"
-                  >
-                    Category
-                  </Link>
-                  <ul className="dropdown-menu  dropdown-menu-end p-3">
-                    <li>
-                      <Link
-                        to="#"
-                        className="dropdown-item rounded-1"
-                      >
-                        Computers
-                      </Link>
-                    </li>
-                    <li>
-                      <Link
-                        to="#"
-                        className="dropdown-item rounded-1"
-                      >
-                        Electronics
-                      </Link>
-                    </li>
-                    <li>
-                      <Link
-                        to="#"
-                        className="dropdown-item rounded-1"
-                      >
-                        Shoe
-                      </Link>
-                    </li>
-                    <li>
-                      <Link
-                        to="#"
-                        className="dropdown-item rounded-1"
-                      >
-                        Electronics
-                      </Link>
-                    </li>
-                  </ul>
-                </div>
-                <div className="dropdown me-2">
-                  <Link
-                    to="#"
-                    className="dropdown-toggle btn btn-white btn-md d-inline-flex align-items-center"
-                    data-bs-toggle="dropdown"
-                  >
-                    Brand
-                  </Link>
-                  <ul className="dropdown-menu  dropdown-menu-end p-3">
-                    <li>
-                      <Link
-                        to="#"
-                        className="dropdown-item rounded-1"
-                      >
-                        Lenovo
-                      </Link>
-                    </li>
-                    <li>
-                      <Link
-                        to="#"
-                        className="dropdown-item rounded-1"
-                      >
-                        Beats
-                      </Link>
-                    </li>
-                    <li>
-                      <Link
-                        to="#"
-                        className="dropdown-item rounded-1"
-                      >
-                        Nike
-                      </Link>
-                    </li>
-                    <li>
-                      <Link
-                        to="#"
-                        className="dropdown-item rounded-1"
-                      >
-                        Apple
-                      </Link>
-                    </li>
-                  </ul>
-                </div>
-                <div className="dropdown">
-                  <Link
-                    to="#"
-                    className="dropdown-toggle btn btn-white btn-md d-inline-flex align-items-center"
-                    data-bs-toggle="dropdown"
-                  >
-                    Sort By : Last 7 Days
-                  </Link>
-                  <ul className="dropdown-menu  dropdown-menu-end p-3">
-                    <li>
-                      <Link
-                        to="#"
-                        className="dropdown-item rounded-1"
-                      >
-                        Recently Added
-                      </Link>
-                    </li>
-                    <li>
-                      <Link
-                        to="#"
-                        className="dropdown-item rounded-1"
-                      >
-                        Ascending
-                      </Link>
-                    </li>
-                    <li>
-                      <Link
-                        to="#"
-                        className="dropdown-item rounded-1"
-                      >
-                        Desending
-                      </Link>
-                    </li>
-                    <li>
-                      <Link
-                        to="#"
-                        className="dropdown-item rounded-1"
-                      >
-                        Last Month
-                      </Link>
-                    </li>
-                    <li>
-                      <Link
-                        to="#"
-                        className="dropdown-item rounded-1"
-                      >
-                        Last 7 Days
-                      </Link>
-                    </li>
-                  </ul>
-                </div>
+                <select
+                  className="form-select form-select-sm w-auto me-2"
+                  value={selectedCategory}
+                  onChange={(e) => setSelectedCategory(e.target.value)}
+                >
+                  <option value="ALL">All Categories</option>
+                  {categories.map((cat) => (
+                    <option key={cat} value={cat}>{cat}</option>
+                  ))}
+                </select>
+                <select
+                  className="form-select form-select-sm w-auto"
+                  value={selectedBrand}
+                  onChange={(e) => setSelectedBrand(e.target.value)}
+                >
+                  <option value="ALL">All Brands</option>
+                  {brands.map((brand) => (
+                    <option key={brand} value={brand}>{brand}</option>
+                  ))}
+                </select>
               </div>
             </div>
             <div className="card-body">
@@ -591,7 +419,29 @@ const ProductList = () => {
             </div> */}
               {/* /Filter */}
               <div className="table-responsive">
-                <Table columns={columns} dataSource={dataSource} />
+                {loading && (
+                  <div className="text-center py-5">
+                    <div className="spinner-border text-primary" role="status" />
+                    <p className="mt-2 text-muted">Loading products...</p>
+                  </div>
+                )}
+                {!loading && error && (
+                  <div className="text-center py-5">
+                    <i className="ti ti-alert-triangle fs-40 text-danger mb-2 d-block" />
+                    <h5 className="text-danger">Could not load products</h5>
+                    <p className="text-muted">{error}</p>
+                  </div>
+                )}
+                {!loading && !error && filteredData.length === 0 && (
+                  <div className="text-center py-5">
+                    <i className="ti ti-package-off fs-40 text-muted mb-2 d-block" />
+                    <h5 className="text-muted">No products found</h5>
+                    <p className="text-muted">No items match the current inventory filters.</p>
+                  </div>
+                )}
+                {!loading && !error && filteredData.length > 0 && (
+                  <Table columns={columns} dataSource={filteredData} />
+                )}
               </div>
             </div>
           </div>

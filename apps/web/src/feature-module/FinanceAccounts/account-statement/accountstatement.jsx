@@ -1,162 +1,95 @@
-import React from 'react'
-import CommonFooter from '../../../core/common/footer/commonFooter'
-import TooltipIcons from '../../../core/common/tooltip-content/tooltipIcons'
-import RefreshIcon from '../../../core/common/tooltip-content/refresh'
-import CollapesIcon from '../../../core/common/tooltip-content/collapes'
-import { Calendar } from 'feather-icons-react/build/IconComponents'
-import { DatePicker, Table } from 'antd';
-import { Link } from 'react-router-dom'
-import { AccountStatementData } from '../../../core/json/accountstatementData'
+import React, { useState, useEffect, useCallback } from 'react';
+import CommonFooter from '../../../core/common/footer/commonFooter';
+import TooltipIcons from '../../../core/common/tooltip-content/tooltipIcons';
+import RefreshIcon from '../../../core/common/tooltip-content/refresh';
+import CollapesIcon from '../../../core/common/tooltip-content/collapes';
+import Table from '../../../core/pagination/datatable';
+import { apiClient } from '../../../core/apiClient';
 
 const Accountstatement = () => {
+    const [dataSource, setDataSource] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
 
-    const dataSource = AccountStatementData;
+    const fetchStatement = useCallback(() => {
+        setLoading(true);
+        setError(null);
+        apiClient.get('/finance/account-statement')
+            .then((res) => {
+                const items = res.data?.data?.items || [];
+                setDataSource(items.map((r) => ({
+                    key: r.id,
+                    Reference_Number: r.reference,
+                    Date: new Date(r.date).toLocaleDateString('en-PK'),
+                    Category: r.category,
+                    Description: r.description,
+                    Amount: `Rs ${Number(r.amount || 0).toFixed(2)}`,
+                    Transaction_Type: r.type,
+                })));
+            })
+            .catch((err) => {
+                setError(err?.response?.data?.message || err?.message || 'Failed to load account statement');
+                setDataSource([]);
+            })
+            .finally(() => setLoading(false));
+    }, []);
+
+    useEffect(() => {
+        fetchStatement();
+    }, [fetchStatement]);
 
     const columns = [
+        { title: "Reference Number", dataIndex: "Reference_Number" },
+        { title: "Date", dataIndex: "Date" },
+        { title: "Category", dataIndex: "Category" },
+        { title: "Description", dataIndex: "Description" },
+        { title: "Amount", dataIndex: "Amount" },
         {
-            title: "Reference Number",
-            dataIndex: "Reference_Number",
-            sorter: (a, b) => a.Reference_Number.length - b.Reference_Number.length,
-        },
-        {
-            title: "Date",
-            dataIndex: "Date",
-            sorter: (a, b) => a.Date.length - b.Date.length,
-        },
-        {
-            title: "Category",
-            dataIndex: "Category",
-            sorter: (a, b) => a.Category.length - b.Category.length,
-        },
-        {
-            title: "Description",
-            dataIndex: "Description",
-            sorter: (a, b) => a.Description.length - b.Description.length,
-        },
-        {
-            title: "Credit",
-            dataIndex: "Credit",
-            sorter: (a, b) => a.Credit.length - b.Credit.length,
-        },
-        {
-            title: "Amount",
-            dataIndex: "Amount",
-            sorter: (a, b) => a.Amount.length - b.Amount.length,
-        },
-        {
-            title: "Transaction Type",
+            title: "Type",
             dataIndex: "Transaction_Type",
             render: (text) => (
-                <span className={`d-inline-flex align-items-center p-1 pe-2 rounded-1 text-white ${text === 'Debit' ? 'bg-danger' : 'bg-success'} fs-10`}>
-                    <i className="ti ti-point-filled me-1 fs-11" />
+                <span className={`badge ${text === "CREDIT" ? "bg-success" : text === "DEBIT" ? "bg-danger" : "bg-info"} badge-xs`}>
                     {text}
                 </span>
-
             ),
-            sorter: (a, b) => a.Transaction_Type.length - b.Transaction_Type.length,
-        },
-        {
-            title: "Balance",
-            dataIndex: "Balance",
-            sorter: (a, b) => a.Balance.length - b.Balance.length,
         },
     ];
 
     return (
-        <div>
-            <div className="page-wrapper">
-                <div className="content">
-                    <div className="page-header">
-                        <div className="add-item d-flex">
-                            <div className="page-title">
-                                <h4 className="fw-bold">Account Statement</h4>
-                                <h6>View Your Statement</h6>
-                            </div>
-                        </div>
-                        <ul className="table-top-head">
-                            <TooltipIcons />
-                            <RefreshIcon />
-                            <CollapesIcon />
-                        </ul>
-                    </div>
-                    {/* /product list */}
-                    <div className="card">
-                        <div className="card-body">
-                            <div className="row row-gap-2 align-items-end">
-                                <div className="col-md-4">
-                                    <div className="dropdown me-2">
-                                        <label className="form-label">Choose Your Date</label>
-                                        <div className="input-groupicon trail-balance">
-                                            <Calendar className="info-img" />
-                                            <DatePicker
-                                                className="form-control datetimepicker"
-                                                placeholder="dd/mm/yyyy"
-                                            />
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="col-md-4">
-                                    <div className="dropdown">
-                                        <label className="form-label">Account</label>
-                                        <Link
-                                            to="#"
-                                            className="dropdown-toggle btn btn-white btn-md d-inline-flex align-items-center w-100"
-                                            data-bs-toggle="dropdown"
-                                        >
-                                            Select
-                                        </Link>
-                                        <ul className="dropdown-menu  dropdown-menu-end p-3">
-                                            <li>
-                                                <Link
-                                                    to="#"
-                                                    className="dropdown-item rounded-1"
-                                                >
-                                                    Zephyr Indira
-                                                </Link>
-                                            </li>
-                                            <li>
-                                                <Link
-                                                    to="#"
-                                                    className="dropdown-item rounded-1"
-                                                >
-                                                    Quillon Elysia
-                                                </Link>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </div>
-                                <div className="col-md-2">
-                                    <button className="btn btn-primary shadow-none w-100">
-                                        Submit
-                                    </button>
-                                </div>
-                            </div>
-
+        <div className="page-wrapper">
+            <div className="content">
+                <div className="page-header">
+                    <div className="add-item d-flex">
+                        <div className="page-title">
+                            <h4>Account Statement</h4>
+                            <h6>Detailed ledger statement from real transactions</h6>
                         </div>
                     </div>
-                    <div className="card">
-                        <div className="card-header">
-                            <h4>
-                                Statement of Account :{" "}
-                                <span className="badge bg-soft-primary">HBSC - 3298784309485</span>
-                            </h4>
-                        </div>
-                        <div className="table-responsive">
-                            <Table columns={columns} dataSource={dataSource} footer={() => <>
-                                <div className='d-flex align-items-center justify-content-between'>
-                                    <h5>Total</h5>
-                                    <h5>Rs 33268.53</h5>
-                                </div>
-                            </>} />
-                        </div>
-                    </div>
-                    {/* /product list */}
+                    <ul className="table-top-head">
+                        <TooltipIcons />
+                        <RefreshIcon onClick={fetchStatement} />
+                        <CollapesIcon />
+                    </ul>
                 </div>
-                <CommonFooter />
+
+                <div className="card table-list-card">
+                    <div className="card-body">
+                        <div className="table-responsive">
+                            {loading && <div className="text-center py-5"><div className="spinner-border text-primary" /></div>}
+                            {!loading && error && <div className="alert alert-danger">{error}</div>}
+                            {!loading && !error && dataSource.length === 0 && (
+                                <div className="text-center py-5 text-muted">No statement entries recorded yet.</div>
+                            )}
+                            {!loading && !error && dataSource.length > 0 && (
+                                <Table columns={columns} dataSource={dataSource} />
+                            )}
+                        </div>
+                    </div>
+                </div>
             </div>
-
+            <CommonFooter />
         </div>
-    )
-}
+    );
+};
 
-export default Accountstatement
+export default Accountstatement;

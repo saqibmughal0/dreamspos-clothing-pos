@@ -1,629 +1,199 @@
-import React from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
-
-import { payrollListData } from "../../core/json/payrollList";
 import Table from "../../core/pagination/datatable";
-import Select from "react-select";
 import TooltipIcons from "../../core/common/tooltip-content/tooltipIcons";
 import RefreshIcon from "../../core/common/tooltip-content/refresh";
 import CollapesIcon from "../../core/common/tooltip-content/collapes";
-import { Employee } from "../../core/common/selectOption/selectOption";
 import CommonFooter from "../../core/common/footer/commonFooter";
-import ImageWithBasePath from "../../core/img/imagewithbasebath";
 import { PlusCircle } from "feather-icons-react/build/IconComponents";
+import { apiClient } from "../../core/apiClient";
 
 const PayrollList = () => {
+  const [dataSource, setDataSource] = useState([]);
+  const [employees, setEmployees] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const now = new Date();
+  const [form, setForm] = useState({ employeeId: "", month: String(now.getMonth() + 1), year: String(now.getFullYear()), basicSalary: "0", allowances: "0", deductions: "0" });
+  const [submitting, setSubmitting] = useState(false);
 
-  // const route = all_routes;
+  const fetchData = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const [payRes, empRes] = await Promise.all([
+        apiClient.get("/hrm/payrolls"),
+        apiClient.get("/hrm/employees"),
+      ]);
+      const items = payRes.data?.data?.items || [];
+      setEmployees(empRes.data?.data?.items || []);
+      setDataSource(items.map((p) => ({
+        id: p.id,
+        key: p.id,
+        name: p.employee ? `${p.employee.firstName} ${p.employee.lastName}` : "—",
+        period: `${p.month}/${p.year}`,
+        salary: `Rs ${Number(p.basicSalary).toLocaleString()}`,
+        allowances: `Rs ${Number(p.allowances).toLocaleString()}`,
+        deductions: `Rs ${Number(p.deductions).toLocaleString()}`,
+        netSalary: `Rs ${Number(p.netSalary).toLocaleString()}`,
+        status: p.status,
+      })));
+    } catch (err) {
+      setError(err?.response?.data?.message || err?.message || "Failed to load payroll");
+      setDataSource([]);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
-  const datas = payrollListData;
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+
+  const handleCreate = async (e) => {
+    e.preventDefault();
+    if (!form.employeeId) return;
+    setSubmitting(true);
+    try {
+      await apiClient.post("/hrm/payrolls", {
+        employeeId: form.employeeId,
+        month: Number(form.month),
+        year: Number(form.year),
+        basicSalary: Number(form.basicSalary || 0),
+        allowances: Number(form.allowances || 0),
+        deductions: Number(form.deductions || 0),
+      });
+      document.querySelector("#add-payroll .btn-close")?.click();
+      fetchData();
+    } catch (err) {
+      setError(err?.response?.data?.message || err?.message || "Failed to create payroll");
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const handleMarkPaid = async (id) => {
+    try {
+      await apiClient.patch(`/hrm/payrolls/${id}/pay`);
+      fetchData();
+    } catch (err) {
+      setError(err?.response?.data?.message || err?.message || "Failed to mark payroll paid");
+    }
+  };
 
   const columns = [
+    { title: "Employee", dataIndex: "name" },
+    { title: "Month/Year", dataIndex: "period" },
+    { title: "Basic Salary", dataIndex: "salary" },
+    { title: "Allowances", dataIndex: "allowances" },
+    { title: "Deductions", dataIndex: "deductions" },
+    { title: "Net Salary", dataIndex: "netSalary" },
+    { title: "Status", dataIndex: "status", render: (text) => <span className={`badge ${text === "PAID" ? "bg-success" : "bg-warning"} badge-xs`}>{text}</span> },
     {
-      title: "Employee",
-      dataIndex: "name",
-      sorter: (a, b) => a.name.localeCompare(b.name),
-      render: (text, record) => (
-        <div className="d-flex align-items-center">
-          <Link to={"employee-details.html"} className="avatar avatar-md">
-            <ImageWithBasePath src={record.image} className="img-fluid" alt="img" />
-          </Link>
-          <div className="ms-2">
-            <p className="text-dark mb-0">
-              <Link to="employee-details.html">{text}</Link>
-            </p>
-            <p>
-              {record.role}
-            </p>
-          </div>
-        </div>
-
-      ),
-    },
-    {
-      title: "Employee ID",
-      dataIndex: "id2",
-      sorter: (a, b) => a.id2.localeCompare(b.id2),
-    },
-    {
-      title: "Email",
-      dataIndex: "email",
-      sorter: (a, b) => a.email.localeCompare(b.email),
-    },
-    {
-      title: "Salary",
-      dataIndex: "salary",
-      sorter: (a, b) => a.salary.length - b.salary.length,
-    },
-    {
-      title: "Status",
-      dataIndex: "status",
-      sorter: (a, b) => a.status.length - b.status.length,
-      render: (status) => (
-        <span className={`badge  ${status === 'Paid' ? 'badge-success' : 'badge-danger'} d-inline-flex align-items-center badge-xs`}>
-          <i className="ti ti-point-filled me-1" />
-          {status}
-        </span>
-
-      ),
-    },
-    {
-      title: "Action",
-      render: () => (
-        <div className="edit-delete-action">
-          <Link className="p-2 me-2" to="#">
-            <i data-feather="eye" className="feather-eye" />
-          </Link>
-          <Link className="p-2 me-2" to="#">
-            <i data-feather="download" className="feather-download" />
-          </Link>
-          <Link
-            data-bs-toggle="modal"
-            data-bs-target="#edit-department"
-            className="p-2 me-2"
-            to="#"
-          >
-            <i data-feather="edit" className="feather-edit" />
-          </Link>
-          <Link
-            data-bs-toggle="modal"
-            data-bs-target="#delete-modal"
-            className="p-2"
-            to="#"
-          >
-            <i data-feather="trash-2" className="feather-trash-2" />
-          </Link>
-        </div>
-
-      ),
+      title: "Actions",
+      key: "actions",
+      render: (_, record) =>
+        record.status !== "PAID" ? (
+          <button type="button" className="btn btn-sm btn-outline-success" onClick={() => handleMarkPaid(record.id)}>
+            Mark Paid
+          </button>
+        ) : null,
     },
   ];
 
   return (
-    <>
-      <div className="page-wrapper">
-        <div className="content">
-          <div className="page-header">
-            <div className="add-item d-flex">
-              <div className="page-title">
-                <h4>Employee Salary</h4>
-                <h6>Manage your employee salaries</h6>
-              </div>
-            </div>
-            <ul className="table-top-head">
-              <TooltipIcons />
-              <RefreshIcon />
-              <CollapesIcon />
-            </ul>
-            <div className="page-btn">
-              <Link
-                to="#"
-                className="btn btn-primary"
-                data-bs-toggle="modal"
-                data-bs-target="#add-department"
-              >
-               <PlusCircle  className="me-2"/>
-                Add Payroll
-              </Link>
+    <div className="page-wrapper">
+      <div className="content">
+        <div className="page-header">
+          <div className="add-item d-flex">
+            <div className="page-title">
+              <h4>Employee Salary / Payroll</h4>
+              <h6>Manage monthly staff payroll and salary disbursements</h6>
             </div>
           </div>
-
-          {/* /product list */}
-          <div className="card table-list-card">
-            <div className="card-header d-flex align-items-center justify-content-between flex-wrap row-gap-3">
-              <div className="search-set">
-              </div>
-              <div className="d-flex table-dropdown my-xl-auto right-content align-items-center flex-wrap row-gap-3">
-                <div className="dropdown me-2">
-                  <Link
-                    to="#"
-                    className="dropdown-toggle btn btn-white btn-md d-inline-flex align-items-center"
-                    data-bs-toggle="dropdown"
-                  >
-                    Select Status
-                  </Link>
-                  <ul className="dropdown-menu  dropdown-menu-end p-3">
-                    <li>
-                      <Link to="#" className="dropdown-item rounded-1">
-                        Paid
-                      </Link>
-                    </li>
-                    <li>
-                      <Link to="#" className="dropdown-item rounded-1">
-                        Unpaid
-                      </Link>
-                    </li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-
-            <div className="card-body">
-              <div className="table-responsive">
-                <Table columns={columns} dataSource={datas} />
-              </div>
-            </div>
+          <ul className="table-top-head">
+            <TooltipIcons />
+            <RefreshIcon onClick={fetchData} />
+            <CollapesIcon />
+          </ul>
+          <div className="page-btn">
+            <Link to="#" className="btn btn-primary" data-bs-toggle="modal" data-bs-target="#add-payroll">
+              <PlusCircle className="me-2" /> Generate Payroll
+            </Link>
           </div>
-          {/* /product list */}
         </div>
-        <CommonFooter />
+
+        <div className="card table-list-card">
+          <div className="card-body">
+            <div className="table-responsive">
+              {loading && <div className="text-center py-5"><div className="spinner-border text-primary" /></div>}
+              {!loading && error && <div className="alert alert-danger">{error}</div>}
+              {!loading && !error && dataSource.length === 0 && <div className="text-center py-5 text-muted">No payroll records generated yet.</div>}
+              {!loading && !error && dataSource.length > 0 && <Table columns={columns} dataSource={dataSource} />}
+            </div>
+          </div>
+        </div>
       </div>
-      <>
-        {/* Add Department */}
-        <div className="modal fade" id="add-department">
-          <div className="modal-dialog modal-dialog-centered modal-lg">
-            <div className="modal-content">
-              <div className="modal-header">
-                <div className="page-title">
-                  <h4>Add Payroll</h4>
-                </div>
-                <button
-                  type="button"
-                  className="close"
-                  data-bs-dismiss="modal"
-                  aria-label="Close"
-                >
-                  <span aria-hidden="true">×</span>
-                </button>
-              </div>
-              <form action="employee-salary.html">
-                <div className="modal-body">
-                  <div className="row">
-                    <div className="col-sm-6 col-12">
-                      <div className="mb-3">
-                        <label className="form-label">
-                          Select Employee <span>*</span>
-                        </label>
-                        <Select
-                          classNamePrefix="react-select"
-                          options={Employee}
-                          placeholder="Choose"
-                        />
-                      </div>
-                    </div>
-                    <div className="text-title">
-                      <h5 className="mb-2">Salary Information</h5>
-                    </div>
-                    <div className="mb-3">
-                      <label className="form-label">
-                        Basic Salary <span>*</span>
-                      </label>
-                      <input type="text" className="text-form form-control" />
-                    </div>
-                    <div className="mb-3 pb-3 border-bottom">
-                      <p className="fw-semibold text-gray-9 mb-2">Status</p>
-                      <div className="d-flex align-items-center">
-                        <div className="form-check me-3">
-                          <input
-                            className="form-check-input"
-                            type="radio"
-                            name="Radio"
-                            id="Radio-sm1"
-                            defaultChecked
-                          />
-                          <label className="form-check-label" htmlFor="Radio-sm1">
-                            Paid
-                          </label>
-                        </div>
-                        <div className="form-check">
-                          <input
-                            className="form-check-input"
-                            type="radio"
-                            name="Radio"
-                            id="Radio-sm2"
-                          />
-                          <label className="form-check-label" htmlFor="Radio-sm2">
-                            Unpaid
-                          </label>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="payroll-title">
-                      <p className="fw-semibold text-gray-9 mb-2">Allowances</p>
-                    </div>
-                    <div className="col-lg-3 col-sm-6 col-12">
-                      <div className="mb-3">
-                        <label className="form-label">
-                          HRA Allowance <span>*</span>
-                        </label>
-                        <input type="text" className="form-control" />
-                      </div>
-                    </div>
-                    <div className="col-lg-3 col-sm-6 col-12">
-                      <div className="mb-3">
-                        <label className="form-label">
-                          Conveyance <span>*</span>
-                        </label>
-                        <input type="text" className="form-control" />
-                      </div>
-                    </div>
-                    <div className="col-lg-3 col-sm-6 col-12">
-                      <div className="mb-3">
-                        <label className="form-label">
-                          Medical Allowance <span>*</span>
-                        </label>
-                        <input type="text" className="form-control" />
-                      </div>
-                    </div>
-                    <div className="col-lg-3 col-sm-6 col-12">
-                      <div className="mb-3">
-                        <label className="form-label">
-                          Bonus <span>*</span>
-                        </label>
-                        <input type="text" className="form-control" />
-                      </div>
-                    </div>
-                    <div className="d-flex align-items-end border-bottom mb-3">
-                      <div className="mb-3 flex-grow-1">
-                        <label className="form-label">Others</label>
-                        <input type="text" className="text-form form-control" />
-                      </div>
-                      <div className="subadd-btn mb-3 ms-3">
-                        <Link to="#" className="btn btn-icon btn-secondary btn-add">
-                          <i className="ti ti-circle-plus fs-16" />
-                        </Link>
-                      </div>
-                    </div>
-                    <div className="payroll-title">
-                      <p className="fw-semibold text-gray-9 mb-2">Deductions</p>
-                    </div>
-                    <div className="col-lg-3 col-sm-6 col-12">
-                      <div className="mb-3">
-                        <label className="form-label">
-                          PF <span>*</span>
-                        </label>
-                        <input type="text" className="form-control" />
-                      </div>
-                    </div>
-                    <div className="col-lg-3 col-sm-6 col-12">
-                      <div className="mb-3">
-                        <label className="form-label">
-                          Professional Tax <span>*</span>
-                        </label>
-                        <input type="text" className="form-control" />
-                      </div>
-                    </div>
-                    <div className="col-lg-3 col-sm-6 col-12">
-                      <div className="mb-3">
-                        <label className="form-label">
-                          TDS <span>*</span>
-                        </label>
-                        <input type="text" className="form-control" />
-                      </div>
-                    </div>
-                    <div className="col-lg-3 col-sm-6 col-12">
-                      <div className="mb-3">
-                        <label className="form-label">
-                          Loans &amp; Others <span>*</span>
-                        </label>
-                        <input type="text" className="form-control" />
-                      </div>
-                    </div>
-                    <div className="d-flex align-items-end border-bottom mb-3">
-                      <div className="mb-3 flex-grow-1">
-                        <label className="form-label">Others</label>
-                        <input type="text" className="text-form form-control" />
-                      </div>
-                      <div className="subadd-btn mb-3 ms-3">
-                        <Link to="#" className="btn btn-icon btn-secondary btn-add">
-                          <i className="ti ti-circle-plus fs-16" />
-                        </Link>
-                      </div>
-                    </div>
-                    <div className="payroll-title">
-                      <p className="fw-semibold text-gray-9 mb-2">Deductions</p>
-                    </div>
-                    <div className="col-lg-4 col-sm-6 col-12">
-                      <div className="mb-3">
-                        <label className="form-label">
-                          Total Allowance <span>*</span>
-                        </label>
-                        <input type="text" className="form-control" />
-                      </div>
-                    </div>
-                    <div className="col-lg-4 col-sm-6 col-12">
-                      <div className="mb-3">
-                        <label className="form-label">
-                          Total Deduction <span>*</span>
-                        </label>
-                        <input type="text" className="form-control" />
-                      </div>
-                    </div>
-                    <div className="col-lg-4 col-sm-6 col-12">
-                      <div className="mb-3">
-                        <label className="form-label">
-                          Net Salary <span>*</span>
-                        </label>
-                        <input type="text" className="form-control" />
-                      </div>
-                    </div>
-                    <div className="col-lg-12">
-                      <div className="d-flex align-items-center justify-content-end">
-                        <button type="button" className="btn btn-previw me-2">
-                          Preview
-                        </button>
-                        <button type="button" className="btn btn-reset me-2">
-                          Reset
-                        </button>
-                        <Link to="#" className="btn btn-save" data-bs-dismiss='modal'>
-                          Save
-                        </Link>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </form>
-            </div>
-          </div>
-        </div>
-        {/* /Add Department */}
-        {/* Edit Department */}
-        <div className="modal fade" id="edit-department">
-          <div className="modal-dialog modal-dialog-centered">
-            <div className="modal-content">
-              <div className="modal-header">
-                <div className="page-title">
-                  <h4>Edit Payroll</h4>
-                </div>
-                <button
-                  type="button"
-                  className="close"
-                  data-bs-dismiss="modal"
-                  aria-label="Close"
-                >
-                  <span aria-hidden="true">×</span>
-                </button>
-              </div>
-              <form >
-                <div className="modal-body">
-                  <div className="row">
-                    <div className="col-sm-6 col-12">
-                      <div className="mb-3">
-                        <label className="form-label">
-                          Select Employee <span>*</span>
-                        </label>
-                        <Select
-                          classNamePrefix="react-select"
-                          options={Employee}
-                          placeholder="Choose"
-                        />
-                      </div>
-                    </div>
-                    <div className="text-title">
-                      <h5 className="mb-2">Salary Information</h5>
-                    </div>
-                    <div className="mb-3">
-                      <label className="form-label">
-                        Basic Salary <span>*</span>
-                      </label>
-                      <input type="text" className="text-form form-control" />
-                    </div>
-                    <div className="mb-3 pb-3 border-bottom">
-                      <p className="fw-semibold text-gray-9 mb-2">Status</p>
-                      <div className="d-flex align-items-center">
-                        <div className="form-check me-3">
-                          <input
-                            className="form-check-input"
-                            type="radio"
-                            name="Radio"
-                            id="Radio-sm3"
-                            defaultChecked
-                          />
-                          <label className="form-check-label" htmlFor="Radio-sm3">
-                            Paid
-                          </label>
-                        </div>
-                        <div className="form-check">
-                          <input
-                            className="form-check-input"
-                            type="radio"
-                            name="Radio"
-                            id="Radio-sm4"
-                          />
-                          <label className="form-check-label" htmlFor="Radio-sm4">
-                            Unpaid
-                          </label>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="payroll-title">
-                      <p className="fw-semibold text-gray-9 mb-2">Allowances</p>
-                    </div>
-                    <div className="col-lg-3 col-sm-6 col-12">
-                      <div className="mb-3">
-                        <label className="form-label">
-                          HRA Allowance <span>*</span>
-                        </label>
-                        <input type="text" className="form-control" />
-                      </div>
-                    </div>
-                    <div className="col-lg-3 col-sm-6 col-12">
-                      <div className="mb-3">
-                        <label className="form-label">
-                          Conveyance <span>*</span>
-                        </label>
-                        <input type="text" className="form-control" />
-                      </div>
-                    </div>
-                    <div className="col-lg-3 col-sm-6 col-12">
-                      <div className="mb-3">
-                        <label className="form-label">
-                          Medical Allowance <span>*</span>
-                        </label>
-                        <input type="text" className="form-control" />
-                      </div>
-                    </div>
-                    <div className="col-lg-3 col-sm-6 col-12">
-                      <div className="mb-3">
-                        <label className="form-label">
-                          Bonus <span>*</span>
-                        </label>
-                        <input type="text" className="form-control" />
-                      </div>
-                    </div>
-                    <div className="d-flex align-items-end border-bottom mb-3">
-                      <div className="mb-3 flex-grow-1">
-                        <label className="form-label">Others</label>
-                        <input type="text" className="text-form form-control" />
-                      </div>
-                      <div className="subadd-btn mb-3 ms-3">
-                        <Link to="#" className="btn btn-icon btn-secondary btn-add">
-                          <i className="ti ti-circle-plus fs-16" />
-                        </Link>
-                      </div>
-                    </div>
-                    <div className="payroll-title">
-                      <p className="fw-semibold text-gray-9 mb-2">Deductions</p>
-                    </div>
-                    <div className="col-lg-3 col-sm-6 col-12">
-                      <div className="mb-3">
-                        <label className="form-label">
-                          PF <span>*</span>
-                        </label>
-                        <input type="text" className="form-control" />
-                      </div>
-                    </div>
-                    <div className="col-lg-3 col-sm-6 col-12">
-                      <div className="mb-3">
-                        <label className="form-label">
-                          Professional Tax <span>*</span>
-                        </label>
-                        <input type="text" className="form-control" />
-                      </div>
-                    </div>
-                    <div className="col-lg-3 col-sm-6 col-12">
-                      <div className="mb-3">
-                        <label className="form-label">
-                          TDS <span>*</span>
-                        </label>
-                        <input type="text" className="form-control" />
-                      </div>
-                    </div>
-                    <div className="col-lg-3 col-sm-6 col-12">
-                      <div className="mb-3">
-                        <label className="form-label">
-                          Loans &amp; Others <span>*</span>
-                        </label>
-                        <input type="text" className="form-control" />
-                      </div>
-                    </div>
-                    <div className="d-flex align-items-end border-bottom mb-3">
-                      <div className="mb-3 flex-grow-1">
-                        <label className="form-label">Others</label>
-                        <input type="text" className="text-form form-control" />
-                      </div>
-                      <div className="subadd-btn mb-3 ms-3">
-                        <Link to="#" className="btn btn-icon btn-secondary btn-add">
-                          <i className="ti ti-circle-plus fs-16" />
-                        </Link>
-                      </div>
-                    </div>
-                    <div className="payroll-title">
-                      <p className="fw-semibold text-gray-9 mb-2">Deductions</p>
-                    </div>
-                    <div className="col-lg-4 col-sm-6 col-12">
-                      <div className="mb-3">
-                        <label className="form-label">
-                          Total Allowance <span>*</span>
-                        </label>
-                        <input type="text" className="form-control" />
-                      </div>
-                    </div>
-                    <div className="col-lg-4 col-sm-6 col-12">
-                      <div className="mb-3">
-                        <label className="form-label">
-                          Total Deduction <span>*</span>
-                        </label>
-                        <input type="text" className="form-control" />
-                      </div>
-                    </div>
-                    <div className="col-lg-4 col-sm-6 col-12">
-                      <div className="mb-3">
-                        <label className="form-label">
-                          Net Salary <span>*</span>
-                        </label>
-                        <input type="text" className="form-control" />
-                      </div>
-                    </div>
-                    <div className="col-lg-12">
-                      <div className="d-flex align-items-center justify-content-end">
-                        <button type="button" className="btn btn-previw me-2">
-                          Preview
-                        </button>
-                        <button type="button" className="btn btn-reset me-2">
-                          Reset
-                        </button>
-                        <Link to="#" className="btn btn-save" data-bs-dismiss="modal">
-                          Save
-                        </Link>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </form>
-            </div>
-          </div>
-        </div>
-        {/* /Edit Department */}
-        {/* delete modal */}
-        <div className="modal fade" id="delete-modal">
-          <div className="modal-dialog modal-dialog-centered">
-            <div className="modal-content">
-              <div className="page-wrapper-new p-0">
-                <div className="content p-5 px-3 text-center">
-                  <span className="rounded-circle d-inline-flex p-2 bg-danger-transparent mb-2">
-                    <i className="ti ti-trash fs-24 text-danger" />
-                  </span>
-                  <h4 className="fs-20 text-gray-9 fw-bold mb-2 mt-1">
-                    Delete Employee Salary
-                  </h4>
-                  <p className="text-gray-6 mb-0 fs-16">
-                    Are you sure you want to delete employee salary?
-                  </p>
-                  <div className="modal-footer-btn mt-3 d-flex justify-content-center">
-                    <button
-                      type="button"
-                      className="btn me-2 btn-secondary fs-13 fw-medium p-2 px-3 shadow-none"
-                      data-bs-dismiss="modal"
-                    >
-                      Cancel
-                    </button>
-                    <Link
-                      to="#"
-                      className="btn btn-submit fs-13 fw-medium p-2 px-3"
-                    >
-                      Yes Delete
-                    </Link>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        {/* /delete modal */}
-      </>
+      <CommonFooter />
 
-    </>
+      <div className="modal fade" id="add-payroll">
+        <div className="modal-dialog modal-dialog-centered">
+          <div className="modal-content">
+            <div className="modal-header">
+              <div className="page-title"><h4>Generate Payroll</h4></div>
+              <button type="button" className="close bg-danger text-white fs-16 btn-close" data-bs-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+            </div>
+            <form onSubmit={handleCreate}>
+              <div className="modal-body">
+                <div className="mb-3">
+                  <label className="form-label">Employee<span className="text-danger ms-1">*</span></label>
+                  <select
+                    className="form-select"
+                    value={form.employeeId}
+                    onChange={(e) => {
+                      const emp = employees.find((x) => x.id === e.target.value);
+                      setForm({ ...form, employeeId: e.target.value, basicSalary: String(emp?.basicSalary || 0) });
+                    }}
+                    required
+                  >
+                    <option value="">Select Employee</option>
+                    {employees.map((emp) => <option key={emp.id} value={emp.id}>{emp.firstName} {emp.lastName}</option>)}
+                  </select>
+                </div>
+                <div className="row">
+                  <div className="col-6 mb-3">
+                    <label className="form-label">Month (1-12)</label>
+                    <input type="number" min="1" max="12" className="form-control" value={form.month} onChange={(e) => setForm({ ...form, month: e.target.value })} required />
+                  </div>
+                  <div className="col-6 mb-3">
+                    <label className="form-label">Year</label>
+                    <input type="number" min="2020" max="2100" className="form-control" value={form.year} onChange={(e) => setForm({ ...form, year: e.target.value })} required />
+                  </div>
+                </div>
+                <div className="row">
+                  <div className="col-4 mb-3">
+                    <label className="form-label">Basic (Rs)</label>
+                    <input type="number" min="0" className="form-control" value={form.basicSalary} onChange={(e) => setForm({ ...form, basicSalary: e.target.value })} />
+                  </div>
+                  <div className="col-4 mb-3">
+                    <label className="form-label">Allowances</label>
+                    <input type="number" min="0" className="form-control" value={form.allowances} onChange={(e) => setForm({ ...form, allowances: e.target.value })} />
+                  </div>
+                  <div className="col-4 mb-3">
+                    <label className="form-label">Deductions</label>
+                    <input type="number" min="0" className="form-control" value={form.deductions} onChange={(e) => setForm({ ...form, deductions: e.target.value })} />
+                  </div>
+                </div>
+              </div>
+              <div className="modal-footer">
+                <button type="button" className="btn me-2 btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="submit" className="btn btn-primary" disabled={submitting}>{submitting ? "Saving..." : "Generate"}</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 };
 

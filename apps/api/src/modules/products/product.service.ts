@@ -76,7 +76,7 @@ export class ProductService {
         categoryId: p.categoryId,
         categoryName: p.category?.name || "Apparel",
         brandId: p.brandId,
-        brandName: p.brand?.name || "Dreams Apparel",
+        brandName: p.brand?.name || "",
         unitName: p.unit?.shortName || "Pc",
         costPrice: Number(p.costPrice),
         sellingPrice: Number(p.sellingPrice),
@@ -215,6 +215,28 @@ export class ProductService {
         stockQty: Number(v.stockQty)
       }))
     };
+  }
+
+  async getExpired(companyId: string) {
+    const products = await prisma.product.findMany({
+      where: {
+        companyId,
+        isActive: true,
+        expiryDate: { not: null }
+      },
+      orderBy: { expiryDate: "asc" },
+      include: { category: true, brand: true }
+    });
+    return products.map(p => ({
+      id: p.id,
+      sku: p.sku,
+      name: p.name,
+      categoryName: p.category?.name || "",
+      brandName: p.brand?.name || "",
+      manufacturedDate: p.manufacturedDate ? p.manufacturedDate.toISOString() : null,
+      expiryDate: p.expiryDate ? p.expiryDate.toISOString() : null,
+      isExpired: p.expiryDate ? p.expiryDate <= new Date() : false
+    }));
   }
 
   async getById(companyId: string, id: string) {
@@ -420,7 +442,7 @@ export class ProductService {
     }> = [];
 
     for (const p of products) {
-      const brandName = p.brand?.name || "Dreams Apparel";
+      const brandName = p.brand?.name || "";
       const baseArticle = p.articleCode || p.sku;
 
       if (p.variants && p.variants.length > 0) {
@@ -435,7 +457,7 @@ export class ProductService {
             sku: v.sku,
             barcode: v.barcode || v.sku,
             price: Number(p.sellingPrice) + Number(v.priceDiff),
-            currency: "USD"
+            currency: "PKR"
           });
         }
       } else {
@@ -449,7 +471,7 @@ export class ProductService {
           sku: p.sku,
           barcode: p.barcode || p.sku,
           price: Number(p.sellingPrice),
-          currency: "USD"
+          currency: "PKR"
         });
       }
     }
@@ -475,7 +497,7 @@ export class ProductService {
       sku: p.sku,
       barcode: p.barcode || "",
       category: p.category.name,
-      brand: p.brand?.name || "Dreams Apparel",
+      brand: p.brand?.name || "",
       season: p.season || "",
       fabric: p.fabric || "",
       gender: p.gender || "",
