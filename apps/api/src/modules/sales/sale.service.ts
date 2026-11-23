@@ -1,5 +1,6 @@
 import { prisma } from "@dreamspos/database";
 import { addMoney, subMoney, roundMoney } from "../../utils/decimal";
+import { ForbiddenError } from "../../utils/errors";
 
 export interface SalesReturnInput {
   saleId: string;
@@ -21,8 +22,24 @@ export interface ClothingExchangeInput {
 }
 
 export class SaleService {
-  async processReturn(companyId: string, storeId: string, input: SalesReturnInput) {
+  async processReturn(companyId: string, storeId: string, input: SalesReturnInput, cashierId?: string) {
     return await prisma.$transaction(async (tx) => {
+      // Cash refunds require an active cash register shift
+      if (input.refundMethod === "CASH" && cashierId) {
+        const activeSession = await tx.cashRegisterSession.findFirst({
+          where: {
+            userId: cashierId,
+            status: "OPEN",
+            register: { store: { companyId } },
+          },
+        });
+        if (!activeSession) {
+          throw new ForbiddenError(
+            "An active cash register shift is required to process cash refunds. Please open the cash register first."
+          );
+        }
+      }
+
       const sale = await tx.sale.findUnique({
         where: { id: input.saleId },
         include: { items: true, company: true }

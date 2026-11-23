@@ -25,7 +25,7 @@ const PurchaseOrderReport = () => {
                 productAmount: `Rs ${Number(item.totalCost || 0).toFixed(2)}`,
                 purchasedQty: item.quantity,
                 instockQty: item.receivedQty,
-                img: "assets/img/products/pos-product-01.png",
+                img: item.productImage || "/assets/img/products/no-product-image.svg",
               });
             }
           }

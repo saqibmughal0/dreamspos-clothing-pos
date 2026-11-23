@@ -6,6 +6,7 @@ import RefreshIcon from "../../core/common/tooltip-content/refresh";
 import CollapesIcon from "../../core/common/tooltip-content/collapes";
 import CommonFooter from "../../core/common/footer/commonFooter";
 import { apiClient } from "../../core/apiClient";
+import { NO_PRODUCT_IMAGE, resolveMediaUrl } from "../../core/utils/mediaUrl";
 
 const AddProduct = () => {
   const route = all_routes;
@@ -34,7 +35,20 @@ const AddProduct = () => {
     taxType: "EXCLUSIVE",
     alertQuantity: "5",
     description: "",
+    image: "",
   });
+
+  const [uploadingImage, setUploadingImage] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const [uploadProvider, setUploadProvider] = useState(null);
+  const [localPreviewUrl, setLocalPreviewUrl] = useState(null);
+  const [uploadError, setUploadError] = useState(null);
+
+  useEffect(() => {
+    return () => {
+      if (localPreviewUrl) URL.revokeObjectURL(localPreviewUrl);
+    };
+  }, [localPreviewUrl]);
 
   const [hasVariants, setHasVariants] = useState(true);
   const [variants, setVariants] = useState([
@@ -95,6 +109,69 @@ const AddProduct = () => {
     setVariants((prev) => prev.map((v, i) => (i === idx ? { ...v, [field]: val } : v)));
   };
 
+  const handleImageUpload = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const allowed = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
+    if (!allowed.includes(file.type.toLowerCase())) {
+      setUploadError("Unsupported file format. Please select a JPG, JPEG, PNG, or WebP image.");
+      e.target.value = "";
+      return;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      setUploadError("Image size exceeds the 5MB limit.");
+      e.target.value = "";
+      return;
+    }
+
+    if (localPreviewUrl) URL.revokeObjectURL(localPreviewUrl);
+    const instantUrl = URL.createObjectURL(file);
+    setLocalPreviewUrl(instantUrl);
+    setUploadError(null);
+    setUploadProvider(null);
+    setUploadProgress(0);
+    setUploadingImage(true);
+
+    const fd = new FormData();
+    fd.append("image", file);
+    try {
+      const res = await apiClient.post("/products/upload-image", fd, {
+        headers: { "Content-Type": "multipart/form-data" },
+        onUploadProgress: (evt) => {
+          if (evt.total) {
+            setUploadProgress(Math.round((evt.loaded * 100) / evt.total));
+          }
+        },
+      });
+      if (res.data?.success && res.data.data?.url) {
+        const uploadedUrl = res.data.data.url;
+        const provider = res.data.data.provider || (uploadedUrl.startsWith("https://") ? "cloudinary" : "local");
+        setForm((prev) => ({ ...prev, image: uploadedUrl }));
+        setUploadProvider(provider);
+        setUploadProgress(100);
+      } else {
+        setUploadError("Image upload failed. Please try again.");
+      }
+    } catch (err) {
+      setUploadError(err?.response?.data?.message || err?.message || "Failed to upload image.");
+    } finally {
+      setUploadingImage(false);
+      e.target.value = "";
+    }
+  };
+
+  const removeImage = () => {
+    if (localPreviewUrl) {
+      URL.revokeObjectURL(localPreviewUrl);
+      setLocalPreviewUrl(null);
+    }
+    setUploadProvider(null);
+    setUploadProgress(0);
+    setUploadError(null);
+    setForm((prev) => ({ ...prev, image: "" }));
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setSubmitError(null);
@@ -128,6 +205,7 @@ const AddProduct = () => {
       taxType: form.taxType,
       alertQuantity: parseInt(form.alertQuantity || "5", 10),
       description: form.description.trim() || undefined,
+      image: form.image.trim() || undefined,
     };
 
     if (hasVariants && variants.length > 0) {
@@ -403,6 +481,88 @@ const AddProduct = () => {
                   />
                 </div>
               </div>
+            </div>
+          </div>
+
+          <div className="card mb-4">
+            <div className="card-header">
+              <h5 className="card-title mb-0">Product Image</h5>
+            </div>
+            <div className="card-body">
+              {uploadError && <div className="alert alert-danger py-2">{uploadError}</div>}
+              <input
+                type="file"
+                id="productImageInput"
+                accept="image/jpeg,image/png,image/webp"
+                className="d-none"
+                onChange={handleImageUpload}
+              />
+              {localPreviewUrl || form.image ? (
+                <div className="d-flex align-items-center gap-3 flex-wrap">
+                  <img
+                    src={localPreviewUrl || resolveMediaUrl(form.image)}
+                    alt="Product preview"
+                    style={{ width: "100px", height: "100px", objectFit: "cover", borderRadius: "8px", border: "1px solid #e5e7eb" }}
+                    onError={(e) => {
+                      e.currentTarget.src = NO_PRODUCT_IMAGE;
+                    }}
+                  />
+                  <div>
+                    <div className="d-flex gap-2 mb-1">
+                      <label
+                        htmlFor="productImageInput"
+                        className="btn btn-sm btn-outline-primary mb-0"
+                        style={{ cursor: "pointer" }}
+                      >
+                        {uploadingImage ? `Uploading (${uploadProgress}%)...` : "Replace Image"}
+                      </label>
+                      <button
+                        type="button"
+                        className="btn btn-sm btn-outline-danger"
+                        onClick={removeImage}
+                        disabled={uploadingImage}
+                      >
+                        <Trash2 className="me-1" size={14} /> Remove Image
+                      </button>
+                    </div>
+                    {uploadingImage && (
+                      <div className="progress mt-1" style={{ height: "6px", maxWidth: "240px" }}>
+                        <div className="progress-bar" role="progressbar" style={{ width: `${uploadProgress}%` }} />
+                      </div>
+                    )}
+                    {!uploadingImage && form.image && !uploadError && (
+                      <p className="text-success fs-12 mt-1 mb-0">
+                        {uploadProvider === "cloudinary" || form.image.startsWith("https://")
+                          ? "Image uploaded to Cloudinary storage."
+                          : "Image uploaded to local development storage."}
+                      </p>
+                    )}
+                  </div>
+                </div>
+              ) : (
+                <div>
+                  <label
+                    htmlFor="productImageInput"
+                    className="btn btn-outline-primary"
+                    style={{ cursor: "pointer" }}
+                  >
+                    {uploadingImage ? (
+                      <>
+                        <span className="spinner-border spinner-border-sm me-2" role="status" />
+                        Uploading ({uploadProgress}%)...
+                      </>
+                    ) : (
+                      <>
+                        <PlusCircle className="me-2" size={16} />
+                        Upload Product Photo
+                      </>
+                    )}
+                  </label>
+                  <p className="text-muted fs-12 mt-2 mb-0">
+                    Supports JPG, JPEG, PNG, and WebP up to 5MB.
+                  </p>
+                </div>
+              )}
             </div>
           </div>
 

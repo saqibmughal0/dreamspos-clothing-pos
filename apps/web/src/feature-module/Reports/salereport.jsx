@@ -60,18 +60,11 @@ const SaleReport = () => {
 
 
   const Store = [
-    { value: "All", label: "All" },
-    { value: "Electro Mart", label: "Electro Mart" },
-    { value: "Quantum Gadgets", label: "Quantum Gadgets" },
-    { value: "Prime Bazaar", label: "Prime Bazaar" },
-  ]
+    { value: "All", label: "All Stores" },
+  ];
   const Products = [
-    { value: "All", label: "All" },
-    { value: "Lenovo IdeaPad 3", label: "Lenovo IdeaPad 3" },
-    { value: "Nike Jordan", label: "Nike Jordan" },
-    { value: "Amazon Echo Dot", label: "Amazon Echo Dot" },
-    { value: "Red Premium Satchel", label: "Red Premium Satchel" },
-  ]
+    { value: "All", label: "All Products" },
+  ];
 
 
   return (

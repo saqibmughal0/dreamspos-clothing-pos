@@ -465,12 +465,16 @@ model CashRegisterSession {
   id           String    @id @default(uuid())
   registerId   String    @map("register_id")
   userId       String    @map("user_id")
+  closedById   String?   @map("closed_by_id")
   openedAt     DateTime  @default(now()) @map("opened_at")
   closedAt     DateTime? @map("closed_at")
   openingFloat Decimal   @default(0.0000) @map("opening_float") @db.Decimal(14, 4)
+  cashIn       Decimal   @default(0.0000) @map("cash_in") @db.Decimal(14, 4)
+  cashOut      Decimal   @default(0.0000) @map("cash_out") @db.Decimal(14, 4)
   closingCash  Decimal?  @map("closing_cash") @db.Decimal(14, 4)
   expectedCash Decimal?  @map("expected_cash") @db.Decimal(14, 4)
   difference   Decimal?  @db.Decimal(14, 4)
+  closingNotes String?   @map("closing_notes") @db.Text
   status       String    @default("OPEN")
 
   register     CashRegister @relation(fields: [registerId], references: [id])

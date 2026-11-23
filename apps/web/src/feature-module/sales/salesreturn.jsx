@@ -25,7 +25,7 @@ const SalesReturn = () => {
             id: r.id,
             key: r.id || idx,
             productname: r.items?.[0]?.product?.name || r.returnNumber,
-            img: "assets/img/products/pos-product-01.png",
+            img: r.items?.[0]?.product?.image || "/assets/img/products/no-product-image.svg",
             date: new Date(r.createdAt).toLocaleDateString("en-PK"),
             customer: r.sale?.customer?.name || "Walk-in Customer",
             customer_image: "assets/img/users/user-01.jpg",
@@ -209,31 +209,7 @@ const SalesReturn = () => {
                         to="#"
                         className="dropdown-item rounded-1"
                       >
-                        Carl Evans
-                      </Link>
-                    </li>
-                    <li>
-                      <Link
-                        to="#"
-                        className="dropdown-item rounded-1"
-                      >
-                        Minerva Rameriz
-                      </Link>
-                    </li>
-                    <li>
-                      <Link
-                        to="#"
-                        className="dropdown-item rounded-1"
-                      >
-                        Robert Lamon
-                      </Link>
-                    </li>
-                    <li>
-                      <Link
-                        to="#"
-                        className="dropdown-item rounded-1"
-                      >
-                        Patricia Lewis
+                        All Customers
                       </Link>
                     </li>
                   </ul>

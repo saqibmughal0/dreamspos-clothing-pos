@@ -37,7 +37,7 @@ const QRcodeModelPopup = () => {
                                         </Link>
                                     </div>
                                     <div className="barcode-scan-header">
-                                        <h5>Nike Jordan</h5>
+                                        <h5>Product QR Code</h5>
                                     </div>
                                     <div className="row">
                                         <div className="col-sm-6">
@@ -94,7 +94,7 @@ const QRcodeModelPopup = () => {
                                             </Link>
                                         </div>
                                         <div className="barcode-scan-header">
-                                            <h5>Nike Jordan</h5>
+                                            <h5>Product QR Code</h5>
                                         </div>
                                         <div className="row">
                                             <div className="col-sm-6">

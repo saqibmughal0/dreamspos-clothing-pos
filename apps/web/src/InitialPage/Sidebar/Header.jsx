@@ -9,6 +9,9 @@ import { all_routes } from "../../Router/all_routes";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 import { apiClient } from "../../core/apiClient";
+import { resolveMediaUrl } from "../../core/utils/mediaUrl";
+
+const DEFAULT_USER_AVATAR = "/assets/img/profiles/avator1.jpg";
 const Header = () => {
   const route = all_routes;
   const navigate = useNavigate();
@@ -29,7 +32,11 @@ const Header = () => {
       }
     };
     window.addEventListener("storage", handleStorage);
-    return () => window.removeEventListener("storage", handleStorage);
+    window.addEventListener("user-updated", handleStorage);
+    return () => {
+      window.removeEventListener("storage", handleStorage);
+      window.removeEventListener("user-updated", handleStorage);
+    };
   }, []);
 
   const handleLogout = async (e) => {
@@ -41,17 +48,12 @@ const Header = () => {
     }
     localStorage.removeItem("accessToken");
     localStorage.removeItem("user");
+    window.dispatchEvent(new Event("user-updated"));
     navigate(route.signin);
   };
 
   const getHeaderAvatar = () => {
-    if (!currentUser?.avatar) return "/assets/img/profiles/avator1.jpg";
-    if (currentUser.avatar.startsWith("http://") || currentUser.avatar.startsWith("https://")) {
-      return currentUser.avatar;
-    }
-    const apiUrl = import.meta.env.VITE_API_URL || "";
-    const backendOrigin = apiUrl.replace(/\/api\/?$/, "");
-    return `${backendOrigin}${currentUser.avatar}`;
+    return resolveMediaUrl(currentUser?.avatar, DEFAULT_USER_AVATAR);
   };
   const [toggle, SetToggle] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
@@ -476,7 +478,7 @@ const Header = () => {
               <Link to="/email">
                 {/* <i data-feather="mail" /> */}
                 <i className="ti ti-mail"></i>
-                <span className="badge rounded-pill">1</span>
+
               </Link>
             </li>
             {/* Notifications */}
@@ -499,69 +501,8 @@ const Header = () => {
                 </div>
                 <div className="noti-content">
                   <ul className="notification-list">
-                    <li className="notification-message">
-                      <Link to={route.activities}>
-                        <div className="media d-flex">
-                          <span className="avatar flex-shrink-0">
-                            <ImageWithBasePath alt="Img" src="assets/img/profiles/avatar-13.jpg" />
-                          </span>
-                          <div className="flex-grow-1">
-                            <p className="noti-details">
-                              <span className="noti-title">James Kirwin</span> confirmed his
-                              order. Order No: #78901.Estimated delivery: 2 days
-                            </p>
-                            <p className="noti-time">4 mins ago</p>
-                          </div>
-                        </div>
-                      </Link>
-                    </li>
-                    <li className="notification-message">
-                      <Link to={route.activities}>
-                        <div className="media d-flex">
-                          <span className="avatar flex-shrink-0">
-                            <ImageWithBasePath alt="Img" src="assets/img/profiles/avatar-03.jpg" />
-                          </span>
-                          <div className="flex-grow-1">
-                            <p className="noti-details">
-                              <span className="noti-title">Leo Kelly</span> cancelled his
-                              order scheduled for 17 Jan 2025
-                            </p>
-                            <p className="noti-time">10 mins ago</p>
-                          </div>
-                        </div>
-                      </Link>
-                    </li>
-                    <li className="notification-message">
-                      <Link to={route.activities} className="recent-msg">
-                        <div className="media d-flex">
-                          <span className="avatar flex-shrink-0">
-                            <ImageWithBasePath alt="Img" src="assets/img/profiles/avatar-17.jpg" />
-                          </span>
-                          <div className="flex-grow-1">
-                            <p className="noti-details">
-                              Payment of Rs 50 received for Order #67890 from{" "}
-                              <span className="noti-title">Antonio Engle</span>
-                            </p>
-                            <p className="noti-time">05 mins ago</p>
-                          </div>
-                        </div>
-                      </Link>
-                    </li>
-                    <li className="notification-message">
-                      <Link to={route.activities} className="recent-msg">
-                        <div className="media d-flex">
-                          <span className="avatar flex-shrink-0">
-                            <ImageWithBasePath alt="Img" src="assets/img/profiles/avatar-02.jpg" />
-                          </span>
-                          <div className="flex-grow-1">
-                            <p className="noti-details">
-                              <span className="noti-title">Andrea</span> confirmed his order.
-                              Order No: #73401.Estimated delivery: 3 days
-                            </p>
-                            <p className="noti-time">4 mins ago</p>
-                          </div>
-                        </div>
-                      </Link>
+                    <li className="notification-message text-center py-3 text-muted">
+                      No new notifications
                     </li>
                   </ul>
                 </div>

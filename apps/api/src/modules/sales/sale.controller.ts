@@ -81,8 +81,9 @@ export class SaleController {
     try {
       const companyId = req.user!.companyId;
       const storeId = req.user!.storeId || req.body.storeId;
+      const cashierId = req.user!.id;
 
-      const result = await saleService.processReturn(companyId, storeId, req.body);
+      const result = await saleService.processReturn(companyId, storeId, req.body, cashierId);
       res.status(201).json({ success: true, data: result });
     } catch (err) {
       next(err);

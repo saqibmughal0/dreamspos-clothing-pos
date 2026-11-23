@@ -78,64 +78,8 @@ const StockadjustmentModal = () => {
                               </thead>
                               <tbody>
                                 <tr>
-                                  <td>
-                                    <div className="productimgname">
-                                      <Link
-                                        to="#"
-                                        className="product-img stock-img"
-                                      >
-                                        <ImageWithBasePath
-                                          src="assets/img/products/stock-img-02.png"
-                                          alt="product"
-                                        />
-                                      </Link>
-                                      <Link to="#">Nike Jordan</Link>
-                                    </div>
-                                  </td>
-                                  <td>PT002</td>
-                                  <td>Nike</td>
-                                  <td>
-                                    <div className="product-quantity">
-                                      <span className="quantity-btn">
-                                        <MinusCircle className="feather-search" />
-                                      </span>
-                                      <input
-                                        type="text"
-                                        className="quntity-input"
-                                        defaultValue={2}
-                                      />
-                                      <span className="quantity-btn">
-                                        +
-                                        <PlusCircle className="plus-circle" />
-                                      </span>
-                                    </div>
-                                  </td>
-                                  <td>
-                                    <Select
-                                      classNamePrefix="react-select"
-                                      options={optionsAddition}
-                                    />
-                                  </td>
-                                  <td className="action-table-data">
-                                    <div className="edit-delete-action">
-                                      <Link
-                                        className="me-2 p-2"
-                                        to="#"
-                                        data-bs-toggle="modal"
-                                        data-bs-target="#edit-units"
-                                      >
-                                        <i
-                                          data-feather="edit"
-                                          className="feather-edit"
-                                        />
-                                      </Link>
-                                      <Link className="confirm-text p-2" to="#">
-                                        <i
-                                          data-feather="trash-2"
-                                          className="feather-trash-2"
-                                        />
-                                      </Link>
-                                    </div>
+                                  <td colSpan="6" className="text-center text-muted py-3">
+                                    No products selected
                                   </td>
                                 </tr>
                               </tbody>
@@ -205,7 +149,7 @@ const StockadjustmentModal = () => {
                       <input
                         type="text"
                         className="form-control"
-                        defaultValue="Nike Jordan"
+                        defaultValue=""
                       />
                       <i data-feather="search" className="feather-search" />
                     </div>
@@ -222,7 +166,7 @@ const StockadjustmentModal = () => {
                       <div className="col-lg-6">
                         <div className="input-blocks">
                           <label>Reference Number</label>
-                          <input type="text" defaultValue="PT002" />
+                          <input type="text" defaultValue="" />
                         </div>
                       </div>
                       <div className="col-lg-12">
@@ -241,64 +185,8 @@ const StockadjustmentModal = () => {
                               </thead>
                               <tbody>
                                 <tr>
-                                  <td>
-                                    <div className="productimgname">
-                                      <Link
-                                        to="#"
-                                        className="product-img stock-img"
-                                      >
-                                        <ImageWithBasePath
-                                          src="assets/img/products/stock-img-02.png"
-                                          alt="product"
-                                        />
-                                      </Link>
-                                      <Link to="#">Nike Jordan</Link>
-                                    </div>
-                                  </td>
-                                  <td>PT002</td>
-                                  <td>Nike</td>
-                                  <td>
-                                    <div className="product-quantity">
-                                      <span className="quantity-btn">
-                                        <MinusCircle className="feather-search" />
-                                      </span>
-                                      <input
-                                        type="text"
-                                        className="quntity-input"
-                                        defaultValue={2}
-                                      />
-                                      <span className="quantity-btn">
-                                        +
-                                        <PlusCircle className="plus-circle" />
-                                      </span>
-                                    </div>
-                                  </td>
-                                  <td>
-                                    <Select
-                                      classNamePrefix="react-select"
-                                      options={optionsAddition}
-                                    />
-                                  </td>
-                                  <td className="action-table-data">
-                                    <div className="edit-delete-action">
-                                      <Link
-                                        className="me-2 p-2"
-                                        to="#"
-                                        data-bs-toggle="modal"
-                                        data-bs-target="#edit-units"
-                                      >
-                                        <i
-                                          data-feather="edit"
-                                          className="feather-edit"
-                                        />
-                                      </Link>
-                                      <Link className="confirm-text p-2" to="#">
-                                        <i
-                                          data-feather="trash-2"
-                                          className="feather-trash-2"
-                                        />
-                                      </Link>
-                                    </div>
+                                  <td colSpan="6" className="text-center text-muted py-3">
+                                    No products selected
                                   </td>
                                 </tr>
                               </tbody>

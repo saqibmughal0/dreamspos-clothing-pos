@@ -22,7 +22,7 @@ const PurchaseReport = () => {
           const mapped = res.data.data.items.map((p, idx) => ({
             id: p.id,
             key: p.id || idx,
-            img: "assets/img/products/pos-product-01.png",
+            img: "/assets/img/products/no-product-image.svg",
             productName: `PO ${p.purchaseNumber} (${p.supplierName})`,
             productAmount: `Rs ${Number(p.totalAmount).toFixed(2)}`,
             purchasedQty: "50",

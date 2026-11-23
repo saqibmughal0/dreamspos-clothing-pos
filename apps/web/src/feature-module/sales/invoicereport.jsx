@@ -188,22 +188,7 @@ const Invoice = () => {
                   <ul className="dropdown-menu  dropdown-menu-end p-3">
                     <li>
                       <Link to="#" className="dropdown-item rounded-1">
-                        Carl Evans
-                      </Link>
-                    </li>
-                    <li>
-                      <Link to="#" className="dropdown-item rounded-1">
-                        Minerva Rameriz
-                      </Link>
-                    </li>
-                    <li>
-                      <Link to="#" className="dropdown-item rounded-1">
-                        Robert Lamon
-                      </Link>
-                    </li>
-                    <li>
-                      <Link to="#" className="dropdown-item rounded-1">
-                        Patricia Lewis
+                        All Customers
                       </Link>
                     </li>
                   </ul>

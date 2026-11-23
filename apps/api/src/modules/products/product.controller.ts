@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { productService } from "./product.service";
+import { storageService } from "../storage/storage.service";
 
 export class ProductController {
   async list(req: Request, res: Response, next: NextFunction): Promise<void> {
@@ -130,6 +131,35 @@ export class ProductController {
       }
       const result = await productService.importProducts(companyId, items);
       res.status(200).json({ success: true, data: result });
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  async uploadImage(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      if (!req.file) {
+        res.status(400).json({ success: false, message: "No image file provided" });
+        return;
+      }
+      const companyId = req.user?.companyId;
+      if (!companyId) {
+        res.status(401).json({ success: false, message: "Unauthorized: missing company context" });
+        return;
+      }
+      const stored = await storageService.saveProductImage(
+        companyId,
+        req.file.buffer,
+        req.file.originalname
+      );
+      res.status(200).json({
+        success: true,
+        data: {
+          url: stored.url,
+          provider: stored.provider,
+          publicId: stored.publicId
+        }
+      });
     } catch (err) {
       next(err);
     }

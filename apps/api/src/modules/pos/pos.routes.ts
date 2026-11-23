@@ -14,4 +14,6 @@ posRouter.get("/receipt/:saleId", posController.getReceiptData);
 // Cash Register Shift endpoints
 posRouter.post("/register/open", posController.openRegister);
 posRouter.post("/register/close", posController.closeRegister);
+posRouter.post("/register/cash-movement", posController.recordCashMovement);
 posRouter.get("/register/active", posController.getActiveRegister);
+posRouter.get("/register/history", posController.getRegisterHistory);

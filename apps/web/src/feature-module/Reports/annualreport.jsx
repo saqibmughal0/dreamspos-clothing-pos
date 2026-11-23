@@ -8,9 +8,6 @@ import PredefinedDateRanges from "../../core/common/range-picker/datePicker";
 const Annualreport = () => {
   const Store = [
     { value: "All Stores", label: "All Stores" },
-    { value: "Electro Mart", label: "Electro Mart" },
-    { value: "Quantum Gadgets", label: "Quantum Gadgets" },
-    { value: "Prime Bazaar", label: "Prime Bazaar" },
   ];
 
   return (

@@ -9,6 +9,7 @@ import { all_routes } from '../../Router/all_routes';
 import PredefinedDateRanges from '../../core/common/range-picker/datePicker';
 import { apiClient } from '../../core/apiClient';
 import ErrorBoundary from '../../core/common/errorBoundary/ErrorBoundary';
+import { formatCurrency } from '../../core/utils/businessSettings';
 
 ChartJS.register(
     CategoryScale,
@@ -114,11 +115,27 @@ const PERIOD_LABELS = {
 const NewDashboard = () => {
     const route = all_routes;
     const [overview, setOverview] = useState(EMPTY_OVERVIEW);
+    const [businessSettings, setBusinessSettings] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [period, setPeriod] = useState('1Y');
     const [dateRange, setDateRange] = useState({ startDate: null, endDate: null });
     const [alertDismissed, setAlertDismissed] = useState(false);
+
+    useEffect(() => {
+        apiClient.get('/settings')
+            .then((res) => {
+                if (res.data?.success && res.data.data) {
+                    setBusinessSettings(res.data.data);
+                }
+            })
+            .catch(() => {
+                // Fallback gracefully
+            });
+    }, []);
+
+    const fmtMoney = (val) =>
+        formatCurrency(val, businessSettings?.currency, { minimumFractionDigits: 0, maximumFractionDigits: 2 });
 
     const fetchDashboardData = useCallback(async (activePeriod, start, end) => {
         setLoading(true);
@@ -267,7 +284,7 @@ const NewDashboard = () => {
                 <div className="content">
                     <div className="d-flex align-items-center justify-content-between flex-wrap gap-3 mb-2">
                         <div className="mb-3">
-                            <h1 className="mb-1">Welcome to MR Bilal POS</h1>
+                            <h1 className="mb-1">Welcome to MR. BILAL</h1>
                             <p className="fw-medium">
                                 Live Store Overview &bull; {overallInfo.ordersCount} Orders ({PERIOD_LABELS[period] || 'Selected Range'})
                             </p>
@@ -341,7 +358,7 @@ const NewDashboard = () => {
                                     <div className="ms-2">
                                         <p className="text-white mb-1">Total Sales</p>
                                         <div className="d-inline-flex align-items-center flex-wrap gap-2">
-                                            <h4 className="text-white">{loading ? '...' : formatRs(kpis.totalSales)}</h4>
+                                            <h4 className="text-white">{loading ? '...' : fmtMoney(kpis.totalSales)}</h4>
                                             {formatPctBadge(kpis.changes.salesPct)}
                                         </div>
                                     </div>
@@ -357,7 +374,7 @@ const NewDashboard = () => {
                                     <div className="ms-2">
                                         <p className="text-white mb-1">Total Sales Return</p>
                                         <div className="d-inline-flex align-items-center flex-wrap gap-2">
-                                            <h4 className="text-white">{loading ? '...' : formatRs(kpis.totalSalesReturns)}</h4>
+                                            <h4 className="text-white">{loading ? '...' : fmtMoney(kpis.totalSalesReturns)}</h4>
                                             {formatPctBadge(kpis.changes.salesReturnPct)}
                                         </div>
                                     </div>
@@ -373,7 +390,7 @@ const NewDashboard = () => {
                                     <div className="ms-2">
                                         <p className="text-white mb-1">Total Purchase</p>
                                         <div className="d-inline-flex align-items-center flex-wrap gap-2">
-                                            <h4 className="text-white">{loading ? '...' : formatRs(kpis.totalPurchases)}</h4>
+                                            <h4 className="text-white">{loading ? '...' : fmtMoney(kpis.totalPurchases)}</h4>
                                             {formatPctBadge(kpis.changes.purchasePct)}
                                         </div>
                                     </div>
@@ -389,7 +406,7 @@ const NewDashboard = () => {
                                     <div className="ms-2">
                                         <p className="text-white mb-1">Total Expenses</p>
                                         <div className="d-inline-flex align-items-center flex-wrap gap-2">
-                                            <h4 className="text-white">{loading ? '...' : formatRs(kpis.totalExpenses)}</h4>
+                                            <h4 className="text-white">{loading ? '...' : fmtMoney(kpis.totalExpenses)}</h4>
                                             {formatPctBadge(kpis.changes.expensePct)}
                                         </div>
                                     </div>
@@ -405,7 +422,7 @@ const NewDashboard = () => {
                                 <div className="card-body">
                                     <div className="d-flex align-items-center justify-content-between mb-3 pb-3 border-bottom">
                                         <div>
-                                            <h4 className="mb-1">{formatRs(kpis.profit)}</h4>
+                                            <h4 className="mb-1">{fmtMoney(kpis.profit)}</h4>
                                             <p>Profit</p>
                                         </div>
                                         <span className="revenue-icon bg-cyan-transparent text-cyan">
@@ -424,7 +441,7 @@ const NewDashboard = () => {
                                 <div className="card-body">
                                     <div className="d-flex align-items-center justify-content-between mb-3 pb-3 border-bottom">
                                         <div>
-                                            <h4 className="mb-1">{formatRs(kpis.invoiceDue)}</h4>
+                                            <h4 className="mb-1">{fmtMoney(kpis.invoiceDue)}</h4>
                                             <p>Invoice Due</p>
                                         </div>
                                         <span className="revenue-icon bg-teal-transparent text-teal">
@@ -443,7 +460,7 @@ const NewDashboard = () => {
                                 <div className="card-body">
                                     <div className="d-flex align-items-center justify-content-between mb-3 pb-3 border-bottom">
                                         <div>
-                                            <h4 className="mb-1">{formatRs(kpis.totalExpenses)}</h4>
+                                            <h4 className="mb-1">{fmtMoney(kpis.totalExpenses)}</h4>
                                             <p>Total Expenses</p>
                                         </div>
                                         <span className="revenue-icon bg-orange-transparent text-orange">
@@ -462,7 +479,7 @@ const NewDashboard = () => {
                                 <div className="card-body">
                                     <div className="d-flex align-items-center justify-content-between mb-3 pb-3 border-bottom">
                                         <div>
-                                            <h4 className="mb-1">{formatRs(kpis.paymentReturns)}</h4>
+                                            <h4 className="mb-1">{fmtMoney(kpis.paymentReturns)}</h4>
                                             <p>Total Payment Returns</p>
                                         </div>
                                         <span className="revenue-icon bg-indigo-transparent text-indigo">
@@ -509,14 +526,14 @@ const NewDashboard = () => {
                                                 <i className="ti ti-point-filled text-primary-light fs-16 me-1" />
                                                 Total Purchase
                                             </span>
-                                            <h4>{formatRs(salesAndPurchaseChart.totalPurchase)}</h4>
+                                            <h4>{fmtMoney(salesAndPurchaseChart.totalPurchase)}</h4>
                                         </div>
                                         <div className="border p-2 br-8">
                                             <span className="d-inline-flex align-items-center fs-13">
                                                 <i className="ti ti-point-filled text-primary fs-16 me-1" />
                                                 Total Sales
                                             </span>
-                                            <h4>{formatRs(salesAndPurchaseChart.totalSales)}</h4>
+                                            <h4>{fmtMoney(salesAndPurchaseChart.totalSales)}</h4>
                                         </div>
                                     </div>
                                     <ErrorBoundary compact widgetName="Sales & Purchase Chart">
@@ -626,13 +643,13 @@ const NewDashboard = () => {
                                                             <Link to={route.productlist}>{p.name}</Link>
                                                         </h6>
                                                         <div className="d-flex align-items-center gap-2 fs-13 text-muted">
-                                                            <span>{formatRs(p.price)}</span>
+                                                            <span>{fmtMoney(p.price)}</span>
                                                             <span>&bull;</span>
                                                             <span>{p.unitsSold} Sold</span>
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <span className="badge bg-outline-success badge-xs">{formatRs(p.revenue)}</span>
+                                                <span className="badge bg-outline-success badge-xs">{fmtMoney(p.revenue)}</span>
                                             </div>
                                         ))
                                     )}
@@ -705,7 +722,7 @@ const NewDashboard = () => {
                                                     <div className="d-flex align-items-center gap-2 fs-12 text-muted">
                                                         <span>{s.categoryName}</span>
                                                         <span>&bull;</span>
-                                                        <span>{formatRs(s.totalAmount)}</span>
+                                                        <span>{fmtMoney(s.totalAmount)}</span>
                                                     </div>
                                                 </div>
                                                 <div className="text-end">
@@ -737,7 +754,7 @@ const NewDashboard = () => {
                                     <div className="d-flex align-items-center flex-wrap gap-2 mb-2">
                                         <div className="border p-2 br-8">
                                             <h5 className="d-inline-flex align-items-center text-teal">
-                                                {formatRs(salesStatistics.totalRevenue)}
+                                                {fmtMoney(salesStatistics.totalRevenue)}
                                                 <span className="badge badge-success badge-xs d-inline-flex align-items-center ms-2">
                                                     {salesStatistics.revenueChangePct >= 0 ? '+' : ''}{salesStatistics.revenueChangePct}%
                                                 </span>
@@ -746,7 +763,7 @@ const NewDashboard = () => {
                                         </div>
                                         <div className="border p-2 br-8">
                                             <h5 className="d-inline-flex align-items-center text-orange">
-                                                {formatRs(salesStatistics.totalExpenses)}
+                                                {fmtMoney(salesStatistics.totalExpenses)}
                                                 <span className="badge badge-danger badge-xs d-inline-flex align-items-center ms-2">
                                                     {salesStatistics.expensesChangePct >= 0 ? '+' : ''}{salesStatistics.expensesChangePct}%
                                                 </span>
@@ -815,7 +832,7 @@ const NewDashboard = () => {
                                                                         <td>
                                                                             <span className="badge bg-success badge-xs">{tx.status}</span>
                                                                         </td>
-                                                                        <td className="fw-medium text-gray-9">{formatRs(tx.total)}</td>
+                                                                        <td className="fw-medium text-gray-9">{fmtMoney(tx.total)}</td>
                                                                     </tr>
                                                                 ))
                                                             )}
@@ -865,7 +882,7 @@ const NewDashboard = () => {
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <h6 className="fw-bold">{formatRs(c.totalSpent)}</h6>
+                                                <h6 className="fw-bold">{fmtMoney(c.totalSpent)}</h6>
                                             </div>
                                         ))
                                     )}
@@ -901,7 +918,7 @@ const NewDashboard = () => {
                                                             <i className="ti ti-point-filled me-1" style={{ color: catColors[idx % catColors.length] }} />
                                                             {c.name}
                                                         </p>
-                                                        <h6 className="ms-3">{formatRs(c.revenue)} <span className="fs-12 text-muted">({c.unitsSold} pcs)</span></h6>
+                                                        <h6 className="ms-3">{fmtMoney(c.revenue)} <span className="fs-12 text-muted">({c.unitsSold} pcs)</span></h6>
                                                     </div>
                                                 ))
                                             )}

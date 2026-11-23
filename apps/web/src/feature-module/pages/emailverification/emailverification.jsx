@@ -3,6 +3,7 @@ import ImageWithBasePath from "../../../core/img/imagewithbasebath";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { all_routes } from "../../../Router/all_routes";
 import { apiClient } from "../../../core/apiClient";
+import { consumePendingRegistrationAvatar } from "../../../core/utils/pendingRegistrationAvatar";
 
 const EmailVerification = () => {
   const route = all_routes;
@@ -55,15 +56,40 @@ const EmailVerification = () => {
       });
 
       if (res.data?.success) {
-        setSuccessMsg(res.data.message || "Email verified successfully!");
+        const normalizedEmail = email.trim().toLowerCase();
+        let finalMessage = res.data.message || "Email verified successfully!";
 
         if (res.data.data?.accessToken) {
           localStorage.setItem("accessToken", res.data.data.accessToken);
-          localStorage.setItem("user", JSON.stringify(res.data.data.user));
+          let verifiedUser = res.data.data.user;
+          localStorage.setItem("user", JSON.stringify(verifiedUser));
+
+          // Upload any pending registration profile photo securely using the newly verified JWT
+          const pendingAvatar = await consumePendingRegistrationAvatar(normalizedEmail);
+          if (pendingAvatar) {
+            try {
+              const fd = new FormData();
+              fd.append("avatar", pendingAvatar);
+              const avatarRes = await apiClient.post("/users/me/avatar", fd, {
+                headers: { "Content-Type": "multipart/form-data" },
+              });
+              if (avatarRes.data?.success && avatarRes.data.data?.avatar) {
+                verifiedUser = { ...verifiedUser, avatar: avatarRes.data.data.avatar };
+                localStorage.setItem("user", JSON.stringify(verifiedUser));
+              }
+            } catch {
+              finalMessage =
+                "Email verified! However, your profile photo could not be uploaded automatically — you can upload it anytime in Profile.";
+            }
+          }
+
+          window.dispatchEvent(new Event("user-updated"));
+          setSuccessMsg(finalMessage);
           setTimeout(() => {
             navigate(route.newdashboard);
           }, 1200);
         } else {
+          setSuccessMsg(finalMessage);
           setTimeout(() => {
             navigate(route.signin);
           }, 1500);

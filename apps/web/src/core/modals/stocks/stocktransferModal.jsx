@@ -205,64 +205,8 @@ const StockTransferModal = () => {
                               </thead>
                               <tbody>
                                 <tr>
-                                  <td>
-                                    <div className="productimgname">
-                                      <Link
-                                        to="#"
-                                        className="product-img stock-img"
-                                      >
-                                        <ImageWithBasePath
-                                          src="assets/img/products/stock-img-02.png"
-                                          alt="product"
-                                        />
-                                      </Link>
-                                      <Link to="#">Nike Jordan</Link>
-                                    </div>
-                                  </td>
-                                  <td>PT002</td>
-                                  <td>Nike</td>
-                                  <td>
-                                    <div className="product-quantity">
-                                      <span className="quantity-btn">
-                                        <i
-                                          data-feather="minus-circle"
-                                          className="feather-search"
-                                        />
-                                      </span>
-                                      <input
-                                        type="text"
-                                        className="quntity-input"
-                                        defaultValue={2}
-                                      />
-                                      <span className="quantity-btn">
-                                        +
-                                        <i
-                                          data-feather="plus-circle"
-                                          className="plus-circle"
-                                        />
-                                      </span>
-                                    </div>
-                                  </td>
-                                  <td className="action-table-data">
-                                    <div className="edit-delete-action">
-                                      <Link
-                                        className="me-2 p-2"
-                                        to="#"
-                                        data-bs-toggle="modal"
-                                        data-bs-target="#edit-units"
-                                      >
-                                        <i
-                                          data-feather="edit"
-                                          className="feather-edit"
-                                        />
-                                      </Link>
-                                      <Link className="confirm-text p-2" to="#">
-                                        <i
-                                          data-feather="trash-2"
-                                          className="feather-trash-2"
-                                        />
-                                      </Link>
-                                    </div>
+                                  <td colSpan="5" className="text-center text-muted py-3">
+                                    No products selected
                                   </td>
                                 </tr>
                               </tbody>
@@ -275,9 +219,7 @@ const StockTransferModal = () => {
                           <label>Notes</label>
                           <textarea
                             className="form-control"
-                            defaultValue={
-                              "The Jordan brand is owned by Nike (owned by the Knight family), as, at the time, the company was building its strategy to work with athletes to launch shows that could inspire consumers.Although Jordan preferred Converse and Adidas, they simply could not match the offer Nike made. "
-                            }
+                            defaultValue=""
                           />
                         </div>
                       </div>

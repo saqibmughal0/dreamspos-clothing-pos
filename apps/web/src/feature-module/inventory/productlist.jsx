@@ -48,7 +48,7 @@ const ProductList = () => {
             key: p.id || idx,
             sku: p.sku || "—",
             product: p.name,
-            productImage: p.image || "assets/img/products/pos-product-01.png",
+            productImage: p.image || (Array.isArray(p.images) ? p.images[0] : "") || "",
             category: p.categoryName || "Apparel",
             brand: p.brandName || "—",
             price: `Rs ${Number(p.sellingPrice || 0).toFixed(2)}`,
@@ -384,7 +384,7 @@ const ProductList = () => {
                             className="img-select"
                             classNamePrefix="react-select"
                             options={brandlist}
-                            placeholder="Nike"
+                            placeholder="Enter brand name"
                           />
                         </div>
                       </div>

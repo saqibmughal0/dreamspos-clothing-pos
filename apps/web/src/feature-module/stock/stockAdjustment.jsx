@@ -26,7 +26,7 @@ const StockAdjustment = () => {
             Shop: item.storeName || "MR Bilal POS",
             Product: {
               Name: item.items?.[0]?.productName || "Clothing Garment",
-              Image: "assets/img/products/pos-product-01.png"
+              Image: item.items?.[0]?.productImage || "/assets/img/products/no-product-image.svg"
             },
             Date: new Date(item.createdAt).toLocaleDateString(),
             Person: {
@@ -418,7 +418,7 @@ const StockAdjustment = () => {
                     <input
                       type="text"
                       className="form-control"
-                      defaultValue="Nike Jordan"
+                      placeholder="Search product"
                     />
                     <i data-feather="search" className="feather-search" />
                   </div>
@@ -443,7 +443,7 @@ const StockAdjustment = () => {
                         <input
                           type="text"
                           className="form-control"
-                          defaultValue="PT002"
+                          placeholder="Reference number"
                         />
                       </div>
                     </div>
@@ -463,61 +463,8 @@ const StockAdjustment = () => {
                             </thead>
                             <tbody>
                               <tr>
-                                <td>
-                                  <div className="d-flex align-items-center">
-                                    <Link
-                                      to="#"
-                                      className="avatar avatar-md me-2"
-                                    >
-                                      <ImageWithBasePath
-                                        src="assets/img/products/stock-img-02.png"
-                                        alt="product"
-                                      />
-                                    </Link>
-                                    <Link to="#">Nike Jordan</Link>
-                                  </div>
-                                </td>
-                                <td>PT002</td>
-                                <td>Nike</td>
-                                <td>
-                                  <div className="product-quantity border-0 bg-gray-transparent">
-                                    <span className="quantity-btn">
-                                      <MinusCircle />
-                                      onClick={handleDecrement}
-                                    </span>
-                                    <input
-                                      type="text"
-                                      className="quntity-input bg-transparent"
-                                      defaultValue={2}
-                                    />
-                                    <span className="quantity-btn">
-                                      +
-                                      <PlusCircle className="plus-circle" />
-                                      onClick={handleIncrement}
-                                    </span>
-                                  </div>
-                                </td>
-                                <td>
-                                  <Select
-                                    classNamePrefix="react-select"
-                                    options={Addition}
-                                    placeholder="Choose"
-                                  />
-                                </td>
-                                <td>
-                                  <div className="edit-delete-action d-flex align-items-center">
-                                    <Link
-                                      className="p-2 border rounded d-flex align-items-center"
-                                      to="#"
-                                      data-bs-toggle="modal"
-                                      data-bs-target="#delete"
-                                    >
-                                      <i
-                                        data-feather="trash-2"
-                                        className="feather-trash-2"
-                                      />
-                                    </Link>
-                                  </div>
+                                <td colSpan={6} className="text-center text-muted py-3">
+                                  No product selected
                                 </td>
                               </tr>
                             </tbody>
@@ -557,9 +504,7 @@ const StockAdjustment = () => {
                         </label>
                         <textarea
                           className="form-control"
-                          defaultValue={
-                            "The Jordan brand is owned by Nike (owned by the Knight family), as, at the time, the company was building its strategy to work with athletes to launch shows that could inspire consumers.Although Jordan preferred Converse and Adidas, they simply could not match the offer Nike made. "
-                          }
+                          placeholder="Enter adjustment notes"
                         />
                       </div>
                     </div>
@@ -600,15 +545,7 @@ const StockAdjustment = () => {
                 </button>
               </div>
               <div className="modal-body">
-                <p>
-                  The Jordan brand is owned by Nike (owned by the Knight family), as,
-                  at the time, the company was building its strategy to work with
-                  athletes to launch shows that could inspire consumers.Although
-                  Jordan preferred Converse and Adidas, they simply could not match
-                  the offer Nike made. Jordan also signed with Nike because he loved
-                  the way they wanted to market him with the banned colored shoes.
-                  Nike promised to cover the fine Jordan would receive from the NBA.
-                </p>
+                <p className="text-muted mb-0">No notes available.</p>
               </div>
             </div>
           </div>

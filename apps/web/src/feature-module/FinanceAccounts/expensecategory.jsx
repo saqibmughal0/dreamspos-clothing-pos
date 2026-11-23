@@ -311,7 +311,7 @@ const ExpenseCategory = () => {
                         <input
                           type="text"
                           className="form-control"
-                          defaultValue="Electro Mart"
+                          placeholder="Enter store name"
                         />
                       </div>
                       <div className="mb-3">
@@ -321,7 +321,7 @@ const ExpenseCategory = () => {
                         <input
                           type="text"
                           className="form-control"
-                          defaultValue="johnsmith"
+                          placeholder="Enter user name"
                         />
                       </div>
                       <div className="input-blocks mb-3">

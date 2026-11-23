@@ -12,9 +12,7 @@ const AddCoupons = () => {
     { value: "percentage", label: "Percentage" },
   ];
   const list = [
-    { value: "choose", label: "Choose" },
-    { value: "nikeJordan", label: "Nike Jordan" },
-    { value: "amazonEchoDot", label: "Amazon Echo Dot" },
+    { value: "choose", label: "Choose Product" },
   ];
   const [selectedDate, setSelectedDate] = useState(new Date());
   const handleDateChange = (date) => {

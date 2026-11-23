@@ -3,6 +3,9 @@ import ImageWithBasePath from "../../core/img/imagewithbasebath";
 import { Link } from "react-router-dom";
 import { apiClient } from "../../core/apiClient";
 import { triggerGoogleAuth } from "../../core/googleAuth";
+import { resolveMediaUrl } from "../../core/utils/mediaUrl";
+
+const DEFAULT_USER_AVATAR = "/assets/img/profiles/avator1.jpg";
 
 const Profile = () => {
   const [isPasswordVisible, setPasswordVisible] = useState(false);
@@ -59,8 +62,9 @@ const Profile = () => {
         setAvatar(u.avatar || null);
         setGoogleLinked(!!u.googleLinked);
 
-        // Update localStorage user cache
+        // Update localStorage user cache & notify Header in same tab
         localStorage.setItem("user", JSON.stringify(u));
+        window.dispatchEvent(new Event("user-updated"));
       }
     } catch (err) {
       console.warn("Failed to fetch profile from API, checking localStorage:", err);
@@ -117,10 +121,11 @@ const Profile = () => {
         setAvatar(newAvatar);
         setSuccessMsg("Profile picture updated successfully!");
 
-        // Update localStorage
+        // Update localStorage & notify Header immediately
         const stored = JSON.parse(localStorage.getItem("user") || "{}");
         stored.avatar = newAvatar;
         localStorage.setItem("user", JSON.stringify(stored));
+        window.dispatchEvent(new Event("user-updated"));
       }
     } catch (err) {
       const msg = err.response?.data?.message || "Failed to upload image. Please try again.";
@@ -144,10 +149,11 @@ const Profile = () => {
         setAvatar(null);
         setSuccessMsg("Profile picture removed successfully.");
 
-        // Update localStorage
+        // Update localStorage & notify Header immediately
         const stored = JSON.parse(localStorage.getItem("user") || "{}");
         stored.avatar = null;
         localStorage.setItem("user", JSON.stringify(stored));
+        window.dispatchEvent(new Event("user-updated"));
       }
     } catch (err) {
       const msg = err.response?.data?.message || "Failed to remove image.";
@@ -336,15 +342,7 @@ const Profile = () => {
   };
 
   const getAvatarSrc = () => {
-    if (!avatar) {
-      return "assets/img/profiles/avator1.jpg";
-    }
-    if (avatar.startsWith("http://") || avatar.startsWith("https://")) {
-      return avatar;
-    }
-    const apiUrl = import.meta.env.VITE_API_URL || "";
-    const backendOrigin = apiUrl.replace(/\/api\/?$/, "");
-    return `${backendOrigin}${avatar}`;
+    return resolveMediaUrl(avatar, DEFAULT_USER_AVATAR);
   };
 
   return (

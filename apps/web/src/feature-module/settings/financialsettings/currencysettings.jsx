@@ -1,19 +1,101 @@
-import {
-  Edit,
-  PlusCircle,
-  Trash2,
-} from "feather-icons-react/build/IconComponents";
-import React from "react";
-import { Link } from "react-router-dom";
-import AddCurrency from "../../../core/modals/settings/addcurrency";
-import EditCurrency from "../../../core/modals/editcurrency";
+import React, { useState, useEffect, useCallback } from "react";
 import SettingsSideBar from "../settingssidebar";
 import RefreshIcon from "../../../core/common/tooltip-content/refresh";
 import CollapesIcon from "../../../core/common/tooltip-content/collapes";
 import CommonFooter from "../../../core/common/footer/commonFooter";
+import { apiClient } from "../../../core/apiClient";
+import { extractApiError, formatCurrency } from "../../../core/utils/businessSettings";
+
+const DEFAULT_CURRENCY = {
+  code: "PKR",
+  symbol: "Rs",
+  position: "PREFIX",
+};
+
+const PRESETS = [
+  { code: "PKR", symbol: "Rs", name: "Pakistani Rupee" },
+  { code: "USD", symbol: "$", name: "US Dollar" },
+  { code: "AED", symbol: "AED", name: "UAE Dirham" },
+  { code: "SAR", symbol: "SAR", name: "Saudi Riyal" },
+  { code: "GBP", symbol: "£", name: "British Pound" },
+  { code: "EUR", symbol: "€", name: "Euro" },
+];
 
 const CurrencySettings = () => {
+  const [currency, setCurrency] = useState(DEFAULT_CURRENCY);
+  const [savedCurrency, setSavedCurrency] = useState(DEFAULT_CURRENCY);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
 
+  const loadSettings = useCallback(async () => {
+    setLoading(true);
+    setError("");
+    try {
+      const res = await apiClient.get("/settings");
+      const s = res.data?.data || {};
+      const loaded = {
+        code: s.currency?.code || "PKR",
+        symbol: s.currency?.symbol || "Rs",
+        position: s.currency?.position === "SUFFIX" ? "SUFFIX" : "PREFIX",
+      };
+      setCurrency(loaded);
+      setSavedCurrency(loaded);
+    } catch (err) {
+      setError(extractApiError(err, "Failed to load currency settings."));
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    loadSettings();
+  }, [loadSettings]);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError("");
+    setSuccess("");
+
+    if (!currency.code.trim()) {
+      setError("Currency code is required (e.g. PKR).");
+      return;
+    }
+    if (!currency.symbol.trim()) {
+      setError("Currency symbol is required (e.g. Rs).");
+      return;
+    }
+
+    setSaving(true);
+    try {
+      const payload = {
+        currency: {
+          code: currency.code.trim().toUpperCase(),
+          symbol: currency.symbol.trim(),
+          position: currency.position === "SUFFIX" ? "SUFFIX" : "PREFIX",
+        },
+      };
+      const res = await apiClient.put("/settings", payload);
+      const updated = res.data?.data?.currency;
+      if (updated) {
+        const synced = { ...DEFAULT_CURRENCY, ...updated };
+        setCurrency(synced);
+        setSavedCurrency(synced);
+      }
+      setSuccess("Currency settings saved successfully.");
+    } catch (err) {
+      setError(extractApiError(err, "Failed to save currency settings."));
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleCancel = () => {
+    setCurrency(savedCurrency);
+    setError("");
+    setSuccess("");
+  };
 
   return (
     <div>
@@ -23,11 +105,11 @@ const CurrencySettings = () => {
             <div className="add-item d-flex">
               <div className="page-title">
                 <h4>Settings</h4>
-                <h6>Manage your settings on portal</h6>
+                <h6>Configure your active POS currency and formatting</h6>
               </div>
             </div>
             <ul className="table-top-head">
-              <RefreshIcon />
+              <RefreshIcon onClick={loadSettings} />
               <CollapesIcon />
             </ul>
           </div>
@@ -35,162 +117,127 @@ const CurrencySettings = () => {
             <div className="col-xl-12">
               <div className="settings-wrapper d-flex">
                 <SettingsSideBar />
-                <div className="card flex-fill mb-0 w-50">
-                  <div className="card-header">
-                    <h4>Currency</h4>
+                <div className="card flex-fill mb-0">
+                  <div className="card-header d-flex align-items-center justify-content-between">
+                    <h4 className="fs-18 fw-bold mb-0">Currency Settings</h4>
+                    <span className="badge bg-success-transparent text-success">
+                      Default: PKR (Rs)
+                    </span>
                   </div>
-                  <div className="card-body pb-0">
-                    <div className="row">
-                      <div className="col-lg-12">
-                        <div className="card table-list-card">
-                          <div className="card-body">
-                            <div className="table-top">
-                              <div className="search-set">
-                                <div className="search-input">
-                                  <span className="btn-searchset">
-                                    <i className="ti ti-search fs-14 feather-search" />
-                                  </span>
-                                </div>
-                              </div>
-                              <Link
-                                to="#"
-                                className="btn btn-primary"
-                                data-bs-toggle="modal"
-                                data-bs-target="#add-currency"
+                  <div className="card-body">
+                    {error && (
+                      <div className="alert alert-danger alert-dismissible fade show" role="alert">
+                        <i className="ti ti-alert-circle me-2" />
+                        {error}
+                        <button type="button" className="btn-close" onClick={() => setError("")} aria-label="Close" />
+                      </div>
+                    )}
+                    {success && (
+                      <div className="alert alert-success alert-dismissible fade show" role="alert">
+                        <i className="ti ti-circle-check me-2" />
+                        {success}
+                        <button type="button" className="btn-close" onClick={() => setSuccess("")} aria-label="Close" />
+                      </div>
+                    )}
+
+                    {loading ? (
+                      <div className="text-center py-5">
+                        <div className="spinner-border text-primary" role="status" />
+                        <p className="mt-2 text-muted mb-0">Loading currency settings...</p>
+                      </div>
+                    ) : (
+                      <form onSubmit={handleSubmit} noValidate>
+                        <div className="mb-4">
+                          <label className="form-label fw-medium">Quick Currency Presets</label>
+                          <div className="d-flex flex-wrap gap-2">
+                            {PRESETS.map((p) => (
+                              <button
+                                key={p.code}
+                                type="button"
+                                className={`btn btn-sm ${currency.code === p.code ? "btn-primary" : "btn-outline-secondary"}`}
+                                onClick={() => {
+                                  setCurrency((prev) => ({ ...prev, code: p.code, symbol: p.symbol }));
+                                  setSuccess("");
+                                }}
                               >
-                                <PlusCircle className="me-1" />
-                                Add New Currency
-                              </Link>
-                            </div>
-                            <div className="table-responsive no-pagination">
-                              <table className="table datatable">
-                                <thead className="thead-light">
-                                  <tr>
-                                    <th>Currency Name</th>
-                                    <th>Code </th>
-                                    <th>Symbol</th>
-                                    <th>Exchange Rate</th>
-                                    <th>Created On</th>
-                                    <th className="no-sort text-end">Action</th>
-                                  </tr>
-                                </thead>
-                                <tbody>
-                                  <tr>
-                                    <td>Euro</td>
-                                    <td>EUR</td>
-                                    <td>€</td>
-                                    <td>Default</td>
-                                    <td>12 Jul 2025</td>
-                                    <td className="action-table-data justify-content-end">
-                                      <div className="edit-delete-action">
-                                        <Link
-                                          className="me-2 p-2"
-                                          to="#"
-                                          data-bs-toggle="modal"
-                                          data-bs-target="#edit-currency"
-                                        >
-                                          <i
-                                            data-feather="edit"
-                                            className="feather-edit"
-                                          />
-                                        </Link>
-                                        <Link className="p-2" to="#" data-bs-toggle="modal" data-bs-target="#delete-modal">
-                                          <i
-                                            data-feather="trash-2"
-                                            className="feather-trash-2"
-                                          />
-                                        </Link>
-                                      </div>
-                                    </td>
-                                  </tr>
-                                  <tr>
-                                    <td>England Pound</td>
-                                    <td>GBP</td>
-                                    <td>£</td>
-                                    <td>Default</td>
-                                    <td>14 Jul 2025</td>
-                                    <td className="action-table-data justify-content-end">
-                                      <div className="edit-delete-action">
-                                        <Link
-                                          className="me-2 p-2"
-                                          to="#"
-                                          data-bs-toggle="modal"
-                                          data-bs-target="#edit-currency"
-                                        >
-                                          <Edit className="feather-edit" />
-                                        </Link>
-                                        <Link
-                                          className="p-2"
-                                          to="#"
-                                          data-bs-toggle="modal"
-                                          data-bs-target="#delete-modal"
-                                        >
-                                          <Trash2 className="feather-trash-2" />
-                                        </Link>
-                                      </div>
-                                    </td>
-                                  </tr>
-                                  <tr>
-                                    <td>India Rupee</td>
-                                    <td>INR</td>
-                                    <td>₹</td>
-                                    <td>76.154</td>
-                                    <td>14 Mar 2025</td>
-                                    <td className="action-table-data justify-content-end">
-                                      <div className="edit-delete-action">
-                                        <Link
-                                          className="me-2 p-2"
-                                          to="#"
-                                          data-bs-toggle="modal"
-                                          data-bs-target="#edit-currency"
-                                        >
-                                          <Edit className="feather-edit" />
-                                        </Link>
-                                        <Link
-                                          className="p-2"
-                                          to="#"
-                                          data-bs-toggle="modal"
-                                          data-bs-target="#delete-modal"
-                                        >
-                                          <Trash2 className="feather-trash-2" />
-                                        </Link>
-                                      </div>
-                                    </td>
-                                  </tr>
-                                  <tr>
-                                    <td>US Dollar</td>
-                                    <td>PKR</td>
-                                    <td>Rs</td>
-                                    <td>Default</td>
-                                    <td>10 Jan 2025</td>
-                                    <td className="action-table-data justify-content-end">
-                                      <div className="edit-delete-action">
-                                        <Link
-                                          className="me-2 p-2"
-                                          to="#"
-                                          data-bs-toggle="modal"
-                                          data-bs-target="#edit-currency"
-                                        >
-                                          <Edit className="feather-edit" />
-                                        </Link>
-                                        <Link
-                                          className="p-2"
-                                          to="#"
-                                          data-bs-toggle="modal"
-                                          data-bs-target="#delete-modal"
-                                        >
-                                          <Trash2 className="feather-trash-2" />
-                                        </Link>
-                                      </div>
-                                    </td>
-                                  </tr>
-                                </tbody>
-                              </table>
-                            </div>
+                                {p.code} ({p.symbol}) — {p.name}
+                              </button>
+                            ))}
                           </div>
                         </div>
-                      </div>
-                    </div>
+
+                        <div className="row">
+                          <div className="col-md-4 mb-3">
+                            <label className="form-label">
+                              Currency Code <span className="text-danger">*</span>
+                            </label>
+                            <input
+                              type="text"
+                              className="form-control"
+                              maxLength={10}
+                              value={currency.code}
+                              onChange={(e) => {
+                                setCurrency((prev) => ({ ...prev, code: e.target.value }));
+                                setSuccess("");
+                              }}
+                              placeholder="PKR"
+                            />
+                          </div>
+                          <div className="col-md-4 mb-3">
+                            <label className="form-label">
+                              Currency Symbol <span className="text-danger">*</span>
+                            </label>
+                            <input
+                              type="text"
+                              className="form-control"
+                              maxLength={10}
+                              value={currency.symbol}
+                              onChange={(e) => {
+                                setCurrency((prev) => ({ ...prev, symbol: e.target.value }));
+                                setSuccess("");
+                              }}
+                              placeholder="Rs"
+                            />
+                          </div>
+                          <div className="col-md-4 mb-3">
+                            <label className="form-label">Symbol Position</label>
+                            <select
+                              className="form-select"
+                              value={currency.position}
+                              onChange={(e) => {
+                                setCurrency((prev) => ({ ...prev, position: e.target.value }));
+                                setSuccess("");
+                              }}
+                            >
+                              <option value="PREFIX">Before Amount (e.g. {currency.symbol || "Rs"} 1,500.00)</option>
+                              <option value="SUFFIX">After Amount (e.g. 1,500.00 {currency.symbol || "Rs"})</option>
+                            </select>
+                          </div>
+                        </div>
+
+                        <div className="alert alert-light border d-flex align-items-center justify-content-between mb-4">
+                          <div>
+                            <span className="text-muted">Receipt &amp; Invoice Preview:</span>
+                            <strong className="ms-2 fs-16">{formatCurrency(4850, currency)}</strong>
+                          </div>
+                          <span className="text-muted fs-12">Applied across POS, Dashboard, Invoices &amp; Receipts</span>
+                        </div>
+
+                        <div className="text-end settings-bottom-btn mt-0">
+                          <button
+                            type="button"
+                            className="btn btn-secondary me-2"
+                            onClick={handleCancel}
+                            disabled={saving}
+                          >
+                            Cancel
+                          </button>
+                          <button type="submit" className="btn btn-primary" disabled={saving}>
+                            {saving ? "Saving..." : "Save Changes"}
+                          </button>
+                        </div>
+                      </form>
+                    )}
                   </div>
                 </div>
               </div>
@@ -199,49 +246,6 @@ const CurrencySettings = () => {
         </div>
         <CommonFooter />
       </div>
-
-      <AddCurrency />
-      <EditCurrency />
-
-      <>
-        {/* delete modal */}
-        <div className="modal fade" id="delete-modal">
-          <div className="modal-dialog modal-dialog-centered">
-            <div className="modal-content">
-              <div className="page-wrapper-new p-0">
-                <div className="content p-5 px-3 text-center">
-                  <span className="rounded-circle d-inline-flex p-2 bg-danger-transparent mb-2">
-                    <i className="ti ti-trash fs-24 text-danger" />
-                  </span>
-                  <h4 className="fs-20 text-gray-9 fw-bold mb-2 mt-1">
-                    Delete Currency
-                  </h4>
-                  <p className="text-gray-6 mb-0 fs-16">
-                    Are you sure you want to delete currency?
-                  </p>
-                  <div className="modal-footer-btn mt-3 d-flex justify-content-center">
-                    <button
-                      type="button"
-                      className="btn me-2 btn-secondary fs-13 fw-medium p-2 px-3 shadow-none"
-                      data-bs-dismiss="modal"
-                    >
-                      Cancel
-                    </button>
-                    <button
-                      type="button"
-                      className="btn btn-submit fs-13 fw-medium p-2 px-3"
-                    >
-                      Yes Delete
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        {/* /delete modal */}
-      </>
-
     </div>
   );
 };

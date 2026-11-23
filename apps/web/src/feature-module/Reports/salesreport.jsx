@@ -30,7 +30,7 @@ const SalesReport = () => {
           const mapped = res.data.data.items.map((s, idx) => ({
             id: s.id,
             key: s.id || idx,
-            img: "assets/img/products/pos-product-01.png",
+            img: "/assets/img/products/no-product-image.svg",
             productName: `Order ${s.invoiceNumber} (${s.itemsCount} items)`,
             sku: s.invoiceNumber,
             category: "Apparel",

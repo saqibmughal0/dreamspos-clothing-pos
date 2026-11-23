@@ -28,7 +28,7 @@ const LowStock = () => {
             warehouse: "Main Warehouse",
             store: "MR Bilal POS",
             product: item.name,
-            img: "assets/img/products/pos-product-01.png",
+            img: item.image || "/assets/img/products/no-product-image.svg",
             category: item.category || "Apparel",
             sku: item.sku || "—",
             qty: String(item.stockQuantity),

@@ -135,32 +135,12 @@ const EditPurchases = () => {
                                 </tr>
                               </thead>
                               <tbody>
-														<tr>
-															<td>
-																<div  className="productimgname">
-																	<Link to="#"  className="product-img stock-img">
-																		<img src="assets/img/products/stock-img-02.png" alt="product" />
-																	</Link>
-																	<Link to="#">Nike Jordan</Link>
-																</div>
-															</td>
-															<td><div className="product-quantity">
-																<span  className="quantity-btn">+ <PlusCircle/></span>
-																<input type="text"  className="quntity-input" value="10" />
-																<span  className="quantity-btn"> <MinusCircle/></span>
-															</div></td>
-															<td>2000</td>
-															<td>500.00</td>
-															<td>0.00</td>
-															<td>0.00</td>
-															<td>0.00</td>
-															<td>1500</td>
-															<td>
-																<Link  className="delete-set"><ImageWithBasePath
-																		src="assets/img/icons/delete.svg" alt="svg" /></Link>
-															</td>
-														</tr>
-													</tbody>
+                                <tr>
+                                  <td colSpan="9" className="text-center text-muted py-3">
+                                    No products selected
+                                  </td>
+                                </tr>
+                              </tbody>
                             </table>
                           </div>
                         </div>

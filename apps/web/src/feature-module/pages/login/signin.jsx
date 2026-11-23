@@ -38,6 +38,7 @@ const Signin = () => {
       if (res.data?.success && res.data.data?.accessToken) {
         localStorage.setItem("accessToken", res.data.data.accessToken);
         localStorage.setItem("user", JSON.stringify(res.data.data.user));
+        window.dispatchEvent(new Event("user-updated"));
         navigate(route.newdashboard);
       } else {
         setErrorMsg(res.data?.message || "Invalid email or password");
@@ -71,6 +72,7 @@ const Signin = () => {
           if (res.data?.success && res.data.data?.accessToken) {
             localStorage.setItem("accessToken", res.data.data.accessToken);
             localStorage.setItem("user", JSON.stringify(res.data.data.user));
+            window.dispatchEvent(new Event("user-updated"));
             navigate(route.newdashboard);
           } else {
             setErrorMsg(res.data?.message || "Google sign-in failed");

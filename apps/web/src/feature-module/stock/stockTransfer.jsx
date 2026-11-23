@@ -479,7 +479,6 @@ const StockTransfer = () => {
                         type="text"
                         className="form-control"
                         placeholder="Select Product"
-                        defaultValue="Nike Jordan"
                       />
                       <i data-feather="search" className="feather-search" />
                     </div>
@@ -499,54 +498,8 @@ const StockTransfer = () => {
                           </thead>
                           <tbody>
                             <tr>
-                              <td>
-                                <div className="d-flex align-items-center">
-                                  <Link
-                                    to="#"
-                                    className="avatar avatar-md me-2"
-                                  >
-                                    <ImageWithBasePath
-                                      src="assets/img/products/stock-img-02.png"
-                                      alt="product"
-                                    />
-                                  </Link>
-                                  <Link to="#">Nike Jordan</Link>
-                                </div>
-                              </td>
-                              <td>PT002</td>
-                              <td>Nike</td>
-                              <td>
-                                <div className="product-quantity bg-gray-transparent border-0">
-                                  <span className="quantity-btn">
-                                    <MinusCircle />
-                                    onClick={handleDecrement}
-                                  </span>
-                                  <input
-                                    type="text"
-                                    className="quntity-input bg-transparent"
-                                    defaultValue={2}
-                                  />
-                                  <span className="quantity-btn">
-                                    +
-                                    <PlusCircle className="plus-circle" />
-                                    onClick={handleIncrement}
-                                  </span>
-                                </div>
-                              </td>
-                              <td>
-                                <div className="edit-delete-action d-flex align-items-center justify-content-center">
-                                  <Link
-                                    className="p-2 d-flex align-items-center justify-content-center border rounded"
-                                    to="#"
-                                    data-bs-toggle="modal"
-                                    data-bs-target="#delete"
-                                  >
-                                    <i
-                                      data-feather="trash-2"
-                                      className="feather-trash-2"
-                                    />
-                                  </Link>
-                                </div>
+                              <td colSpan={5} className="text-center text-muted py-3">
+                                No product selected
                               </td>
                             </tr>
                           </tbody>

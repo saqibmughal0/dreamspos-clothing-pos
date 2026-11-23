@@ -1,5 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { usePosStore } from "../../posStore";
+import { apiClient } from "../../apiClient";
+import { formatCurrency } from "../../utils/businessSettings";
 
 interface ThermalReceiptModalProps {
   saleData?: any;
@@ -11,10 +13,34 @@ export const ThermalReceiptModal: React.FC<ThermalReceiptModalProps> = ({
   onClose
 }) => {
   const [paperWidth, setPaperWidth] = useState<"58mm" | "80mm">("80mm");
+  const [businessSettings, setBusinessSettings] = useState<any>(null);
   const lastSale = usePosStore((state) => state.lastCompletedSale);
   const data = saleData || lastSale;
 
+  useEffect(() => {
+    apiClient.get("/settings")
+      .then((res) => {
+        if (res.data?.success && res.data.data) {
+          setBusinessSettings(res.data.data);
+          if (res.data.data.printer?.paperSize === "58mm" || res.data.data.printer?.paperSize === "80mm") {
+            setPaperWidth(res.data.data.printer.paperSize);
+          }
+        }
+      })
+      .catch(() => {
+        // Fallback gracefully without throwing
+      });
+  }, []);
+
   if (!data) return null;
+
+  const currency = businessSettings?.currency;
+  const fmt = (amount: number) => formatCurrency(amount, currency);
+  const showCashier = businessSettings?.receipt?.showCashier ?? true;
+  const showCustomer = businessSettings?.receipt?.showCustomer ?? true;
+  const showBarcode = businessSettings?.receipt?.showBarcode ?? true;
+  const invoicePrefix = businessSettings?.invoice?.prefix || "INV-";
+  const displayInvoice = data.invoiceNumber || `${invoicePrefix}0001`;
 
   const handlePrint = () => {
     window.print();
@@ -61,40 +87,52 @@ export const ThermalReceiptModal: React.FC<ThermalReceiptModalProps> = ({
             >
               <div className="text-center mb-2">
                 <h4 className="fw-bold mb-0" style={{ fontSize: paperWidth === "58mm" ? "15px" : "18px" }}>
-                  DREAMS APPAREL
+                  {businessSettings?.shopName || businessSettings?.brandName || "MR BILAL POS"}
                 </h4>
-                <div style={{ fontSize: "11px" }}>Flagship Clothing Retail</div>
-                <div style={{ fontSize: "11px" }}>100 Fashion Avenue, Suite 10</div>
-                <div style={{ fontSize: "11px" }}>Tel: +1 (800) 555-0101</div>
-                <div style={{ fontSize: "11px" }}>Tax Reg: US-987654321-TX</div>
+                {businessSettings?.receipt?.headerMessage && (
+                  <div style={{ fontSize: "11px" }}>{businessSettings.receipt.headerMessage}</div>
+                )}
+                {businessSettings?.address && (
+                  <div style={{ fontSize: "11px" }}>{businessSettings.address}</div>
+                )}
+                {businessSettings?.phone && (
+                  <div style={{ fontSize: "11px" }}>Tel: {businessSettings.phone}</div>
+                )}
+                {businessSettings?.taxNumber && (
+                  <div style={{ fontSize: "11px" }}>Tax Reg: {businessSettings.taxNumber}</div>
+                )}
               </div>
 
               <div className="border-top border-bottom border-dark py-1 my-2" style={{ borderStyle: "dashed !important" }}>
                 <div className="d-flex justify-content-between">
                   <span>Invoice:</span>
-                  <span className="fw-bold">{data.invoiceNumber || "INV-0001"}</span>
+                  <span className="fw-bold">{displayInvoice}</span>
                 </div>
                 <div className="d-flex justify-content-between">
                   <span>Date/Time:</span>
                   <span>{new Date().toLocaleDateString()} {new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}</span>
                 </div>
-                <div className="d-flex justify-content-between">
-                  <span>Cashier:</span>
-                  <span>{data.cashierName || "Front Desk Cashier"}</span>
-                </div>
-                <div className="d-flex justify-content-between">
-                  <span>Customer:</span>
-                  <span>{data.customerName || "Walk-in Customer"}</span>
-                </div>
+                {showCashier && (
+                  <div className="d-flex justify-content-between">
+                    <span>Cashier:</span>
+                    <span>{data.cashierName || "Front Desk Cashier"}</span>
+                  </div>
+                )}
+                {showCustomer && (
+                  <div className="d-flex justify-content-between">
+                    <span>Customer:</span>
+                    <span>{data.customerName || "Walk-in Customer"}</span>
+                  </div>
+                )}
               </div>
 
               {/* Items List */}
               <div className="mb-2">
                 <div className="d-flex justify-content-between fw-bold border-bottom pb-1 mb-1">
-                  <span style={{ width: "50%" }}>Item</span>
-                  <span className="text-center" style={{ width: "15%" }}>Qty</span>
-                  <span className="text-end" style={{ width: "15%" }}>Price</span>
-                  <span className="text-end" style={{ width: "20%" }}>Total</span>
+                  <span style={{ width: "45%" }}>Item</span>
+                  <span className="text-center" style={{ width: "13%" }}>Qty</span>
+                  <span className="text-end" style={{ width: "20%" }}>Price</span>
+                  <span className="text-end" style={{ width: "22%" }}>Total</span>
                 </div>
 
                 {data.items?.map((it: any, idx: number) => (
@@ -106,10 +144,10 @@ export const ThermalReceiptModal: React.FC<ThermalReceiptModalProps> = ({
                       </div>
                     )}
                     <div className="d-flex justify-content-between">
-                      <span style={{ width: "50%" }}></span>
-                      <span className="text-center" style={{ width: "15%" }}>{it.quantity}</span>
-                      <span className="text-end" style={{ width: "15%" }}>${Number(it.unitPrice || it.price).toFixed(2)}</span>
-                      <span className="text-end fw-bold" style={{ width: "20%" }}>${Number(it.totalPrice || it.price * it.quantity).toFixed(2)}</span>
+                      <span style={{ width: "45%" }}></span>
+                      <span className="text-center" style={{ width: "13%" }}>{it.quantity}</span>
+                      <span className="text-end" style={{ width: "20%" }}>{fmt(Number(it.unitPrice || it.price))}</span>
+                      <span className="text-end fw-bold" style={{ width: "22%" }}>{fmt(Number(it.totalPrice || it.price * it.quantity))}</span>
                     </div>
                   </div>
                 ))}
@@ -118,21 +156,21 @@ export const ThermalReceiptModal: React.FC<ThermalReceiptModalProps> = ({
               <div className="border-top border-dark pt-1 mt-2" style={{ borderStyle: "dashed !important" }}>
                 <div className="d-flex justify-content-between">
                   <span>Subtotal:</span>
-                  <span>${Number(data.subtotal || 0).toFixed(2)}</span>
+                  <span>{fmt(Number(data.subtotal || 0))}</span>
                 </div>
                 {Number(data.discountAmount || 0) > 0 && (
                   <div className="d-flex justify-content-between text-success">
                     <span>Discount:</span>
-                    <span>-${Number(data.discountAmount).toFixed(2)}</span>
+                    <span>-{fmt(Number(data.discountAmount))}</span>
                   </div>
                 )}
                 <div className="d-flex justify-content-between">
-                  <span>Sales Tax (8.5%):</span>
-                  <span>${Number(data.taxAmount || 0).toFixed(2)}</span>
+                  <span>Sales Tax ({businessSettings?.tax?.rate ?? 0}%):</span>
+                  <span>{fmt(Number(data.taxAmount || 0))}</span>
                 </div>
                 <div className="d-flex justify-content-between fw-bold fs-15 border-top border-bottom border-dark py-1 my-1">
                   <span>TOTAL DUE:</span>
-                  <span>${Number(data.totalAmount || 0).toFixed(2)}</span>
+                  <span>{fmt(Number(data.totalAmount || 0))}</span>
                 </div>
               </div>
 
@@ -141,25 +179,29 @@ export const ThermalReceiptModal: React.FC<ThermalReceiptModalProps> = ({
                 {data.payments?.map((pm: any, pIdx: number) => (
                   <div key={pIdx} className="d-flex justify-content-between">
                     <span>Tender ({pm.method}):</span>
-                    <span>${Number(pm.amount).toFixed(2)}</span>
+                    <span>{fmt(Number(pm.amount))}</span>
                   </div>
                 ))}
                 <div className="d-flex justify-content-between fw-bold">
                   <span>Change Given:</span>
-                  <span>${Number(data.changeDue || 0).toFixed(2)}</span>
+                  <span>{fmt(Number(data.changeDue || 0))}</span>
                 </div>
               </div>
 
               {/* Barcode & Footer Policy */}
               <div className="text-center mt-3 pt-2 border-top border-dark" style={{ borderStyle: "dashed !important" }}>
-                <div className="barcode-font fw-bold letter-spacing-2" style={{ fontSize: "14px", letterSpacing: "3px" }}>
-                  * {data.invoiceNumber || "INV-0001"} *
-                </div>
-                <div className="mt-2 text-center" style={{ fontSize: "10px" }}>
-                  Clothing Returns & Size/Color Exchanges Accepted within 14 Days with Original Tags.
-                </div>
+                {showBarcode && (
+                  <div className="barcode-font fw-bold letter-spacing-2" style={{ fontSize: "14px", letterSpacing: "3px" }}>
+                    * {displayInvoice} *
+                  </div>
+                )}
+                {businessSettings?.policies?.terms && (
+                  <div className="mt-2 text-center" style={{ fontSize: "10px" }}>
+                    {businessSettings.policies.terms}
+                  </div>
+                )}
                 <div className="fw-bold mt-1" style={{ fontSize: "11px" }}>
-                  *** THANK YOU FOR SHOPPING! ***
+                  {businessSettings?.receipt?.footerMessage || "Thank you for your purchase!"}
                 </div>
               </div>
             </div>

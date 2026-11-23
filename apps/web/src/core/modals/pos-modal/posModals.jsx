@@ -301,7 +301,7 @@ const PosModals = () => {
                   >
                     <Link to="#" className="pro-img">
                       <ImageWithBasePath
-                        src="assets/img/products/pos-product-16.png"
+                        src="/assets/img/products/no-product-image.svg"
                         alt="Products"
                       />
                     </Link>
@@ -322,7 +322,7 @@ const PosModals = () => {
                   >
                     <Link to="#" className="pro-img">
                       <ImageWithBasePath
-                        src="assets/img/products/pos-product-17.png"
+                        src="/assets/img/products/no-product-image.svg"
                         alt="Products"
                       />
                     </Link>

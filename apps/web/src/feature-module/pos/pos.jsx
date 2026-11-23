@@ -1,6 +1,7 @@
-import React, { useEffect, useState, useMemo } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import React, { useEffect, useState, useMemo, useCallback } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import Select from "react-select";
+import { all_routes } from '../../Router/all_routes';
 import PosModals from '../../core/modals/pos-modal/posModals';
 import { usePosStore } from '../../core/posStore';
 import { useBarcodeScanner } from '../../core/hooks/useBarcodeScanner';
@@ -9,6 +10,8 @@ import { CheckoutModal } from '../../core/modals/pos-modal/CheckoutModal';
 import { ThermalReceiptModal } from '../../core/modals/pos-modal/ThermalReceiptModal';
 import { CashRegisterModal } from '../../core/modals/pos-modal/CashRegisterModal';
 import { ClothingExchangeModal } from '../../core/modals/pos-modal/ClothingExchangeModal';
+import { formatCurrency } from '../../core/utils/businessSettings';
+import { NO_PRODUCT_IMAGE, resolveMediaUrl } from '../../core/utils/mediaUrl';
 
 const WALK_IN_CUSTOMER = { value: null, label: "Walk-in Customer" };
 
@@ -21,6 +24,11 @@ const Pos = () => {
   const [customerOptions, setCustomerOptions] = useState([WALK_IN_CUSTOMER]);
   const [selectedVariants, setSelectedVariants] = useState({});
   const [scanMessage, setScanMessage] = useState('');
+  const [businessSettings, setBusinessSettings] = useState(null);
+  const [categories, setCategories] = useState([]);
+  const [activeRegisterSession, setActiveRegisterSession] = useState(null);
+  const [registerChecked, setRegisterChecked] = useState(false);
+  const [registerNotice, setRegisterNotice] = useState('');
 
   // Modals state
   const [showCheckoutModal, setShowCheckoutModal] = useState(false);
@@ -30,6 +38,8 @@ const Pos = () => {
   const [showHeldOrdersModal, setShowHeldOrdersModal] = useState(false);
 
   const Location = useLocation();
+  const navigate = useNavigate();
+  const isRegisterOpen = Boolean(activeRegisterSession);
 
   // POS Zustand Store
   const {
@@ -83,8 +93,46 @@ const Pos = () => {
       .finally(() => setProductsLoading(false));
   };
 
+  // Check active cash register shift from backend (never rely on localStorage)
+  const checkActiveRegister = useCallback(async (autoOpenIfMissing = false) => {
+    try {
+      const res = await apiClient.get('/pos/register/active');
+      const session = res.data?.success ? res.data.data || null : null;
+      setActiveRegisterSession(session);
+      if (!session && autoOpenIfMissing) {
+        setShowRegisterModal(true);
+      }
+    } catch {
+      setActiveRegisterSession(null);
+      if (autoOpenIfMissing) {
+        setShowRegisterModal(true);
+      }
+    } finally {
+      setRegisterChecked(true);
+    }
+  }, []);
+
   useEffect(() => {
     loadProducts();
+    checkActiveRegister(true);
+    apiClient.get('/settings')
+      .then((res) => {
+        if (res.data?.success && res.data.data) {
+          setBusinessSettings(res.data.data);
+        }
+      })
+      .catch(() => {
+        // Fallback to default PKR / 0% tax
+      });
+    // Fetch live categories from database
+    apiClient.get('/catalog/categories')
+      .then((res) => {
+        const items = res.data?.data?.items || [];
+        setCategories(items);
+      })
+      .catch(() => {
+        setCategories([]);
+      });
     // Fetch customers
     apiClient.get('/customers')
       .then((res) => {
@@ -128,10 +176,16 @@ const Pos = () => {
   const handleSearchKeyDown = async (e) => {
     if (e.key === 'Enter' && searchQuery.trim().length >= 3) {
       e.preventDefault();
+      if (!isRegisterOpen) {
+        setShowRegisterModal(true);
+        return;
+      }
       try {
         const res = await apiClient.get(`/products/barcode/${encodeURIComponent(searchQuery.trim())}`);
         if (res.data?.success && res.data.data) {
           const item = res.data.data;
+          const defaultTaxRate = Number(businessSettings?.tax?.rate || 0);
+          const itemTaxRate = Number(item.taxRate || 0) > 0 ? Number(item.taxRate) : defaultTaxRate;
           addItem({
             id: item.id,
             variantId: item.variantId || null,
@@ -140,7 +194,8 @@ const Pos = () => {
             color: item.color || null,
             sku: item.sku,
             sellingPrice: item.sellingPrice,
-            taxRate: item.taxRate,
+            taxRate: itemTaxRate,
+            taxType: businessSettings?.tax?.type || 'EXCLUSIVE',
             image: item.image,
             stockQty: item.stockQuantity
           });
@@ -156,6 +211,14 @@ const Pos = () => {
 
   // Add Product to Cart with Selected Variant
   const handleAddProductWithVariant = (prod) => {
+    if (!isRegisterOpen) {
+      setShowRegisterModal(true);
+      return;
+    }
+    const defaultTaxRate = Number(businessSettings?.tax?.rate || 0);
+    const defaultTaxType = businessSettings?.tax?.type || 'EXCLUSIVE';
+    const prodRate = Number(prod.taxRate || 0);
+    const effectiveTaxRate = prodRate > 0 ? prodRate : defaultTaxRate;
     const selectedVariant = selectedVariants[prod.id] || (prod.variants && prod.variants[0]);
     if (selectedVariant) {
       addItem({
@@ -166,7 +229,8 @@ const Pos = () => {
         color: selectedVariant.color,
         sku: selectedVariant.sku,
         sellingPrice: selectedVariant.price || prod.sellingPrice,
-        taxRate: prod.taxRate || 8.5,
+        taxRate: effectiveTaxRate,
+        taxType: defaultTaxType,
         image: prod.image,
         stockQty: selectedVariant.stockQty
       });
@@ -176,7 +240,8 @@ const Pos = () => {
         name: prod.name,
         sku: prod.sku,
         sellingPrice: prod.sellingPrice,
-        taxRate: prod.taxRate || 8.5,
+        taxRate: effectiveTaxRate,
+        taxType: defaultTaxType,
         image: prod.image,
         stockQty: prod.stockQuantity
       });
@@ -185,6 +250,10 @@ const Pos = () => {
 
   // Open Checkout Modal
   const handleOpenCheckout = () => {
+    if (!isRegisterOpen) {
+      setShowRegisterModal(true);
+      return;
+    }
     if (cart.length === 0) return;
     setShowCheckoutModal(true);
   };
@@ -192,7 +261,16 @@ const Pos = () => {
   const handleCheckoutSuccess = () => {
     setShowCheckoutModal(false);
     setShowReceiptModal(true);
+    checkActiveRegister(false);
   };
+
+  // Compute accurate Sales Tax label matching actual cart tax rates
+  const cartTaxLabel = useMemo(() => {
+    if (cart.length === 0) return `Sales Tax (${Number(businessSettings?.tax?.rate || 0)}%)`;
+    const rates = Array.from(new Set(cart.map((c) => Number(c.taxRate || 0))));
+    if (rates.length === 1) return `Sales Tax (${rates[0]}%)`;
+    return 'Sales Tax';
+  }, [cart, businessSettings]);
 
   return (
     <div className='main-wrapper pos-five'>
@@ -203,7 +281,7 @@ const Pos = () => {
             <div className="col-md-12 col-lg-7 col-xl-8 d-flex">
               <div className="pos-categories tabs_wrapper p-0 flex-fill">
                 <div className="content-wrap">
-                  {/* Category Tabs */}
+                  {/* Category Tabs (Dynamic from Database) */}
                   <div className="tab-wrap">
                     <ul className="tabs pos-category5 d-flex list-unstyled gap-2 p-2 overflow-auto mb-0">
                       <li
@@ -216,56 +294,26 @@ const Pos = () => {
                         </Link>
                         <h6><Link to="#" onClick={(e) => { e.preventDefault(); setActiveTab('all'); }}>All Items</Link></h6>
                       </li>
-                      <li
-                        id="t-shirts"
-                        onClick={() => setActiveTab('t-shirts')}
-                        className={`cursor-pointer ${activeTab === 't-shirts' ? 'active' : ''}`}
-                      >
-                        <Link to="#" onClick={(e) => { e.preventDefault(); setActiveTab('t-shirts'); }}>
-                          <img src="assets/img/categories/category-02.svg" alt="Tees" />
-                        </Link>
-                        <h6><Link to="#" onClick={(e) => { e.preventDefault(); setActiveTab('t-shirts'); }}>T-Shirts & Tops</Link></h6>
-                      </li>
-                      <li
-                        id="shirts"
-                        onClick={() => setActiveTab('shirts')}
-                        className={`cursor-pointer ${activeTab === 'shirts' ? 'active' : ''}`}
-                      >
-                        <Link to="#" onClick={(e) => { e.preventDefault(); setActiveTab('shirts'); }}>
-                          <img src="assets/img/categories/category-03.svg" alt="Shirts" />
-                        </Link>
-                        <h6><Link to="#" onClick={(e) => { e.preventDefault(); setActiveTab('shirts'); }}>Shirts</Link></h6>
-                      </li>
-                      <li
-                        id="jeans"
-                        onClick={() => setActiveTab('jeans')}
-                        className={`cursor-pointer ${activeTab === 'jeans' ? 'active' : ''}`}
-                      >
-                        <Link to="#" onClick={(e) => { e.preventDefault(); setActiveTab('jeans'); }}>
-                          <img src="assets/img/categories/category-04.svg" alt="Jeans" />
-                        </Link>
-                        <h6><Link to="#" onClick={(e) => { e.preventDefault(); setActiveTab('jeans'); }}>Jeans & Denim</Link></h6>
-                      </li>
-                      <li
-                        id="hoodies"
-                        onClick={() => setActiveTab('hoodies')}
-                        className={`cursor-pointer ${activeTab === 'hoodies' ? 'active' : ''}`}
-                      >
-                        <Link to="#" onClick={(e) => { e.preventDefault(); setActiveTab('hoodies'); }}>
-                          <img src="assets/img/categories/category-05.svg" alt="Hoodies" />
-                        </Link>
-                        <h6><Link to="#" onClick={(e) => { e.preventDefault(); setActiveTab('hoodies'); }}>Hoodies & Outerwear</Link></h6>
-                      </li>
-                      <li
-                        id="shorts"
-                        onClick={() => setActiveTab('shorts')}
-                        className={`cursor-pointer ${activeTab === 'shorts' ? 'active' : ''}`}
-                      >
-                        <Link to="#" onClick={(e) => { e.preventDefault(); setActiveTab('shorts'); }}>
-                          <img src="assets/img/categories/category-06.svg" alt="Shorts" />
-                        </Link>
-                        <h6><Link to="#" onClick={(e) => { e.preventDefault(); setActiveTab('shorts'); }}>Shorts & Active</Link></h6>
-                      </li>
+                      {categories.map((cat) => {
+                        const tabKey = cat.slug || cat.code || cat.name;
+                        return (
+                          <li
+                            key={cat.id}
+                            id={tabKey}
+                            onClick={() => setActiveTab(tabKey)}
+                            className={`cursor-pointer ${activeTab === tabKey ? 'active' : ''}`}
+                          >
+                            <Link to="#" onClick={(e) => { e.preventDefault(); setActiveTab(tabKey); }}>
+                              <img src="assets/img/categories/category-01.svg" alt={cat.name} />
+                            </Link>
+                            <h6>
+                              <Link to="#" onClick={(e) => { e.preventDefault(); setActiveTab(tabKey); }}>
+                                {cat.name}
+                              </Link>
+                            </h6>
+                          </li>
+                        );
+                      })}
                     </ul>
                   </div>
 
@@ -296,7 +344,13 @@ const Pos = () => {
                         <button
                           type="button"
                           className="btn btn-sm btn-dark"
-                          onClick={() => setShowExchangeModal(true)}
+                          onClick={() => {
+                            if (!isRegisterOpen) {
+                              setShowRegisterModal(true);
+                              return;
+                            }
+                            setShowExchangeModal(true);
+                          }}
                         >
                           <i className="ti ti-repeat me-1" />
                           Exchange / Return
@@ -307,10 +361,32 @@ const Pos = () => {
                           onClick={() => setShowRegisterModal(true)}
                         >
                           <i className="ti ti-cash me-1" />
-                          Register Shift
+                          {isRegisterOpen ? 'Register Shift (Open)' : 'Register Shift'}
                         </button>
                       </div>
                     </div>
+
+                    {registerNotice && (
+                      <div className="alert alert-success alert-dismissible fade show py-2 px-3 m-3 mb-0 fs-13 d-flex align-items-center justify-content-between">
+                        <span>
+                          <i className="ti ti-circle-check me-2 fs-16" />
+                          {registerNotice}
+                        </span>
+                        <button type="button" className="btn-close btn-sm" onClick={() => setRegisterNotice('')} aria-label="Close" />
+                      </div>
+                    )}
+
+                    {registerChecked && !isRegisterOpen && (
+                      <div className="alert alert-warning py-2 px-3 m-3 mb-0 fs-13 d-flex align-items-center justify-content-between">
+                        <span>
+                          <i className="ti ti-lock me-2 fs-16" />
+                          <strong>POS Locked:</strong> Open a cash register shift to begin selling.
+                        </span>
+                        <button type="button" className="btn btn-sm btn-primary" onClick={() => setShowRegisterModal(true)}>
+                          Enter Opening Cash
+                        </button>
+                      </div>
+                    )}
 
                     {scanMessage && (
                       <div className="alert alert-info py-2 px-3 m-3 mb-0 fs-13 d-flex align-items-center">
@@ -352,9 +428,9 @@ const Pos = () => {
                                   onClick={() => handleAddProductWithVariant(prod)}
                                 >
                                   <img
-                                    src={prod.image || "assets/img/products/pos-product-01.png"}
+                                    src={resolveMediaUrl(prod.image)}
                                     alt={prod.name}
-                                    onError={(e) => { e.currentTarget.src = "assets/img/products/pos-product-01.svg"; }}
+                                    onError={(e) => { e.currentTarget.src = NO_PRODUCT_IMAGE; }}
                                   />
                                   {isCarted && (
                                     <span>
@@ -573,7 +649,7 @@ const Pos = () => {
                                         </div>
                                       </td>
                                       <td className="fs-13 fw-semibold text-gray-9 text-end py-2">
-                                        Rs {(item.price * item.quantity - item.discount).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 2 })}
+                                        {formatCurrency(item.price * item.quantity - item.discount, businessSettings?.currency, { minimumFractionDigits: 0, maximumFractionDigits: 2 })}
                                       </td>
                                     </tr>
                                   ))}
@@ -591,27 +667,27 @@ const Pos = () => {
                           <tbody>
                             <tr>
                               <td className="text-muted fs-13 py-1">Sub Total</td>
-                              <td className="text-gray-9 fw-semibold text-end py-1">Rs {getSubtotal().toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 2 })}</td>
+                              <td className="text-gray-9 fw-semibold text-end py-1">{formatCurrency(getSubtotal(), businessSettings?.currency, { minimumFractionDigits: 0, maximumFractionDigits: 2 })}</td>
                             </tr>
                             {orderDiscount > 0 && (
                               <tr>
                                 <td className="text-danger fs-13 py-1">Discount</td>
-                                <td className="text-danger fw-semibold text-end py-1">-Rs {orderDiscount.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 2 })}</td>
+                                <td className="text-danger fw-semibold text-end py-1">-{formatCurrency(orderDiscount, businessSettings?.currency, { minimumFractionDigits: 0, maximumFractionDigits: 2 })}</td>
                               </tr>
                             )}
                             <tr>
-                              <td className="text-muted fs-13 py-1">Sales Tax (Est.)</td>
-                              <td className="text-gray-9 fw-semibold text-end py-1">Rs {getTotalTax().toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 2 })}</td>
+                              <td className="text-muted fs-13 py-1">{cartTaxLabel}</td>
+                              <td className="text-gray-9 fw-semibold text-end py-1">{formatCurrency(getTotalTax(), businessSettings?.currency, { minimumFractionDigits: 0, maximumFractionDigits: 2 })}</td>
                             </tr>
                             {shippingFee > 0 && (
                               <tr>
                                 <td className="text-muted fs-13 py-1">Shipping</td>
-                                <td className="text-gray-9 fw-semibold text-end py-1">Rs {shippingFee.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 2 })}</td>
+                                <td className="text-gray-9 fw-semibold text-end py-1">{formatCurrency(shippingFee, businessSettings?.currency, { minimumFractionDigits: 0, maximumFractionDigits: 2 })}</td>
                               </tr>
                             )}
                             <tr className="border-top border-dashed">
                               <td className="fw-bold fs-15 py-2">Total Payable</td>
-                              <td className="text-primary fw-bold text-end fs-16 py-2">Rs {getGrandTotal().toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 2 })}</td>
+                              <td className="text-primary fw-bold text-end fs-16 py-2">{formatCurrency(getGrandTotal(), businessSettings?.currency, { minimumFractionDigits: 0, maximumFractionDigits: 2 })}</td>
                             </tr>
                           </tbody>
                         </table>
@@ -677,7 +753,7 @@ const Pos = () => {
                       disabled={cart.length === 0}
                     >
                       <i className="ti ti-shopping-cart me-2 fs-18" />
-                      Place Order (Rs {getGrandTotal().toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 2 })})
+                      Place Order ({formatCurrency(getGrandTotal(), businessSettings?.currency, { minimumFractionDigits: 0, maximumFractionDigits: 2 })})
                     </button>
                   </div>
                 </div>
@@ -691,8 +767,14 @@ const Pos = () => {
               <button
                 type="button"
                 className="btn btn-orange d-inline-flex align-items-center justify-content-center"
-                onClick={() => holdCurrentOrder(`Hold Order #${heldOrders.length + 1}`)}
-                disabled={cart.length === 0}
+                onClick={() => {
+                  if (!isRegisterOpen) {
+                    setShowRegisterModal(true);
+                    return;
+                  }
+                  holdCurrentOrder(`Hold Order #${heldOrders.length + 1}`);
+                }}
+                disabled={!isRegisterOpen || cart.length === 0}
               >
                 <i className="ti ti-player-pause me-2" />
                 Hold Order
@@ -700,7 +782,14 @@ const Pos = () => {
               <button
                 type="button"
                 className="btn btn-info d-inline-flex align-items-center justify-content-center position-relative"
-                onClick={() => setShowHeldOrdersModal(true)}
+                onClick={() => {
+                  if (!isRegisterOpen) {
+                    setShowRegisterModal(true);
+                    return;
+                  }
+                  setShowHeldOrdersModal(true);
+                }}
+                disabled={!isRegisterOpen}
               >
                 <i className="ti ti-shopping-bag me-2" />
                 View Held Orders
@@ -712,7 +801,7 @@ const Pos = () => {
                 type="button"
                 className="btn btn-cyan d-inline-flex align-items-center justify-content-center"
                 onClick={handleOpenCheckout}
-                disabled={cart.length === 0}
+                disabled={!isRegisterOpen || cart.length === 0}
               >
                 <i className="ti ti-cash-banknote me-2" />
                 Checkout
@@ -737,7 +826,14 @@ const Pos = () => {
               <button
                 type="button"
                 className="btn btn-danger d-inline-flex align-items-center justify-content-center"
-                onClick={() => setShowExchangeModal(true)}
+                onClick={() => {
+                  if (!isRegisterOpen) {
+                    setShowRegisterModal(true);
+                    return;
+                  }
+                  setShowExchangeModal(true);
+                }}
+                disabled={!isRegisterOpen}
               >
                 <i className="ti ti-repeat me-2" />
                 Clothing Exchange
@@ -839,8 +935,27 @@ const Pos = () => {
 
       {/* Cash Register Shift Reconciliation Modal */}
       <CashRegisterModal
-        isOpen={showRegisterModal}
-        onClose={() => setShowRegisterModal(false)}
+        isOpen={showRegisterModal || (registerChecked && !isRegisterOpen)}
+        mandatoryOpen={!isRegisterOpen}
+        currency={businessSettings?.currency}
+        hasUnpaidCart={cart.length > 0}
+        heldOrdersCount={heldOrders.length}
+        onClose={() => {
+          if (isRegisterOpen) {
+            setShowRegisterModal(false);
+          }
+        }}
+        onSessionChanged={(session, notice) => {
+          setActiveRegisterSession(session);
+          if (notice) {
+            setRegisterNotice(notice);
+            setTimeout(() => setRegisterNotice(''), 5000);
+          }
+          if (session) {
+            setShowRegisterModal(false);
+          }
+        }}
+        onReturnToDashboard={() => navigate(all_routes.newdashboard || '/index')}
       />
 
       {/* Clothing Size / Color Exchange Modal */}

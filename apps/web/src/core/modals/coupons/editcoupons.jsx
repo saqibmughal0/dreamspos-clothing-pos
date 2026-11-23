@@ -10,10 +10,7 @@ const EditCoupons = () => {
     { value: "fixed", label: "Fixed" },
     { value: "percentage", label: "Percentage" },
   ];
-  const options = [
-    { value: "nike-jordan", label: "Nike Jordan" },
-    { value: "amazon-echo-dot", label: "Amazon Echo Dot" },
-  ];
+  const options = [];
 
   const [selectedDate, setSelectedDate] = useState(new Date());
   const handleDateChange = (date) => {

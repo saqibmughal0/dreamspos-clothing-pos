@@ -1,9 +1,14 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import ImageWithBasePath from "../../../core/img/imagewithbasebath";
 import { Link, useNavigate } from "react-router-dom";
 import { all_routes } from "../../../Router/all_routes";
 import { apiClient } from "../../../core/apiClient";
 import { triggerGoogleAuth } from "../../../core/googleAuth";
+import {
+  validateAvatarFile,
+  savePendingRegistrationAvatar,
+  clearPendingRegistrationAvatar,
+} from "../../../core/utils/pendingRegistrationAvatar";
 
 const Register = () => {
   const [passwordVisibility, setPasswordVisibility] = useState({
@@ -14,12 +19,45 @@ const Register = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [avatarFile, setAvatarFile] = useState(null);
+  const [avatarPreviewUrl, setAvatarPreviewUrl] = useState(null);
+  const [avatarError, setAvatarError] = useState("");
   const [termsAgreed, setTermsAgreed] = useState(true);
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
   const [successMsg, setSuccessMsg] = useState("");
+  const fileInputRef = useRef(null);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    return () => {
+      if (avatarPreviewUrl) URL.revokeObjectURL(avatarPreviewUrl);
+    };
+  }, [avatarPreviewUrl]);
+
+  const handleAvatarSelect = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setAvatarError("");
+    const check = validateAvatarFile(file);
+    if (!check.valid) {
+      setAvatarError(check.error);
+      if (fileInputRef.current) fileInputRef.current.value = "";
+      return;
+    }
+    if (avatarPreviewUrl) URL.revokeObjectURL(avatarPreviewUrl);
+    setAvatarFile(file);
+    setAvatarPreviewUrl(URL.createObjectURL(file));
+  };
+
+  const handleRemoveAvatar = () => {
+    if (avatarPreviewUrl) URL.revokeObjectURL(avatarPreviewUrl);
+    setAvatarFile(null);
+    setAvatarPreviewUrl(null);
+    setAvatarError("");
+    if (fileInputRef.current) fileInputRef.current.value = "";
+  };
 
   const togglePasswordVisibility = (field) => {
     setPasswordVisibility((prevState) => ({
@@ -69,9 +107,15 @@ const Register = () => {
       });
 
       if (res.data?.success) {
+        const normalizedEmail = email.trim().toLowerCase();
+        if (avatarFile) {
+          await savePendingRegistrationAvatar(normalizedEmail, avatarFile);
+        } else {
+          clearPendingRegistrationAvatar();
+        }
         setSuccessMsg("Account created! A verification code has been sent to your email.");
         setTimeout(() => {
-          navigate(`${route.emailverification}?email=${encodeURIComponent(email.trim().toLowerCase())}`);
+          navigate(`${route.emailverification}?email=${encodeURIComponent(normalizedEmail)}`);
         }, 1200);
       } else {
         setErrorMsg(res.data?.message || "Registration failed");
@@ -144,6 +188,59 @@ const Register = () => {
                       {successMsg}
                     </div>
                   )}
+                  <div className="mb-3">
+                    <label className="form-label">Profile Photo (Optional)</label>
+                    <div className="d-flex align-items-center gap-3">
+                      <div
+                        className="rounded-circle border bg-light d-flex align-items-center justify-content-center overflow-hidden flex-shrink-0"
+                        style={{ width: "64px", height: "64px" }}
+                      >
+                        {avatarPreviewUrl ? (
+                          <img
+                            src={avatarPreviewUrl}
+                            alt="Profile preview"
+                            className="w-100 h-100 object-fit-cover"
+                          />
+                        ) : (
+                          <i className="ti ti-user fs-24 text-muted" />
+                        )}
+                      </div>
+                      <div className="flex-grow-1">
+                        <input
+                          ref={fileInputRef}
+                          type="file"
+                          id="register-avatar-input"
+                          accept="image/jpeg,image/png,image/webp"
+                          className="d-none"
+                          onChange={handleAvatarSelect}
+                        />
+                        <div className="d-flex flex-wrap gap-2">
+                          <label
+                            htmlFor="register-avatar-input"
+                            className="btn btn-sm btn-outline-primary mb-0"
+                            style={{ cursor: "pointer" }}
+                          >
+                            {avatarPreviewUrl ? "Change Photo" : "Upload Photo"}
+                          </label>
+                          {avatarPreviewUrl && (
+                            <button
+                              type="button"
+                              className="btn btn-sm btn-outline-danger"
+                              onClick={handleRemoveAvatar}
+                            >
+                              Remove
+                            </button>
+                          )}
+                        </div>
+                        <small className="text-muted d-block mt-1">
+                          JPG, PNG, or WebP up to 2 MB. Uploaded securely after OTP verification.
+                        </small>
+                        {avatarError && (
+                          <small className="text-danger d-block mt-1">{avatarError}</small>
+                        )}
+                      </div>
+                    </div>
+                  </div>
                   <div className="mb-3">
                     <label className="form-label">
                       Name <span className="text-danger"> *</span>

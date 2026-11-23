@@ -29,7 +29,7 @@ const Managestock = () => {
             key: item.id || idx,
             Warehouse: "Main Warehouse",
             Shop: "MR Bilal POS",
-            Product: { Name: item.name, Image: "assets/img/products/pos-product-01.png" },
+            Product: { Name: item.name, Image: item.image || "/assets/img/products/no-product-image.svg" },
             Date: today,
             Person: { Name: "Inventory Manager", Image: "assets/img/users/user-08.jpg" },
             Quantity: `${item.quantity} Pcs`,

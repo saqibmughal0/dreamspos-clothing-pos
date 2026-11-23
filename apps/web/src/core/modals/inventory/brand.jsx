@@ -6,21 +6,12 @@ import ImageWithBasePath from '../../img/imagewithbasebath';
 const Brand = () => {
     const product = [
         { value: 'choose', label: 'Choose' },
-        { value: 'boldV3.2', label: 'Bold V3.2' },
-        { value: 'nikeJordan', label: 'Nike Jordan' },
-        { value: 'iphone14Pro', label: 'Iphone 14 Pro' },
       ];
       const category = [
         { value: 'choose', label: 'Choose' },
-        { value: 'laptop', label: 'Laptop' },
-        { value: 'electronics', label: 'Electronics' },
-        { value: 'shoe', label: 'Shoe' },
       ];
       const status = [
         { value: 'choose', label: 'Choose' },
-        { value: 'lenovo', label: 'Lenovo' },
-        { value: 'bolt', label: 'Bolt' },
-        { value: 'nike', label: 'Nike' },
       ];
       
     return (

@@ -37,6 +37,11 @@ Thumbs.db
 .vscode/
 .idea/
 
+# Local backups and runtime dev uploads (NEVER commit)
+backups/
+apps/api/uploads/
+uploads/
+
 # Template raw archives
 template-extract/*.zip
 template-extract/*.rar

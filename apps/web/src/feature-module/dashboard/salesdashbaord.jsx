@@ -8,14 +8,13 @@ import RefreshIcon from "../../core/common/tooltip-content/refresh";
 import CollapesIcon from "../../core/common/tooltip-content/collapes";
 import CommonFooter from "../../core/common/footer/commonFooter";
 import { apiClient } from "../../core/apiClient";
-
-const formatCurrency = (val) =>
-  `Rs ${Number(val || 0).toLocaleString("en-PK", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+import { formatCurrency as formatMoney } from "../../core/utils/businessSettings";
 
 const SalesDashbaord = () => {
   const route = all_routes;
   const userName = useSelector((state) => state.auth?.user?.name || "Store Owner");
 
+  const [businessSettings, setBusinessSettings] = useState(null);
   const [summary, setSummary] = useState(null);
   const [bestSellers, setBestSellers] = useState([]);
   const [recentTransactions, setRecentTransactions] = useState([]);
@@ -24,17 +23,23 @@ const SalesDashbaord = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  const formatCurrency = (val) => formatMoney(val, businessSettings?.currency);
+
   const loadData = async () => {
     setLoading(true);
     setError(null);
     try {
-      const [sumRes, txRes, bestRes, overviewRes] = await Promise.all([
+      const [sumRes, txRes, bestRes, overviewRes, settingsRes] = await Promise.all([
         apiClient.get("/dashboard/summary"),
         apiClient.get("/dashboard/transactions"),
         apiClient.get("/reports/best-sellers"),
         apiClient.get("/dashboard/overview?period=1Y"),
+        apiClient.get("/settings").catch(() => ({ data: null })),
       ]);
 
+      if (settingsRes?.data?.success && settingsRes.data.data) {
+        setBusinessSettings(settingsRes.data.data);
+      }
       setSummary(sumRes.data?.data || {});
       setRecentTransactions(txRes.data?.data || []);
       setBestSellers((bestRes.data?.data?.items || []).slice(0, 5));
@@ -90,7 +95,10 @@ const SalesDashbaord = () => {
               <ImageWithBasePath src="assets/img/icons/hi.svg" alt="img" />
               &nbsp;Hi {userName},
             </h3>
-            &nbsp;<h6>here&apos;s what&apos;s happening with your store today.</h6>
+            &nbsp;<h6>
+              here&apos;s what&apos;s happening with{" "}
+              {businessSettings?.shopName || businessSettings?.brandName || "your store"} today.
+            </h6>
           </div>
           <div className="d-flex align-items-center">
             <ul className="table-top-head">

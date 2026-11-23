@@ -20,7 +20,7 @@ const PurchaseReturns = () => {
           const mapped = res.data.data.items.map((r, idx) => ({
             id: r.id,
             key: r.id || idx,
-            img: "assets/img/products/pos-product-01.png",
+            img: r.image || "/assets/img/products/no-product-image.svg",
             date: new Date(r.createdAt).toLocaleDateString(),
             supplier: r.supplierName,
             reference: r.returnNumber,

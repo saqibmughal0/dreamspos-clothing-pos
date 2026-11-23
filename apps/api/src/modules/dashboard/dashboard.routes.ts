@@ -10,3 +10,4 @@ dashboardRouter.get("/summary", dashboardController.getSummary);
 dashboardRouter.get("/analytics", dashboardController.getClothingAnalytics);
 dashboardRouter.get("/transactions", dashboardController.getRecentTransactions);
 dashboardRouter.get("/overview", dashboardController.getOverview);
+dashboardRouter.get("/cash-register", dashboardController.getCashRegister);

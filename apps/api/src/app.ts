@@ -91,8 +91,9 @@ app.get(["/api/health", "/health"], async (req, res) => {
   });
 });
 
-// Static Uploads
-app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
+// Static Uploads (serve from current working dir and apps/api/uploads fallback for workspace consistency)
+app.use("/uploads", express.static(path.resolve(process.cwd(), "uploads")));
+app.use("/uploads", express.static(path.resolve(__dirname, "../uploads")));
 
 // Mount Module Routes
 app.use("/api/auth", authRouter);

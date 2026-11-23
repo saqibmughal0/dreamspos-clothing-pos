@@ -12,10 +12,12 @@ export interface StoredFileResult {
 
 export class StorageService {
   private localUploadDir: string;
+  private localProductDir: string;
   private cloudinaryConfigured: boolean = false;
 
   constructor() {
     this.localUploadDir = path.resolve(process.cwd(), "uploads", "avatars");
+    this.localProductDir = path.resolve(process.cwd(), "uploads", "products");
     this.initCloudinary();
   }
 
@@ -41,6 +43,12 @@ export class StorageService {
   private ensureLocalDir() {
     if (!fs.existsSync(this.localUploadDir)) {
       fs.mkdirSync(this.localUploadDir, { recursive: true });
+    }
+  }
+
+  private ensureLocalProductDir() {
+    if (!fs.existsSync(this.localProductDir)) {
+      fs.mkdirSync(this.localProductDir, { recursive: true });
     }
   }
 
@@ -150,6 +158,63 @@ export class StorageService {
     await fs.promises.writeFile(filePath, buffer);
     logger.info(`[Storage] Avatar saved locally (dev): ${localFilename}`);
     return { url: `/uploads/avatars/${localFilename}`, provider: "local" };
+  }
+
+  /**
+   * Save an uploaded product image buffer securely.
+   * Production: Cloudinary. Dev/test: local fallback.
+   */
+  async saveProductImage(
+    companyId: string,
+    buffer: Buffer,
+    originalName: string
+  ): Promise<StoredFileResult> {
+    const MAX_SIZE = 5 * 1024 * 1024; // 5MB limit
+    if (buffer.length > MAX_SIZE) {
+      throw new BadRequestError("Product image file size exceeds the 5MB limit");
+    }
+
+    const validation = this.validateImageMagicBytes(buffer);
+    if (!validation.isValid) {
+      throw new BadRequestError(
+        "Invalid file format. Uploaded file is not a valid JPEG, PNG, or WebP image"
+      );
+    }
+
+    const uniqueId = `${Date.now()}-${Math.floor(Math.random() * 100000)}`;
+    const filename = `product-${uniqueId}`;
+
+    if (this.cloudinaryConfigured) {
+      try {
+        const result = await this.uploadToCloudinary(
+          buffer,
+          `mrbilal-products/${companyId}/${filename}`,
+          validation.mimeType
+        );
+        logger.info(`[Storage] Product image uploaded to Cloudinary: ${result.publicId}`);
+        return { url: result.url, publicId: result.publicId, provider: "cloudinary" };
+      } catch (err: any) {
+        logger.error(`[Storage] Cloudinary product upload failed: ${err.message}`);
+        if (process.env.NODE_ENV === "production") {
+          throw new AppError(
+            503,
+            "Product image upload failed. Cloud storage is temporarily unavailable."
+          );
+        }
+      }
+    } else if (process.env.NODE_ENV === "production") {
+      throw new AppError(
+        503,
+        "Product image storage is not configured for production. Please configure CLOUDINARY_URL."
+      );
+    }
+
+    this.ensureLocalProductDir();
+    const localFilename = `${filename}${validation.extension}`;
+    const filePath = path.join(this.localProductDir, localFilename);
+    await fs.promises.writeFile(filePath, buffer);
+    logger.info(`[Storage] Product image saved locally (dev): ${localFilename}`);
+    return { url: `/uploads/products/${localFilename}`, provider: "local" };
   }
 
   /**

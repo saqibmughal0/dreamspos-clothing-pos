@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { usePosStore } from "../../posStore";
 import { apiClient } from "../../apiClient";
+import { formatCurrency } from "../../utils/businessSettings";
 
 export const PaymentMethod = {
   CASH: "CASH",
@@ -39,6 +40,23 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
   const [splitCard, setSplitCard] = useState<number>(grandTotal / 2);
   const [submitting, setSubmitting] = useState<boolean>(false);
   const [error, setError] = useState<string>("");
+  const [currency, setCurrency] = useState<any>(null);
+
+  useEffect(() => {
+    if (!isOpen) return;
+    apiClient.get("/settings")
+      .then((res) => {
+        if (res.data?.success && res.data.data?.currency) {
+          setCurrency(res.data.data.currency);
+        }
+      })
+      .catch(() => {
+        // Fallback to PKR
+      });
+  }, [isOpen]);
+
+  const fmt = (amount: number) => formatCurrency(amount, currency);
+  const currencySymbol = currency?.symbol || "Rs";
 
   if (!isOpen) return null;
 
@@ -68,7 +86,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
         payments = [{ method: PaymentMethod.BANK_TRANSFER, amount: grandTotal }];
       } else if (paymentMode === "SPLIT") {
         if (splitCash + splitCard < grandTotal) {
-          setError(`Split payments (Rs ${(splitCash + splitCard).toFixed(2)}) cannot be less than Grand Total (Rs ${grandTotal.toFixed(2)})`);
+          setError(`Split payments (${fmt(splitCash + splitCard)}) cannot be less than Grand Total (${fmt(grandTotal)})`);
           setSubmitting(false);
           return;
         }
@@ -146,7 +164,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
               </div>
               <div className="text-end">
                 <span className="text-muted fs-13">Total Due:</span>
-                <h3 className="fw-bold text-primary mb-0">Rs {grandTotal.toFixed(2)}</h3>
+                <h3 className="fw-bold text-primary mb-0">{fmt(grandTotal)}</h3>
               </div>
             </div>
 
@@ -201,7 +219,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
             {/* Mode-Specific Controls */}
             {paymentMode === "CASH" && (
               <div>
-                <label className="form-label fs-13 fw-semibold">Cash Tendered (Rs)</label>
+                <label className="form-label fs-13 fw-semibold">Cash Tendered ({currencySymbol})</label>
                 <input
                   type="number"
                   step="0.01"
@@ -213,22 +231,22 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                 {/* Quick Presets */}
                 <div className="d-flex gap-2 mb-3">
                   <button type="button" className="btn btn-sm btn-outline-dark flex-fill" onClick={() => handlePresetCash(grandTotal)}>
-                    Exact (Rs {grandTotal.toFixed(2)})
+                    Exact ({fmt(grandTotal)})
                   </button>
                   <button type="button" className="btn btn-sm btn-outline-dark flex-fill" onClick={() => handlePresetCash(500)}>
-                    Rs 500
+                    {fmt(500)}
                   </button>
                   <button type="button" className="btn btn-sm btn-outline-dark flex-fill" onClick={() => handlePresetCash(1000)}>
-                    Rs 1,000
+                    {fmt(1000)}
                   </button>
                   <button type="button" className="btn btn-sm btn-outline-dark flex-fill" onClick={() => handlePresetCash(5000)}>
-                    Rs 5,000
+                    {fmt(5000)}
                   </button>
                 </div>
 
                 <div className="p-2 bg-success-transparent rounded text-success fw-bold d-flex justify-content-between fs-14">
                   <span>Change Given to Customer:</span>
-                  <span>Rs {calculateChange().toFixed(2)}</span>
+                  <span>{fmt(calculateChange())}</span>
                 </div>
               </div>
             )}
@@ -237,14 +255,14 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
               <div className="p-3 bg-light rounded text-center my-2">
                 <i className="feather-check-circle fs-32 text-success mb-2"></i>
                 <div className="fw-bold">Ready for Card Terminal Insertion / Tap</div>
-                <small className="text-muted">Charge Total: Rs {grandTotal.toFixed(2)}</small>
+                <small className="text-muted">Charge Total: {fmt(grandTotal)}</small>
               </div>
             )}
 
             {paymentMode === "BANK_TRANSFER" && (
               <div className="p-3 bg-light rounded my-2">
-                <div className="fw-bold mb-1">Direct Bank Wire / Online Transfer</div>
-                <small className="text-muted">Dreams Retail Operating Account: ****-9921</small>
+                <div className="fw-bold mb-1">Direct Bank Transfer / Online Payment</div>
+                <small className="text-muted">Verify transfer receipt for {fmt(grandTotal)} before completing sale.</small>
               </div>
             )}
 
@@ -252,7 +270,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
               <div>
                 <div className="row g-2 mb-2">
                   <div className="col-6">
-                    <label className="form-label fs-12 fw-semibold">Cash Portion (Rs)</label>
+                    <label className="form-label fs-12 fw-semibold">Cash Portion ({currencySymbol})</label>
                     <input
                       type="number"
                       step="0.01"
@@ -262,7 +280,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                     />
                   </div>
                   <div className="col-6">
-                    <label className="form-label fs-12 fw-semibold">Card Portion (Rs)</label>
+                    <label className="form-label fs-12 fw-semibold">Card Portion ({currencySymbol})</label>
                     <input
                       type="number"
                       step="0.01"
@@ -275,7 +293,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                 <div className="d-flex justify-content-between p-2 bg-light rounded fs-13">
                   <span>Combined Tender:</span>
                   <span className={splitCash + splitCard >= grandTotal ? "text-success fw-bold" : "text-danger fw-bold"}>
-                    Rs {(splitCash + splitCard).toFixed(2)} / Rs {grandTotal.toFixed(2)}
+                    {fmt(splitCash + splitCard)} / {fmt(grandTotal)}
                   </span>
                 </div>
               </div>
@@ -292,7 +310,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
               disabled={submitting || (paymentMode === "CASH" && tenderAmount < grandTotal)}
               onClick={handleCompleteSale}
             >
-              {submitting ? "Processing..." : `Complete Sale (Rs ${grandTotal.toFixed(2)})`}
+              {submitting ? "Processing..." : `Complete Sale (${fmt(grandTotal)})`}
             </button>
           </div>
         </div>

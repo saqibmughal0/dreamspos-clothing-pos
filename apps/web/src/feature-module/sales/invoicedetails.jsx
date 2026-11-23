@@ -1,12 +1,70 @@
-import React from 'react'
-import CommonFooter from '../../core/common/footer/commonFooter'
-import ImageWithBasePath from '../../core/img/imagewithbasebath'
-import { all_routes } from '../../Router/all_routes'
-import { Link } from 'react-router-dom'
+import React, { useState, useEffect } from 'react';
+import CommonFooter from '../../core/common/footer/commonFooter';
+import { all_routes } from '../../Router/all_routes';
+import { Link, useSearchParams } from 'react-router-dom';
+import { apiClient } from '../../core/apiClient';
+import { formatCurrency } from '../../core/utils/businessSettings';
 
 const Invoicedetails = () => {
+    const route = all_routes;
+    const [searchParams] = useSearchParams();
+    const saleId = searchParams.get('id');
 
-    const route = all_routes
+    const [settings, setSettings] = useState(null);
+    const [sale, setSale] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState('');
+
+    useEffect(() => {
+        let mounted = true;
+        setLoading(true);
+        setError('');
+
+        Promise.all([
+            apiClient.get('/settings').catch(() => ({ data: null })),
+            saleId
+                ? apiClient.get(`/sales/${encodeURIComponent(saleId)}`).catch(() => ({ data: null }))
+                : apiClient.get('/sales', { params: { limit: 1 } }).catch(() => ({ data: null })),
+        ])
+            .then(([settingsRes, salesRes]) => {
+                if (!mounted) return;
+                if (settingsRes?.data?.success && settingsRes.data.data) {
+                    setSettings(settingsRes.data.data);
+                }
+                if (salesRes?.data?.success && salesRes.data.data) {
+                    const payload = salesRes.data.data;
+                    if (saleId) {
+                        setSale(payload);
+                    } else if (Array.isArray(payload.items) && payload.items.length > 0) {
+                        setSale(payload.items[0]);
+                    } else {
+                        setSale(null);
+                    }
+                }
+            })
+            .catch((err) => {
+                if (mounted) {
+                    setError(err?.response?.data?.message || err?.message || 'Failed to load invoice details.');
+                }
+            })
+            .finally(() => {
+                if (mounted) setLoading(false);
+            });
+
+        return () => {
+            mounted = false;
+        };
+    }, [saleId]);
+
+    const fmt = (val) => formatCurrency(val, settings?.currency);
+    const showCompanyDetails = settings?.invoice?.showCompanyDetails ?? true;
+    const invoicePrefix = settings?.invoice?.prefix || 'INV-';
+    const dueDays = Number(settings?.invoice?.dueDays ?? 0);
+
+    const createdDate = sale?.createdAt ? new Date(sale.createdAt) : null;
+    const dueDate = createdDate
+        ? new Date(createdDate.getTime() + dueDays * 24 * 60 * 60 * 1000)
+        : null;
 
     return (
         <div>
@@ -18,253 +76,214 @@ const Invoicedetails = () => {
                                 <h4>Invoice Details</h4>
                             </div>
                         </div>
-                        <ul className="table-top-head">
-                            <li>
-                                <Link data-bs-toggle="tooltip" data-bs-placement="top" title="Pdf">
-                                    <ImageWithBasePath src="assets/img/icons/pdf.svg" alt="img" />
-                                </Link>
-                            </li>
-                            <li>
-                                <Link data-bs-toggle="tooltip" data-bs-placement="top" title="Print">
-                                    <i data-feather="printer" className="feather-rotate-ccw" />
-                                </Link>
-                            </li>
-                            <li>
-                                <Link
-                                    data-bs-toggle="tooltip"
-                                    data-bs-placement="top"
-                                    title="Collapse"
-                                    id="collapse-header"
+                        <div className="page-btn d-flex gap-2">
+                            {sale && (
+                                <button
+                                    type="button"
+                                    className="btn btn-outline-primary"
+                                    onClick={() => window.print()}
                                 >
-                                    <i data-feather="chevron-up" className="feather-chevron-up" />
-                                </Link>
-                            </li>
-                        </ul>
-                        <div className="page-btn">
+                                    <i className="ti ti-printer me-1" />
+                                    Print Invoice
+                                </button>
+                            )}
                             <Link to={route.invoice} className="btn btn-primary">
-                                <i data-feather="arrow-left" className="me-2" />
+                                <i className="ti ti-arrow-left me-1" />
                                 Back to Invoices
                             </Link>
                         </div>
                     </div>
-                    {/* Invoices */}
-                    <div className="card">
-                        <div className="card-body">
-                            <div className="row justify-content-between align-items-center border-bottom mb-3">
-                                <div className="col-md-6">
-                                    <div className="mb-2">
-                                        <ImageWithBasePath src="assets/img/logo.svg" className="img-fluid" alt="logo" />
-                                    </div>
-                                    <p>3099 Kennedy Court Framingham, MA 01702</p>
-                                </div>
-                                <div className="col-md-6">
-                                    <div className=" text-end mb-3">
-                                        <h5 className="text-gray mb-1">
-                                            Invoice No <span className="text-primary">#INV0001</span>
-                                        </h5>
-                                        <p className="mb-1 fw-medium">
-                                            Created Date : <span className="text-dark">Sep 24, 2024</span>{" "}
-                                        </p>
-                                        <p className="fw-medium">
-                                            Due Date : <span className="text-dark">Sep 30, 2024</span>{" "}
-                                        </p>
-                                    </div>
-                                </div>
+
+                    {error && (
+                        <div className="alert alert-danger" role="alert">
+                            {error}
+                        </div>
+                    )}
+
+                    {loading ? (
+                        <div className="card">
+                            <div className="card-body text-center py-5">
+                                <div className="spinner-border text-primary" role="status" />
+                                <p className="mt-2 text-muted mb-0">Loading invoice...</p>
                             </div>
-                            <div className="row border-bottom mb-3">
-                                <div className="col-md-5">
-                                    <p className="text-dark mb-2 fw-semibold">From</p>
-                                    <div>
-                                        <h4 className="mb-1">Thomas Lawler</h4>
-                                        <p className="mb-1">2077 Chicago Avenue Orosi, CA 93647</p>
-                                        <p className="mb-1">
-                                            Email :{" "}
-                                            <span className="text-dark">Tarala2445@example.com</span>
-                                        </p>
-                                        <p>
-                                            Phone : <span className="text-dark">+1 987 654 3210</span>
-                                        </p>
+                        </div>
+                    ) : !sale ? (
+                        <div className="card">
+                            <div className="card-body text-center py-5">
+                                <i className="ti ti-file-invoice fs-36 text-muted mb-2 d-block" />
+                                <h5 className="mb-1">No Invoice Selected</h5>
+                                <p className="text-muted mb-3">
+                                    Completed POS and sales invoices will appear here using your configured business settings ({settings?.shopName || 'Not configured yet'}).
+                                </p>
+                                <Link to={route.invoice} className="btn btn-primary btn-sm">
+                                    View Invoices List
+                                </Link>
+                            </div>
+                        </div>
+                    ) : (
+                        <div className="card">
+                            <div className="card-body">
+                                <div className="row justify-content-between align-items-center border-bottom mb-3 pb-3">
+                                    <div className="col-md-6">
+                                        {showCompanyDetails && (
+                                            <div>
+                                                {settings?.logo && (
+                                                    <div className="mb-2">
+                                                        <img
+                                                            src={settings.logo}
+                                                            alt="Business Logo"
+                                                            style={{ maxHeight: '48px', objectFit: 'contain' }}
+                                                            onError={(e) => {
+                                                                e.currentTarget.style.display = 'none';
+                                                            }}
+                                                        />
+                                                    </div>
+                                                )}
+                                                <h4 className="fw-bold mb-1">
+                                                    {settings?.shopName || settings?.brandName || 'Business Name Not Set'}
+                                                </h4>
+                                                {settings?.address && <p className="mb-1">{settings.address}</p>}
+                                                {settings?.phone && <p className="mb-1">Phone: {settings.phone}</p>}
+                                                {settings?.email && <p className="mb-1">Email: {settings.email}</p>}
+                                                {settings?.taxNumber && <p className="mb-0">Tax / NTN: {settings.taxNumber}</p>}
+                                            </div>
+                                        )}
                                     </div>
-                                </div>
-                                <div className="col-md-5">
-                                    <p className="text-dark mb-2 fw-semibold">To</p>
-                                    <div>
-                                        <h4 className="mb-1">Carl Evans</h4>
-                                        <p className="mb-1">3103 Trainer Avenue Peoria, IL 61602</p>
-                                        <p className="mb-1">
-                                            Email :{" "}
-                                            <span className="text-dark">Sara_inc34@example.com</span>
-                                        </p>
-                                        <p>
-                                            Phone : <span className="text-dark">+1 987 471 6589</span>
-                                        </p>
-                                    </div>
-                                </div>
-                                <div className="col-md-2">
-                                    <div className="mb-3">
-                                        <p className="text-title mb-2 fw-medium">Payment Status </p>
-                                        <span className="bg-success text-white fs-10 px-1 rounded">
-                                            <i className="ti ti-point-filled " />
-                                            Paid
-                                        </span>
-                                        <div className="mt-3">
-                                            <ImageWithBasePath src="assets/img/qr.svg" className="img-fluid" alt="QR" />
+                                    <div className="col-md-6">
+                                        <div className="text-md-end mb-2">
+                                            <h5 className="text-gray mb-1">
+                                                Invoice No{' '}
+                                                <span className="text-primary">
+                                                    {sale.invoiceNumber || `${invoicePrefix}${sale.id?.slice(0, 6)}`}
+                                                </span>
+                                            </h5>
+                                            {createdDate && (
+                                                <p className="mb-1 fw-medium">
+                                                    Created Date:{' '}
+                                                    <span className="text-dark">{createdDate.toLocaleDateString()}</span>
+                                                </p>
+                                            )}
+                                            {dueDate && (
+                                                <p className="mb-1 fw-medium">
+                                                    Due Date:{' '}
+                                                    <span className="text-dark">{dueDate.toLocaleDateString()}</span>
+                                                </p>
+                                            )}
+                                            <span
+                                                className={`badge ${
+                                                    sale.paymentStatus === 'PAID'
+                                                        ? 'bg-success'
+                                                        : sale.paymentStatus === 'PARTIAL'
+                                                        ? 'bg-warning'
+                                                        : 'bg-danger'
+                                                }`}
+                                            >
+                                                {sale.paymentStatus || sale.status || 'COMPLETED'}
+                                            </span>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div>
-                                <p className="fw-medium">
-                                    Invoice For :{" "}
-                                    <span className="text-dark fw-medium">
-                                        Design &amp; development of Website
-                                    </span>
-                                </p>
+
+                                {settings?.invoice?.headerTerms && (
+                                    <div className="alert alert-light border py-2 mb-3">
+                                        {settings.invoice.headerTerms}
+                                    </div>
+                                )}
+
+                                <div className="row border-bottom mb-3 pb-3">
+                                    <div className="col-md-6">
+                                        <p className="text-dark mb-1 fw-semibold">Billed To</p>
+                                        <h5 className="mb-1">{sale.customer?.name || sale.customerName || 'Walk-in Customer'}</h5>
+                                        {sale.customer?.phone && <p className="mb-1">Phone: {sale.customer.phone}</p>}
+                                        {sale.customer?.email && <p className="mb-0">Email: {sale.customer.email}</p>}
+                                    </div>
+                                </div>
+
                                 <div className="table-responsive mb-3">
                                     <table className="table">
                                         <thead className="thead-light">
                                             <tr>
-                                                <th>Job Description</th>
+                                                <th>Item</th>
                                                 <th className="text-end">Qty</th>
-                                                <th className="text-end">Cost</th>
+                                                <th className="text-end">Unit Price</th>
                                                 <th className="text-end">Discount</th>
                                                 <th className="text-end">Total</th>
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <tr>
-                                                <td>
-                                                    <h6>UX Strategy</h6>
-                                                </td>
-                                                <td className="text-gray-9 fw-medium text-end">1</td>
-                                                <td className="text-gray-9 fw-medium text-end">Rs 500</td>
-                                                <td className="text-gray-9 fw-medium text-end">Rs 100</td>
-                                                <td className="text-gray-9 fw-medium text-end">Rs 500</td>
-                                            </tr>
-                                            <tr>
-                                                <td>
-                                                    <h6>Design System</h6>
-                                                </td>
-                                                <td className="text-gray-9 fw-medium text-end">1</td>
-                                                <td className="text-gray-9 fw-medium text-end">Rs 5000</td>
-                                                <td className="text-gray-9 fw-medium text-end">Rs 100</td>
-                                                <td className="text-gray-9 fw-medium text-end">Rs 5000</td>
-                                            </tr>
-                                            <tr>
-                                                <td>
-                                                    <h6>Brand Guidellines</h6>
-                                                </td>
-                                                <td className="text-gray-9 fw-medium text-end">1</td>
-                                                <td className="text-gray-9 fw-medium text-end">Rs 5000</td>
-                                                <td className="text-gray-9 fw-medium text-end">Rs 100</td>
-                                                <td className="text-gray-9 fw-medium text-end">Rs 5000</td>
-                                            </tr>
-                                            <tr>
-                                                <td>
-                                                    <h6>Social Media Template</h6>
-                                                </td>
-                                                <td className="text-gray-9 fw-medium text-end">1</td>
-                                                <td className="text-gray-9 fw-medium text-end">Rs 5000</td>
-                                                <td className="text-gray-9 fw-medium text-end">Rs 100</td>
-                                                <td className="text-gray-9 fw-medium text-end">Rs 5000</td>
-                                            </tr>
+                                            {(sale.items || []).length === 0 ? (
+                                                <tr>
+                                                    <td colSpan={5} className="text-center text-muted py-3">
+                                                        No line items available for this invoice.
+                                                    </td>
+                                                </tr>
+                                            ) : (
+                                                sale.items.map((item, idx) => (
+                                                    <tr key={item.id || idx}>
+                                                        <td>
+                                                            <h6 className="mb-0">{item.product?.name || item.name || 'Item'}</h6>
+                                                            {(item.color || item.size) && (
+                                                                <small className="text-muted">
+                                                                    {item.color || ''} {item.size ? `[${item.size}]` : ''}
+                                                                </small>
+                                                            )}
+                                                        </td>
+                                                        <td className="text-end">{item.quantity}</td>
+                                                        <td className="text-end">{fmt(item.unitPrice)}</td>
+                                                        <td className="text-end">{fmt(item.discountAmount || 0)}</td>
+                                                        <td className="text-end fw-medium">{fmt(item.totalPrice)}</td>
+                                                    </tr>
+                                                ))
+                                            )}
                                         </tbody>
                                     </table>
                                 </div>
-                            </div>
-                            <div className="row border-bottom mb-3">
-                                <div className="col-md-5 ms-auto mb-3">
-                                    <div className="d-flex justify-content-between align-items-center border-bottom mb-2 pe-3">
-                                        <p className="mb-0">Sub Total</p>
-                                        <p className="text-dark fw-medium mb-2">Rs 5500</p>
-                                    </div>
-                                    <div className="d-flex justify-content-between align-items-center border-bottom mb-2 pe-3">
-                                        <p className="mb-0">Discount(0%)</p>
-                                        <p className="text-dark fw-medium mb-2">Rs 400</p>
-                                    </div>
-                                    <div className="d-flex justify-content-between align-items-center mb-2 pe-3">
-                                        <p className="mb-0">VAT(5%)</p>
-                                        <p className="text-dark fw-medium mb-2">Rs 54</p>
-                                    </div>
-                                    <div className="d-flex justify-content-between align-items-center mb-2 pe-3">
-                                        <h5>Total Amount</h5>
-                                        <h5>Rs 5775</h5>
-                                    </div>
-                                    <p className="fs-12">
-                                        Amount in Words : Dollar Five thousand Seven Seventy Five
-                                    </p>
-                                </div>
-                            </div>
-                            <div className="row align-items-center border-bottom mb-3">
-                                <div className="col-md-7">
-                                    <div>
-                                        <div className="mb-3">
-                                            <h6 className="mb-1">Terms and Conditions</h6>
-                                            <p>
-                                                Please pay within 15 days from the date of invoice, overdue
-                                                interest @ 14% will be charged on delayed payments.
-                                            </p>
+
+                                <div className="row border-bottom mb-3 pb-3">
+                                    <div className="col-md-5 ms-auto">
+                                        <div className="d-flex justify-content-between mb-2">
+                                            <span>Sub Total</span>
+                                            <span className="fw-medium">{fmt(sale.subtotal)}</span>
                                         </div>
-                                        <div className="mb-3">
-                                            <h6 className="mb-1">Notes</h6>
-                                            <p>Please quote invoice number when remitting funds.</p>
+                                        <div className="d-flex justify-content-between mb-2">
+                                            <span>Discount</span>
+                                            <span className="fw-medium">{fmt(sale.discountAmount || 0)}</span>
+                                        </div>
+                                        <div className="d-flex justify-content-between mb-2">
+                                            <span>Tax</span>
+                                            <span className="fw-medium">{fmt(sale.taxAmount || 0)}</span>
+                                        </div>
+                                        <div className="d-flex justify-content-between border-top pt-2">
+                                            <h5>Total Amount</h5>
+                                            <h5>{fmt(sale.totalAmount)}</h5>
                                         </div>
                                     </div>
                                 </div>
-                                <div className="col-md-5">
-                                    <div className="text-end">
-                                        <ImageWithBasePath src="assets/img/sign.svg" className="img-fluid" alt="sign" />
+
+                                {(settings?.invoice?.footerTerms || settings?.policies?.terms) && (
+                                    <div className="mb-2">
+                                        {settings?.invoice?.footerTerms && (
+                                            <div className="mb-2">
+                                                <h6 className="mb-1">Invoice Terms</h6>
+                                                <p className="mb-0 text-muted">{settings.invoice.footerTerms}</p>
+                                            </div>
+                                        )}
+                                        {settings?.policies?.terms && (
+                                            <div>
+                                                <h6 className="mb-1">Return &amp; Exchange Policy</h6>
+                                                <p className="mb-0 text-muted">{settings.policies.terms}</p>
+                                            </div>
+                                        )}
                                     </div>
-                                    <div className="text-end mb-3">
-                                        <h6 className="fs-14 fw-medium pe-3">Ted M. Davis</h6>
-                                        <p>Assistant Manager</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="text-center">
-                                <div className="mb-3">
-                                    <ImageWithBasePath src="assets/img/logo.svg" className="img-fluid" alt="logo" />
-                                </div>
-                                <p className="text-dark mb-1">
-                                    Payment Made Via bank transfer / Cheque in the name of Thomas Lawler
-                                </p>
-                                <div className="d-flex justify-content-center align-items-center">
-                                    <p className="fs-12 mb-0 me-3">
-                                        Bank Name : <span className="text-dark">HDFC Bank</span>
-                                    </p>
-                                    <p className="fs-12 mb-0 me-3">
-                                        Account Number : <span className="text-dark">45366287987</span>
-                                    </p>
-                                    <p className="fs-12">
-                                        IFSC : <span className="text-dark">HDFC0018159</span>
-                                    </p>
-                                </div>
+                                )}
                             </div>
                         </div>
-                    </div>
-                    {/* /Invoices */}
-                    <div className="d-flex justify-content-center align-items-center mb-4">
-                        <Link
-                            to="#"
-                            className="btn btn-primary d-flex justify-content-center align-items-center me-2"
-                        >
-                            <i className="ti ti-printer me-2" />
-                            Print Invoice
-                        </Link>
-                        <Link
-                            to="#"
-                            className="btn btn-secondary d-flex justify-content-center align-items-center border"
-                        >
-                            <i className="ti ti-copy me-2" />
-                            Clone Invoice
-                        </Link>
-                    </div>
+                    )}
                 </div>
                 <CommonFooter />
             </div>
-
         </div>
-    )
-}
+    );
+};
 
-export default Invoicedetails
+export default Invoicedetails;

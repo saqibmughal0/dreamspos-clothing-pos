@@ -1,13 +1,99 @@
-
-import React from "react";
-import { Link } from "react-router-dom";
-import AddTaxRates from "../../../core/modals/settings/addtaxrates";
-import EditTaxRates from "../../../core/modals/settings/edittaxrates";
+import React, { useState, useEffect, useCallback } from "react";
 import SettingsSideBar from "../settingssidebar";
 import RefreshIcon from "../../../core/common/tooltip-content/refresh";
 import CollapesIcon from "../../../core/common/tooltip-content/collapes";
 import CommonFooter from "../../../core/common/footer/commonFooter";
+import { apiClient } from "../../../core/apiClient";
+import { extractApiError } from "../../../core/utils/businessSettings";
+
+const DEFAULT_TAX = {
+  rate: 0,
+  type: "EXCLUSIVE",
+};
+
 const TaxRates = () => {
+  const [tax, setTax] = useState(DEFAULT_TAX);
+  const [savedTax, setSavedTax] = useState(DEFAULT_TAX);
+  const [taxNumber, setTaxNumber] = useState("");
+  const [savedTaxNumber, setSavedTaxNumber] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
+
+  const loadSettings = useCallback(async () => {
+    setLoading(true);
+    setError("");
+    try {
+      const res = await apiClient.get("/settings");
+      const s = res.data?.data || {};
+      const loadedTax = {
+        rate: Number(s.tax?.rate ?? 0),
+        type: s.tax?.type === "INCLUSIVE" ? "INCLUSIVE" : "EXCLUSIVE",
+      };
+      const loadedTaxNumber = s.taxNumber || "";
+      setTax(loadedTax);
+      setSavedTax(loadedTax);
+      setTaxNumber(loadedTaxNumber);
+      setSavedTaxNumber(loadedTaxNumber);
+    } catch (err) {
+      setError(extractApiError(err, "Failed to load tax settings."));
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    loadSettings();
+  }, [loadSettings]);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError("");
+    setSuccess("");
+
+    const numericRate = Number(tax.rate);
+    if (Number.isNaN(numericRate) || numericRate < 0 || numericRate > 100) {
+      setError("Tax rate must be a number between 0 and 100.");
+      return;
+    }
+
+    setSaving(true);
+    try {
+      const payload = {
+        tax: {
+          rate: numericRate,
+          type: tax.type,
+        },
+        taxNumber: taxNumber.trim(),
+      };
+      const res = await apiClient.put("/settings", payload);
+      const updated = res.data?.data;
+      if (updated) {
+        const syncedTax = {
+          rate: Number(updated.tax?.rate ?? numericRate),
+          type: updated.tax?.type === "INCLUSIVE" ? "INCLUSIVE" : "EXCLUSIVE",
+        };
+        const syncedTaxNum = updated.taxNumber || "";
+        setTax(syncedTax);
+        setSavedTax(syncedTax);
+        setTaxNumber(syncedTaxNum);
+        setSavedTaxNumber(syncedTaxNum);
+      }
+      setSuccess("Tax settings saved successfully. New POS sales will use this rate without altering historical sales.");
+    } catch (err) {
+      setError(extractApiError(err, "Failed to save tax settings."));
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleCancel = () => {
+    setTax(savedTax);
+    setTaxNumber(savedTaxNumber);
+    setError("");
+    setSuccess("");
+  };
 
   return (
     <div>
@@ -17,11 +103,11 @@ const TaxRates = () => {
             <div className="add-item d-flex">
               <div className="page-title">
                 <h4>Settings</h4>
-                <h6>Manage your settings on portal</h6>
+                <h6>Configure default sales tax rate and registration details</h6>
               </div>
             </div>
             <ul className="table-top-head">
-              <RefreshIcon />
+              <RefreshIcon onClick={loadSettings} />
               <CollapesIcon />
             </ul>
           </div>
@@ -29,160 +115,145 @@ const TaxRates = () => {
             <div className="col-xl-12">
               <div className="settings-wrapper d-flex">
                 <SettingsSideBar />
-                <div className="card flex-fill mb-0 w-50">
-                  <div className="card-header d-flex align-items-center justify-content-between">
-                    <h4>Tax Rates</h4>
-                    <Link
-                      to="#"
-                      className="btn btn-primary"
-                      data-bs-toggle="modal"
-                      data-bs-target="#add-tax"
-                    >
-                      <i className="ti ti-circle-plus me-1" />
-                      Add New Tax Rate
-                    </Link>
+                <div className="card flex-fill mb-0">
+                  <div className="card-header">
+                    <h4 className="fs-18 fw-bold mb-0">Tax Settings</h4>
                   </div>
                   <div className="card-body">
-                    <div className="table-responsive">
-                      <table className="table border">
-                        <thead className="thead-light">
-                          <tr>
-                            <th>Tax Name</th>
-                            <th>Tax rates</th>
-                            <th>Created On</th>
-                            <th className="no-sort" />
-                          </tr>
-                        </thead>
-                        <tbody>
-                          <tr>
-                            <td>VAT</td>
-                            <td>10%</td>
-                            <td>12 Jan 2025</td>
-                            <td className="action-table-data justify-content-end">
-                              <div className="edit-delete-action">
-                                <Link
-                                  className="me-2 p-2"
-                                  to="#"
-                                  data-bs-toggle="modal"
-                                  data-bs-target="#edit-tax"
-                                >
-                                  <i data-feather="edit" className="feather-edit" />
-                                </Link>
-                                <Link
-                                  className="p-2"
-                                  to="javascript:void(0);"
-                                  data-bs-toggle="modal"
-                                  data-bs-target="#delete-modal"
-                                >
-                                  <i data-feather="trash-2" className="feather-trash-2" />
-                                </Link>
+                    {error && (
+                      <div className="alert alert-danger alert-dismissible fade show" role="alert">
+                        <i className="ti ti-alert-circle me-2" />
+                        {error}
+                        <button type="button" className="btn-close" onClick={() => setError("")} aria-label="Close" />
+                      </div>
+                    )}
+                    {success && (
+                      <div className="alert alert-success alert-dismissible fade show" role="alert">
+                        <i className="ti ti-circle-check me-2" />
+                        {success}
+                        <button type="button" className="btn-close" onClick={() => setSuccess("")} aria-label="Close" />
+                      </div>
+                    )}
+
+                    {loading ? (
+                      <div className="text-center py-5">
+                        <div className="spinner-border text-primary" role="status" />
+                        <p className="mt-2 text-muted mb-0">Loading tax settings...</p>
+                      </div>
+                    ) : (
+                      <form onSubmit={handleSubmit} noValidate>
+                        <div className="row">
+                          <div className="col-md-6">
+                            <div className="mb-3">
+                              <label className="form-label">
+                                Default Sales Tax Rate (%) <span className="text-danger">*</span>
+                              </label>
+                              <div className="input-group">
+                                <input
+                                  type="number"
+                                  min="0"
+                                  max="100"
+                                  step="0.01"
+                                  className="form-control"
+                                  value={tax.rate}
+                                  onChange={(e) => {
+                                    setTax((prev) => ({ ...prev, rate: e.target.value }));
+                                    setSuccess("");
+                                  }}
+                                />
+                                <span className="input-group-text">%</span>
                               </div>
-                            </td>
-                          </tr>
-                          <tr>
-                            <td>CGST</td>
-                            <td>08%</td>
-                            <td>10 Jan 2025</td>
-                            <td className="action-table-data justify-content-end">
-                              <div className="edit-delete-action">
-                                <Link
-                                  className="me-2 p-2"
-                                  to="#"
-                                  data-bs-toggle="modal"
-                                  data-bs-target="#edit-tax"
-                                >
-                                  <i data-feather="edit" className="feather-edit" />
-                                </Link>
-                                <Link
-                                  className="p-2"
-                                  to="javascript:void(0);"
-                                  data-bs-toggle="modal"
-                                  data-bs-target="#delete-modal"
-                                >
-                                  <i data-feather="trash-2" className="feather-trash-2" />
-                                </Link>
+                              <small className="text-muted">
+                                Set to 0 if your store does not charge separate sales tax.
+                              </small>
+                            </div>
+                          </div>
+
+                          <div className="col-md-6">
+                            <div className="mb-3">
+                              <label className="form-label">Tax Registration / NTN Number (Optional)</label>
+                              <input
+                                type="text"
+                                className="form-control"
+                                value={taxNumber}
+                                onChange={(e) => {
+                                  setTaxNumber(e.target.value);
+                                  setSuccess("");
+                                }}
+                                placeholder="Optional NTN / STRN / Tax ID"
+                              />
+                              <small className="text-muted">
+                                Printed on thermal receipts and invoices when set.
+                              </small>
+                            </div>
+                          </div>
+
+                          <div className="col-md-12">
+                            <div className="mb-3">
+                              <label className="form-label d-block">Tax Calculation Mode</label>
+                              <div className="d-flex gap-4">
+                                <div className="form-check">
+                                  <input
+                                    className="form-check-input"
+                                    type="radio"
+                                    name="taxType"
+                                    id="taxExclusive"
+                                    value="EXCLUSIVE"
+                                    checked={tax.type === "EXCLUSIVE"}
+                                    onChange={() => {
+                                      setTax((prev) => ({ ...prev, type: "EXCLUSIVE" }));
+                                      setSuccess("");
+                                    }}
+                                  />
+                                  <label className="form-check-label" htmlFor="taxExclusive">
+                                    <strong>Exclusive</strong> — Tax is added on top of item prices at checkout
+                                  </label>
+                                </div>
+                                <div className="form-check">
+                                  <input
+                                    className="form-check-input"
+                                    type="radio"
+                                    name="taxType"
+                                    id="taxInclusive"
+                                    value="INCLUSIVE"
+                                    checked={tax.type === "INCLUSIVE"}
+                                    onChange={() => {
+                                      setTax((prev) => ({ ...prev, type: "INCLUSIVE" }));
+                                      setSuccess("");
+                                    }}
+                                  />
+                                  <label className="form-check-label" htmlFor="taxInclusive">
+                                    <strong>Inclusive</strong> — Item prices already include tax
+                                  </label>
+                                </div>
                               </div>
-                            </td>
-                          </tr>
-                          <tr>
-                            <td>SGST</td>
-                            <td>10%</td>
-                            <td>06 Jan 2025</td>
-                            <td className="action-table-data justify-content-end">
-                              <div className="edit-delete-action">
-                                <Link
-                                  className="me-2 p-2"
-                                  to="#"
-                                  data-bs-toggle="modal"
-                                  data-bs-target="#edit-tax"
-                                >
-                                  <i data-feather="edit" className="feather-edit" />
-                                </Link>
-                                <Link
-                                  className="p-2"
-                                  to="javascript:void(0);"
-                                  data-bs-toggle="modal"
-                                  data-bs-target="#delete-modal"
-                                >
-                                  <i data-feather="trash-2" className="feather-trash-2" />
-                                </Link>
-                              </div>
-                            </td>
-                          </tr>
-                        </tbody>
-                      </table>
-                    </div>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="text-end settings-bottom-btn mt-3">
+                          <button
+                            type="button"
+                            className="btn btn-secondary me-2"
+                            onClick={handleCancel}
+                            disabled={saving}
+                          >
+                            Cancel
+                          </button>
+                          <button type="submit" className="btn btn-primary" disabled={saving}>
+                            {saving ? "Saving..." : "Save Changes"}
+                          </button>
+                        </div>
+                      </form>
+                    )}
                   </div>
                 </div>
-
               </div>
             </div>
           </div>
         </div>
         <CommonFooter />
       </div>
-
-      <AddTaxRates />
-      <EditTaxRates />
-      <>
-        {/* delete modal */}
-        <div className="modal fade" id="delete-modal">
-          <div className="modal-dialog modal-dialog-centered">
-            <div className="modal-content">
-              <div className="page-wrapper-new p-0">
-                <div className="content p-5 px-3 text-center">
-                  <span className="rounded-circle d-inline-flex p-2 bg-danger-transparent mb-2">
-                    <i className="ti ti-trash fs-24 text-danger" />
-                  </span>
-                  <h4 className="fs-20 text-gray-9 fw-bold mb-2 mt-1">
-                    Delete Tax Rate
-                  </h4>
-                  <p className="text-gray-6 mb-0 fs-16">
-                    Are you sure you want to delete tax rate?
-                  </p>
-                  <div className="modal-footer-btn mt-3 d-flex justify-content-center">
-                    <button
-                      type="button"
-                      className="btn me-2 btn-secondary fs-13 fw-medium p-2 px-3 shadow-none"
-                      data-bs-dismiss="modal"
-                    >
-                      Cancel
-                    </button>
-                    <button
-                      type="button"
-                      className="btn btn-submit fs-13 fw-medium p-2 px-3" data-bs-dismiss="modal"
-                    >
-                      Yes Delete
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        {/* /delete modal */}
-      </>
-
     </div>
   );
 };
